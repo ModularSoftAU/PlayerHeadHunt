@@ -1,0 +1,6 @@
+main: net.craftingforchrist.EasterEggHunt.EasterEggHuntMain
+name: EasterEggHunt
+description: An Easter Egg Hunt minigame for the Easter break in collaberation with Katoomba Easter Convention (KEC)
+version: ${project.version}
+author: Crafting For Christ, Ben Robson
+api-version: 1.16
