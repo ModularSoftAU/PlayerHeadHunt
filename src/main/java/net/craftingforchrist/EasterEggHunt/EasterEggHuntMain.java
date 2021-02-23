@@ -41,12 +41,12 @@ public class EasterEggHuntMain extends JavaPlugin {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection("jdbc:mysql://" + Variables.host + ":" + Variables.port + "/" + Variables.database, Variables.username, Variables.password);
-            this.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', ChatColor.GREEN + " Database connection was successful."));
+            this.getLogger().info(ChatColor.translateAlternateColorCodes('&', ChatColor.GREEN + " Database connection was successful."));
         } catch (SQLException e) {
-            this.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', ChatColor.RED + " Database connection failed!"));
+            this.getLogger().info(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + " Database connection failed!"));
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            this.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', ChatColor.RED + " Database connection failed!"));
+            this.getLogger().info(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + " Database connection failed!"));
             e.printStackTrace();
         }
     }
@@ -58,7 +58,7 @@ public class EasterEggHuntMain extends JavaPlugin {
             try {
                 this.connection.close();
             } catch (SQLException e) {
-                this.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', Variables.developmentprefix + net.md_5.bungee.api.ChatColor.RED + " Database connection failed!"));
+                this.getLogger().info(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + " Database connection failed!"));
                 e.printStackTrace();
             }
             establishConnection();
