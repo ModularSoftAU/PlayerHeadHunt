@@ -1,16 +1,24 @@
 package net.craftingforchrist.EasterEggHunt;
 
 import net.craftingforchrist.EasterEggHunt.events.EggFindEvent;
+import net.craftingforchrist.EasterEggHunt.events.EggHunterOnJoin;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class EasterEggHuntMain extends JavaPlugin {
     public static EasterEggHuntMain plugin;
+    private Connection connection;
 
     @Override
     public void onEnable() {
         plugin = this;
+
+        establishConnection(); // Connect to the database
 
         // Plugin Load Message
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "\n\n" + plugin.getDescription().getName() + " is now enabled.\nRunning Version: " + plugin.getDescription().getVersion() + "\nGitHub Repository: https://github.com/craftingforchrist/EasterEggHunt\nCreated By: " + plugin.getDescription().getAuthors() + "\n\n");
@@ -18,6 +26,7 @@ public class EasterEggHuntMain extends JavaPlugin {
         // Plugin Event Register
         PluginManager pluginmanager = this.getServer().getPluginManager();
         pluginmanager.registerEvents(new EggFindEvent(), this);
+        pluginmanager.registerEvents(new EggHunterOnJoin(), this);
 
         plugin.saveDefaultConfig(); // Generate configuration file
     }
@@ -26,6 +35,35 @@ public class EasterEggHuntMain extends JavaPlugin {
     public void onDisable() {
         // Plugin Shutdown Message
         getServer().getConsoleSender().sendMessage(ChatColor.RED + "\n\n" + plugin.getDescription().getName() + " is now disabled.\n\n");
+    }
+
+    public void establishConnection() {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            this.connection = DriverManager.getConnection("jdbc:mysql://" + Variables.host + ":" + Variables.port + "/" + Variables.database, Variables.username, Variables.password);
+            this.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', ChatColor.GREEN + " Database connection was successful."));
+        } catch (SQLException e) {
+            this.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', ChatColor.RED + " Database connection failed!"));
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            this.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', ChatColor.RED + " Database connection failed!"));
+            e.printStackTrace();
+        }
+    }
+
+    public Connection getConnection() {
+        if (this.connection == null) {
+            establishConnection();
+        } else {
+            try {
+                this.connection.close();
+            } catch (SQLException e) {
+                this.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', Variables.developmentprefix + net.md_5.bungee.api.ChatColor.RED + " Database connection failed!"));
+                e.printStackTrace();
+            }
+            establishConnection();
+        }
+        return connection;
     }
 
 }
