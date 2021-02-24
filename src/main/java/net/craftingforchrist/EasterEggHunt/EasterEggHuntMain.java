@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class EasterEggHuntMain extends JavaPlugin {
-    public static EasterEggHuntMain plugin;
+    private static EasterEggHuntMain plugin;
     private Connection connection;
 
     @Override
@@ -26,7 +26,7 @@ public class EasterEggHuntMain extends JavaPlugin {
         // Plugin Event Register
         PluginManager pluginmanager = this.getServer().getPluginManager();
         pluginmanager.registerEvents(new EggFindEvent(), this);
-        pluginmanager.registerEvents(new EggHunterOnJoin(), this);
+        pluginmanager.registerEvents(new EggHunterOnJoin(this), this);
 
         plugin.saveDefaultConfig(); // Generate configuration file
     }
@@ -40,7 +40,7 @@ public class EasterEggHuntMain extends JavaPlugin {
     public void establishConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            this.connection = DriverManager.getConnection("jdbc:mysql://" + Variables.host + ":" + Variables.port + "/" + Variables.database, Variables.username, Variables.password);
+            this.connection = DriverManager.getConnection("jdbc:mysql://" + plugin.getConfig().getString("database.host") + ":" + plugin.getConfig().getString("database.port") + "/" + plugin.getConfig().getString("database.database"), plugin.getConfig().getString("database.username"), plugin.getConfig().getString("database.password"));
             this.getLogger().info(ChatColor.translateAlternateColorCodes('&', ChatColor.GREEN + " Database connection was successful."));
         } catch (SQLException e) {
             this.getLogger().info(ChatColor.translateAlternateColorCodes('&', ChatColor.RED + " Database connection failed!"));

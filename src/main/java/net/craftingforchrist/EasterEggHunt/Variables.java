@@ -1,7 +1,10 @@
 package net.craftingforchrist.EasterEggHunt;
 
 public class Variables {
-    EasterEggHuntMain plugin;
+    public static EasterEggHuntMain plugin;
+    public Variables(EasterEggHuntMain instance) {
+        plugin = instance;
+    }
 
     // Database
     public static String host = plugin.getConfig().getString("database.host");
