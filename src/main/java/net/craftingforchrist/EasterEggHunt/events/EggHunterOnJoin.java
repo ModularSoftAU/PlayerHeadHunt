@@ -30,7 +30,8 @@ public class EggHunterOnJoin implements Listener {
         //
         try {
             PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT * FROM playerdata WHERE uuid=?");
-            findstatement.setString(1, player.getUniqueId().toString());
+            findstatement.setString(1, UserUUID);
+
             ResultSet results = findstatement.executeQuery();
             if (!results.next()) {
                 plugin.getServer().getConsoleSender().sendMessage(new TextComponent(ChatColor.translateAlternateColorCodes('&', Username + " is a new player, creating a player profile.")));

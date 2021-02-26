@@ -4,3 +4,5 @@ database:
   database: "EasterEggHunt"
   username: "root"
   password: "password"
+lang:
+  databaseerror: "&cA database error has occurred, please contact an Administrator."
