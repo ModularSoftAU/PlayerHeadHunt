@@ -4,3 +4,8 @@ description: An Easter Egg Hunt minigame for the Easter break in collaberation w
 version: ${project.version}
 author: Crafting For Christ, Ben Robson
 api-version: 1.16
+
+commands:
+  egg:
+    description: Grab the amount of eggs a hunter has.
+    usage: /egg
