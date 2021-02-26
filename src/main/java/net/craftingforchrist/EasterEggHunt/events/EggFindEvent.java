@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class EggFindEvent implements Listener {
@@ -36,30 +37,46 @@ public class EggFindEvent implements Listener {
 
         if (EquipSlot.equals(EquipmentSlot.OFF_HAND) || event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
 
-        player.sendMessage("You just clicked " + event.getClickedBlock().getType());
-
         if (blockType.equals(Material.PLAYER_HEAD) || blockType.equals(Material.PLAYER_WALL_HEAD)) {
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE, 100, 100);
-            player.sendMessage("This is a Player Head.");
-
             //
             // Database Query
-            // Insert Easter Egg
+            // Check if the player has already found that Easter Egg before.
             //
             try {
-                PreparedStatement insertstatement = plugin.getConnection().prepareStatement("INSERT INTO eastereggs (playerid, eggcordx, eggcordy, eggcordz) VALUES ((select id from playerdata where uuid=?), ?, ?, ?)");
+                PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT * FROM eastereggs WHERE playerid=(select id from playerdata where uuid=?) AND eggcordx=? AND eggcordy=? AND eggcordz=?");
+                findstatement.setString(1, UserUUID);
+                findstatement.setString(2, String.valueOf(blockx));
+                findstatement.setString(3, String.valueOf(blocky));
+                findstatement.setString(4, String.valueOf(blockz));
 
-                insertstatement.setString(1, UserUUID);
-                insertstatement.setString(2, String.valueOf(blockx));
-                insertstatement.setString(3, String.valueOf(blocky));
-                insertstatement.setString(4, String.valueOf(blockz));
+                ResultSet results = findstatement.executeQuery();
+                if (!results.next()) {
+                    //
+                    // Database Query
+                    // Insert Easter Egg
+                    //
+                    try {
+                        PreparedStatement insertstatement = plugin.getConnection().prepareStatement("INSERT INTO eastereggs (playerid, eggcordx, eggcordy, eggcordz) VALUES ((select id from playerdata where uuid=?), ?, ?, ?)");
 
-                insertstatement.executeUpdate();
+                        insertstatement.setString(1, UserUUID);
+                        insertstatement.setString(2, String.valueOf(blockx));
+                        insertstatement.setString(3, String.valueOf(blocky));
+                        insertstatement.setString(4, String.valueOf(blockz));
 
-                player.sendMessage(ChatColor.GREEN + "You found an Easter Egg!");
+                        insertstatement.executeUpdate();
+
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE, 100, 100);
+                        player.sendMessage(ChatColor.GREEN + "You found an Easter Egg!");
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED + "You have already found this Easter Egg.");
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
         }
     }
 

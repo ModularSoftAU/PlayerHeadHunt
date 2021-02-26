@@ -1,5 +1,6 @@
 package net.craftingforchrist.EasterEggHunt;
 
+import net.craftingforchrist.EasterEggHunt.commands.egg;
 import net.craftingforchrist.EasterEggHunt.events.EggFindEvent;
 import net.craftingforchrist.EasterEggHunt.events.EggHunterOnJoin;
 import org.bukkit.ChatColor;
@@ -27,6 +28,9 @@ public class EasterEggHuntMain extends JavaPlugin {
         PluginManager pluginmanager = plugin.getServer().getPluginManager();
         pluginmanager.registerEvents(new EggFindEvent(this), this);
         pluginmanager.registerEvents(new EggHunterOnJoin(this), this);
+
+        // Command Registry
+        this.getCommand("egg").setExecutor(new egg(this));
 
         plugin.saveDefaultConfig(); // Generate configuration file
     }
