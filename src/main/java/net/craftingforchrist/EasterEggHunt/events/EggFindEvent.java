@@ -3,6 +3,7 @@ package net.craftingforchrist.EasterEggHunt.events;
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -64,14 +65,14 @@ public class EggFindEvent implements Listener {
 
                         insertstatement.executeUpdate();
 
-
-                        player.playSound(player.getLocation(), plugin.getConfig().getString("SOUND.EGGCOLLECTION"), 100, 100); // Play sound for an Easter Egg that is found.
+                        player.playSound(player.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, 100, 100); // Play sound for an Easter Egg that is found.
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")));
                     } catch (SQLException e) {
                         e.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
                     }
                 } else {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE, 100, 100); // Play sound for an Easter Egg that is already found.
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND")));
                 }
             } catch (SQLException e) {
