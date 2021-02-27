@@ -1,8 +1,10 @@
-database:
-  host: "localhost"
-  port: "3306"
-  database: "EasterEggHunt"
-  username: "root"
-  password: "password"
-lang:
-  databaseerror: "&cA database error has occurred, please contact an Administrator."
+DATABASE:
+  HOST: "localhost"
+  PORT: "3306"
+  DATABASE: "EasterEggHunt"
+  USERNAME: "root"
+  PASSWORD: "root"
+LANG:
+  DATABASE:
+    CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
+    CONNECTIONSUCCESS: "&aDatabase connected successfully."
