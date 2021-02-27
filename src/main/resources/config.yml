@@ -4,6 +4,12 @@ DATABASE:
   DATABASE: "EasterEggHunt"
   USERNAME: "root"
   PASSWORD: "root"
+EGG:
+  EGGBLOCK:
+    - PLAYER_HEAD
+    - PLAYER_WALL_HEAD
+  # The radius of the map in order to count all of the eggs.
+  RADIUS: 100
 LANG:
   DATABASE:
     CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
