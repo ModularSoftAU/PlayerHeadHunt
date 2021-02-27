@@ -6,6 +6,7 @@ Maintained By: [Ben Robson](https://github.com/benrobson) <br>
 When a player right clicks a Player Head, the coordinates are logged in a database and a number incremented in their name.
 
 ## Commands
-| Command       | Description                           |
-|---------------|---------------------------------------|
-| egg           | Grab the amount of eggs a hunter has. |
+| Command       | Description                           | Permission               |
+|---------------|---------------------------------------|--------------------------|
+| /egg           | Grab the amount of eggs a hunter has. |                          |
+| /clearegg      | Clear all eggs from targeted player.  | `easteregghunt.clearegg` |
