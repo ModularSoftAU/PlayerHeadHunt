@@ -12,3 +12,7 @@ LANG:
   DATABASE:
     CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
     CONNECTIONSUCCESS: "&aDatabase connected successfully."
+  EGG:
+    EGGFOUND: "&aYou have found an egg"
+    EGGALREADYFOUND: "&eYou have already found this egg."
+    EGGCOLLECTIONMILESTONEREACHED: "&5%PLAYER% has collected %NUMBEROFEGGS% eggs!"
