@@ -1,8 +1,10 @@
 package net.craftingforchrist.EasterEggHunt;
 
+import net.craftingforchrist.EasterEggHunt.commands.clearegg;
 import net.craftingforchrist.EasterEggHunt.commands.egg;
 import net.craftingforchrist.EasterEggHunt.events.EggFindEvent;
 import net.craftingforchrist.EasterEggHunt.events.EggHunterOnJoin;
+import net.craftingforchrist.EasterEggHunt.events.EggMilestoneReachedEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,9 +30,11 @@ public class EasterEggHuntMain extends JavaPlugin {
         PluginManager pluginmanager = plugin.getServer().getPluginManager();
         pluginmanager.registerEvents(new EggFindEvent(this), this);
         pluginmanager.registerEvents(new EggHunterOnJoin(this), this);
+        pluginmanager.registerEvents(new EggMilestoneReachedEvent(this), this);
 
         // Command Registry
         this.getCommand("egg").setExecutor(new egg(this));
+        this.getCommand("clearegg").setExecutor(new clearegg(this));
 
         plugin.saveDefaultConfig(); // Generate configuration file
     }
@@ -44,13 +48,13 @@ public class EasterEggHuntMain extends JavaPlugin {
     public void establishConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            plugin.connection = DriverManager.getConnection("jdbc:mysql://" + plugin.getConfig().getString("database.host") + ":" + plugin.getConfig().getString("database.port") + "/" + plugin.getConfig().getString("database.database"), plugin.getConfig().getString("database.username"), plugin.getConfig().getString("database.password"));
-            plugin.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', net.md_5.bungee.api.ChatColor.GREEN + " Database connection was successful."));
+            plugin.connection = DriverManager.getConnection("jdbc:mysql://" + plugin.getConfig().getString("DATABASE.HOST") + ":" + plugin.getConfig().getString("DATABASE.PORT") + "/" + plugin.getConfig().getString("DATABASE.DATABASE"), plugin.getConfig().getString("DATABASE.USERNAME"), plugin.getConfig().getString("DATABASE.PASSWORD"));
+            plugin.getLogger().info(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONSUCCESS")));
         } catch (SQLException e) {
-            plugin.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', net.md_5.bungee.api.ChatColor.RED + " Database connection failed!"));
+            plugin.getLogger().info(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            plugin.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', net.md_5.bungee.api.ChatColor.RED + " Database connection failed!"));
+            plugin.getLogger().info(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
             e.printStackTrace();
         }
     }
@@ -62,7 +66,7 @@ public class EasterEggHuntMain extends JavaPlugin {
             try {
                 plugin.connection.close();
             } catch (SQLException e) {
-                plugin.getLogger().info(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', net.md_5.bungee.api.ChatColor.RED + " Database connection failed!"));
+                plugin.getLogger().info(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
                 e.printStackTrace();
             }
             establishConnection();

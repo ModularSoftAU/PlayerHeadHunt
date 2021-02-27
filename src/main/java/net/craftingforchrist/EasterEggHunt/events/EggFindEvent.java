@@ -65,16 +65,21 @@ public class EggFindEvent implements Listener {
 
                         insertstatement.executeUpdate();
 
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE, 100, 100);
-                        player.sendMessage(ChatColor.GREEN + "You found an Easter Egg!");
+                        player.playSound(player.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, 100, 100); // Play sound for an Easter Egg that is found.
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")));
                     } catch (SQLException e) {
                         e.printStackTrace();
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
                     }
                 } else {
-                    player.sendMessage(ChatColor.RED + "You have already found this Easter Egg.");
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE, 100, 100); // Play sound for an Easter Egg that is already found.
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND")));
+                    event.setCancelled(true);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
+                event.setCancelled(true);
             }
 
         }

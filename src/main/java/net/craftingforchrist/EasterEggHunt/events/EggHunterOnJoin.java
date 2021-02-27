@@ -46,6 +46,7 @@ public class EggHunterOnJoin implements Listener {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            player.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
         }
 
     }

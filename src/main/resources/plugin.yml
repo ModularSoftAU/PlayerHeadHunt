@@ -1,6 +1,6 @@
 main: net.craftingforchrist.EasterEggHunt.EasterEggHuntMain
 name: EasterEggHunt
-description: An Easter Egg Hunt minigame for the Easter break in collaberation with Katoomba Easter Convention (KEC)
+description: An Easter Egg Hunt minigame for the Easter break in collaberation with Katoomba Easter Convention (KEC).
 version: ${project.version}
 author: Crafting For Christ, Ben Robson
 api-version: 1.16
@@ -9,3 +9,6 @@ commands:
   egg:
     description: Grab the amount of eggs a hunter has.
     usage: /egg
+  clearegg:
+    description: Clear all eggs the selected hunter has.
+    usage: /clearegg [player]

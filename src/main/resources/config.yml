@@ -1,8 +1,20 @@
-database:
-  host: "localhost"
-  port: "3306"
-  database: "EasterEggHunt"
-  username: "root"
-  password: "password"
-lang:
-  databaseerror: "&cA database error has occurred, please contact an Administrator."
+DATABASE:
+  HOST: "localhost"
+  PORT: "3306"
+  DATABASE: "EasterEggHunt"
+  USERNAME: "root"
+  PASSWORD: "root"
+LANG:
+  DATABASE:
+    CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
+    CONNECTIONSUCCESS: "&aDatabase connected successfully."
+  COMMAND:
+    NOTAPLAYER: "&cYou must be a player to run this command."
+    INSUFFICENTPERMISSIONS: "&cYou do not have permission to use this command."
+    COMMANDINCOMPLETE: "&cThis command is incomplete, please refer to the command guide for reference."
+  EGG:
+    EGGFOUND: "&aYou have found an egg."
+    EGGALREADYFOUND: "&eYou have already found this egg."
+    EGGCOUNT: "&eYou have found &l&6%NUMBEROFEGGS% &r&eeggs."
+    # Use %PLAYER% to display players name, use %NUMBEROFEGGS% to display number of eggs.
+    EGGCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFEGGS% &r&5eggs!"

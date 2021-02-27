@@ -23,13 +23,13 @@ public class egg implements CommandExecutor {
         String UserUUID = player.getUniqueId().toString();
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage("You must be a player to use this command.");
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.COMMAND.NOTAPLAYER")));
             return true;
         }
 
         //
         // Database Query
-        // Check if the player has already found that Easter Egg before.
+        // Check how many eggs the player has collected.
         //
         try {
             PreparedStatement findstatement = plugin.getConnection().prepareStatement("select count(*) as 'eastereggs' from eastereggs where playerid = (select id from playerdata where uuid=?)");
@@ -37,10 +37,14 @@ public class egg implements CommandExecutor {
 
             ResultSet results = findstatement.executeQuery();
             if (results.next()) {
-                player.sendMessage(ChatColor.YELLOW + "You have found " + results.getInt("eastereggs") + " eggs.");
+                int totaleggs = results.getInt("eastereggs");
+                String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOUNT");
+
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%NUMBEROFEGGS%", String.valueOf(totaleggs))));
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            player.sendMessage(org.bukkit.ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
         }
 
         return true;
