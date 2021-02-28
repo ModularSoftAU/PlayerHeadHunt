@@ -3,6 +3,7 @@ package net.craftingforchrist.EasterEggHunt.events;
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,6 +36,8 @@ public class EggFindEvent implements Listener {
         int blockx = block.getX();
         int blocky = block.getY();
         int blockz = block.getZ();
+
+        BlockData EggBlockData = block.getBlockData();
 
         String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
         String EGGALREADYFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGALREADYFOUND");
@@ -84,7 +87,7 @@ public class EggFindEvent implements Listener {
                             new BukkitRunnable() {
                                 @Override
                                 public void run() {
-                                    replaceEggBlock(blockType, blockx, blocky, blockz);
+                                    replaceEggBlock(blockType, EggBlockData, blockx, blocky, blockz);
                                 }
                             }.runTaskLater(plugin, EGGRESPAWNTIMER);
 
@@ -102,7 +105,7 @@ public class EggFindEvent implements Listener {
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
                     event.setCancelled(true);
                 }
-            }
+            } else return;
         }
     }
 
@@ -111,9 +114,10 @@ public class EggFindEvent implements Listener {
         EggBlock.getBlock().setType(Material.AIR);
     }
 
-    public void replaceEggBlock(Material EggBlockHead, int blockx, int blocky, int blockz) {
+    public void replaceEggBlock(Material EggBlockHead, BlockData EggBlockData, int blockx, int blocky, int blockz) {
         Location EggBlock = new Location(Bukkit.getWorld("world"), blockx, blocky, blockz);
         EggBlock.getBlock().setType(EggBlockHead);
+        EggBlock.getBlock().setBlockData(EggBlockData);
     }
 
 }
