@@ -1,9 +1,7 @@
 package net.craftingforchrist.EasterEggHunt.events;
 
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,6 +36,7 @@ public class EggFindEvent implements Listener {
 
         String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
         String EGGALREADYFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGALREADYFOUND");
+        int EGGRESPAWNTIMER = plugin.getConfig().getInt("EGG.RESPAWNTIMER");
 
         // This stops the event from firing twice, since the event fires for each hand.
         if (EquipSlot.equals(EquipmentSlot.OFF_HAND) || event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
@@ -72,6 +72,18 @@ public class EggFindEvent implements Listener {
 
                         player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is found.
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")));
+
+                        breakEggBlock(blockx, blocky, blockz);
+
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                // What you want to schedule goes here
+                                plugin.getServer().broadcastMessage("Egg should now be replaced.");
+                                replaceEggBlock(blockType, blockx, blocky, blockz);
+                            }
+                        }.runTaskLater(plugin, EGGRESPAWNTIMER);
+
                     } catch (SQLException e) {
                         e.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
@@ -88,6 +100,16 @@ public class EggFindEvent implements Listener {
             }
 
         }
+    }
+
+    public void breakEggBlock(int blockx, int blocky, int blockz) {
+        Location EggBlock = new Location(Bukkit.getWorld("world"), blockx, blocky, blockz);
+        EggBlock.getBlock().setType(Material.AIR);
+    }
+
+    public void replaceEggBlock(Material EggBlockHead, int blockx, int blocky, int blockz) {
+        Location EggBlock = new Location(Bukkit.getWorld("world"), blockx, blocky, blockz);
+        EggBlock.getBlock().setType(EggBlockHead);
     }
 
 }

@@ -4,6 +4,9 @@ DATABASE:
   DATABASE: "EasterEggHunt"
   USERNAME: "root"
   PASSWORD: "root"
+EGG:
+  # Respawn Timer is in Ticks [default is 1200, 1 minute]
+  RESPAWNTIMER: 1200
 SOUND:
   EGGFOUND: "ENTITY_WITHER_BREAK_BLOCK"
   EGGALREADYFOUND: "BLOCK_NOTE_BLOCK_SNARE"
