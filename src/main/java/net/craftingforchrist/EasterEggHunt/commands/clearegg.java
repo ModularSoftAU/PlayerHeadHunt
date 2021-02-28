@@ -36,23 +36,24 @@ public class clearegg implements CommandExecutor {
             return true;
         }
 
-        if (sender.hasPermission("easteregghunt.clearegg") || sender.isOp()) {
-            //
-            // Database Query
-            // Check how many eggs the player has collected.
-            //
-            try {
-                PreparedStatement deletestatement = plugin.getConnection().prepareStatement("DELETE from eastereggs where playerid=(select id from playerdata where uuid=?)");
-                deletestatement.setString(1, PlayerTarget.getUniqueId().toString());
-
-                deletestatement.executeUpdate();
-                player.sendMessage("All eggs have been cleared from " + Username + ".");
-            } catch (SQLException e) {
-                e.printStackTrace();
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
-            }
-        } else {
+        if (!sender.hasPermission("easteregghunt.clearegg") || !sender.isOp()) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.COMMAND.INSUFFICENTPERMISSIONS")));
+            return true;
+        }
+
+        //
+        // Database Query
+        // Check how many eggs the player has collected.
+        //
+        try {
+            PreparedStatement deletestatement = plugin.getConnection().prepareStatement("DELETE from eastereggs where playerid=(select id from playerdata where uuid=?)");
+            deletestatement.setString(1, PlayerTarget.getUniqueId().toString());
+
+            deletestatement.executeUpdate();
+            player.sendMessage("All eggs have been cleared from " + Username + ".");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
         }
 
         return true;
