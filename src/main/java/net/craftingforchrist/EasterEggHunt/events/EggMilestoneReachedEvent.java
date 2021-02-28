@@ -42,38 +42,44 @@ public class EggMilestoneReachedEvent implements Listener {
 
                 switch(totaleggs) {
                     case 10:
-                        MilestoneReachEvent(player, totaleggs);
+                        MilestoneReachEvent(player, Sound.BLOCK_NOTE_BLOCK_PLING, totaleggs);
                         event.setCancelled(true);
                         break;
                     case 30:
-                        MilestoneReachEvent(player, totaleggs);
+                        MilestoneReachEvent(player, Sound.BLOCK_NOTE_BLOCK_PLING, totaleggs);
                         event.setCancelled(true);
                         break;
-//                    case 50:
-//                        // code block
-//                        break;
-//                    case 60:
-//                        // code block
-//                        break;
-//                    case 80:
-//                        // code block
-//                        break;
-//                    case 90:
-//                        // code block
-//                        break;
-//                    case 100:
-//                        // code block
-//                        break;
-//                    case 150:
-//                        // code block
-//                        break;
-//                    case 200:
-//                        // code block
-//                        break;
+                    case 50:
+                        MilestoneReachEvent(player, Sound.UI_TOAST_CHALLENGE_COMPLETE, totaleggs);
+                        event.setCancelled(true);
+                        break;
+                    case 60:
+                        MilestoneReachEvent(player, Sound.BLOCK_NOTE_BLOCK_PLING, totaleggs);
+                        event.setCancelled(true);
+                        break;
+                    case 80:
+                        MilestoneReachEvent(player, Sound.BLOCK_NOTE_BLOCK_PLING, totaleggs);
+                        event.setCancelled(true);
+                        break;
+                    case 90:
+                        MilestoneReachEvent(player, Sound.BLOCK_NOTE_BLOCK_PLING, totaleggs);
+                        event.setCancelled(true);
+                        break;
+                    case 100:
+                        MilestoneReachEvent(player, Sound.UI_TOAST_CHALLENGE_COMPLETE, totaleggs);
+                        event.setCancelled(true);
+                        break;
+                    case 150:
+                        MilestoneReachEvent(player, Sound.BLOCK_NOTE_BLOCK_PLING, totaleggs);
+                        event.setCancelled(true);
+                        break;
+                    case 200:
+                        MilestoneReachEvent(player, Sound.UI_TOAST_CHALLENGE_COMPLETE, totaleggs);
+                        event.setCancelled(true);
+                        break;
                     default:
                         // code block
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -82,10 +88,10 @@ public class EggMilestoneReachedEvent implements Listener {
 
     }
 
-    public void MilestoneReachEvent(Player player, int totaleggs) {
+    public void MilestoneReachEvent(Player player, Sound EggSound, int totaleggs) {
         String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
 
-        player.playSound(player.getLocation(), Sound.ENTITY_WITHER_AMBIENT, 100, 100);
+        player.playSound(player.getLocation(), EggSound, 100, 0);
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%PLAYER%", player.getName()).replace("%NUMBEROFEGGS%", String.valueOf(totaleggs))));
     }
 
