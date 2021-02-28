@@ -78,8 +78,6 @@ public class EggFindEvent implements Listener {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                // What you want to schedule goes here
-                                plugin.getServer().broadcastMessage("Egg should now be replaced.");
                                 replaceEggBlock(blockType, blockx, blocky, blockz);
                             }
                         }.runTaskLater(plugin, EGGRESPAWNTIMER);
