@@ -33,6 +33,10 @@ public class EggMilestoneReachedEvent implements Listener {
         Block block = event.getClickedBlock();
         Material blockType = block.getType();
 
+        int blockx = block.getX();
+        int blocky = block.getY();
+        int blockz = block.getZ();
+
         String MAJORMILESTONESOUND = plugin.getConfig().getString("SOUND.MAJORMILESTONE");
         String MINORMILESTONESOUND = plugin.getConfig().getString("SOUND.MINORMILESTONE");
 
@@ -41,7 +45,7 @@ public class EggMilestoneReachedEvent implements Listener {
 
         //
         // Database Query
-        // Check if the player has already found that Easter Egg before.
+        // Check how many Easter Eggs the Player has.
         //
         try {
             PreparedStatement findstatement = plugin.getConnection().prepareStatement("select count(*) as 'eastereggs' from eastereggs where playerid = (select id from playerdata where uuid=?)");

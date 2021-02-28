@@ -38,11 +38,11 @@ public class EggFindEvent implements Listener {
         String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
         String EGGALREADYFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGALREADYFOUND");
 
-
         // This stops the event from firing twice, since the event fires for each hand.
         if (EquipSlot.equals(EquipmentSlot.OFF_HAND) || event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
 
         if (blockType.equals(Material.PLAYER_HEAD) || blockType.equals(Material.PLAYER_WALL_HEAD)) {
+
             //
             // Database Query
             // Check if the player has already found that Easter Egg before.
