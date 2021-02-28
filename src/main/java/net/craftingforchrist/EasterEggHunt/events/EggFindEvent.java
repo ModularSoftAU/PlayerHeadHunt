@@ -35,9 +35,14 @@ public class EggFindEvent implements Listener {
         int blocky = block.getY();
         int blockz = block.getZ();
 
+        String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
+        String EGGALREADYFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGALREADYFOUND");
+
+        // This stops the event from firing twice, since the event fires for each hand.
         if (EquipSlot.equals(EquipmentSlot.OFF_HAND) || event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
 
         if (blockType.equals(Material.PLAYER_HEAD) || blockType.equals(Material.PLAYER_WALL_HEAD)) {
+
             //
             // Database Query
             // Check if the player has already found that Easter Egg before.
@@ -65,14 +70,14 @@ public class EggFindEvent implements Listener {
 
                         insertstatement.executeUpdate();
 
-                        player.playSound(player.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, 100, 100); // Play sound for an Easter Egg that is found.
+                        player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is found.
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")));
                     } catch (SQLException e) {
                         e.printStackTrace();
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
                     }
                 } else {
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE, 100, 100); // Play sound for an Easter Egg that is already found.
+                    player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGALREADYFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is already found.
                     player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND")));
                     event.setCancelled(true);
                 }
