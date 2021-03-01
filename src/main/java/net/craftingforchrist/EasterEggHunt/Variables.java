@@ -1,21 +1,28 @@
 package net.craftingforchrist.EasterEggHunt;
 
-import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class Variables {
-    public static EasterEggHuntMain plugin;
-    public Variables(EasterEggHuntMain instance) {
-        plugin = instance;
+    private static EasterEggHuntMain plugin;
+    public Variables(EasterEggHuntMain plugin) {
+        this.plugin = plugin;
     }
 
-    static ConfigurationSection config = plugin.getConfig();
+    private FileConfiguration config;
+
+    public Variables(FileConfiguration config) { this.config = config; }
+
+//    FileConfiguration config = plugin.getConfig();
 
     // Database
-    public static String host = config.getString("database.host");
-    public static String port = config.getString("database.port");
-    public static String database = config.getString("database.database");
-    public static String username = config.getString("database.username");
-    public static String password = config.getString("database.password");
+    static String host = plugin.getConfig().getString("database.host");
+    String port = config.getString("database.port");
+    String database = config.getString("database.database");
+    String username = config.getString("database.username");
+    String password = config.getString("database.password");
+
+    // Egg
+    String EGGTOTAL = String.valueOf(config.get("EGG.EGGTOTAL"));
 
     // Sounds
 
