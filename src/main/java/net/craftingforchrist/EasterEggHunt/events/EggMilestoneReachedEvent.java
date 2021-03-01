@@ -4,7 +4,6 @@ import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
 
 public class EggMilestoneReachedEvent implements Listener {
     public static EasterEggHuntMain plugin;
@@ -28,16 +26,9 @@ public class EggMilestoneReachedEvent implements Listener {
     @EventHandler
     public void onEggFind(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        String Username = player.getName();
         String UserUUID = player.getUniqueId().toString();
         EquipmentSlot EquipSlot = event.getHand();
         Block block = event.getClickedBlock();
-        Material blockType = block.getType();
-        String BlockMaterial = block.getType().name();
-
-        int blockx = block.getX();
-        int blocky = block.getY();
-        int blockz = block.getZ();
 
         String MAJORMILESTONESOUND = plugin.getConfig().getString("SOUND.MAJORMILESTONE");
         String MINORMILESTONESOUND = plugin.getConfig().getString("SOUND.MINORMILESTONE");
@@ -49,7 +40,6 @@ public class EggMilestoneReachedEvent implements Listener {
         // Database Query
         // Check how many Easter Eggs the Player has.
         //
-        Iterator EggBlocks = plugin.getConfig().getStringList("EGG.EGGBLOCK").iterator();
         try {
             PreparedStatement findstatement = plugin.getConnection().prepareStatement("select count(*) as 'eastereggs' from eastereggs where playerid = (select id from playerdata where uuid=?)");
             findstatement.setString(1, UserUUID);
@@ -91,14 +81,12 @@ public class EggMilestoneReachedEvent implements Listener {
             e.printStackTrace();
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
         }
-
     }
 
     public void MilestoneReachEvent(Player player, Sound EggSound, int totaleggs) {
         String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
 
         player.playSound(player.getLocation(), EggSound, 1, 1);
-
         Bukkit.getServer().broadcast(new TextComponent(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%PLAYER%", player.getName()).replace("%NUMBEROFEGGS%", String.valueOf(totaleggs)))));
     }
 
