@@ -17,11 +17,18 @@ public class EasterEggHuntMain extends JavaPlugin {
     public static EasterEggHuntMain plugin;
     private Connection connection;
 
+    public Variables Variables;
+    public EggController EggController;
+
     @Override
     public void onEnable() {
         plugin = this;
 
+//        Variables Variables = new Variables(this);
+        EggController EggController = new EggController(this);
+
         establishConnection(); // Connect to the database
+        EggController.setTotalEggBlocks();
 
         // Plugin Load Message
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "\n\n" + plugin.getDescription().getName() + " is now enabled.\nRunning Version: " + plugin.getDescription().getVersion() + "\nGitHub Repository: https://github.com/craftingforchrist/EasterEggHunt\nCreated By: " + plugin.getDescription().getAuthors() + "\n\n");
@@ -73,5 +80,4 @@ public class EasterEggHuntMain extends JavaPlugin {
         }
         return connection;
     }
-
 }

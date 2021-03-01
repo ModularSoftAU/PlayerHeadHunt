@@ -3,6 +3,7 @@ package net.craftingforchrist.EasterEggHunt.events;
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,25 +25,27 @@ public class EggFindEvent implements Listener {
     @EventHandler
     public void onEggFind(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        String Username = player.getName();
         String UserUUID = player.getUniqueId().toString();
         EquipmentSlot EquipSlot = event.getHand();
 
         Block block = event.getClickedBlock();
+        String BlockMaterial = block.getType().name();
         Material blockType = block.getType();
         int blockx = block.getX();
         int blocky = block.getY();
         int blockz = block.getZ();
 
+        BlockData EggBlockData = block.getBlockData();
+
         String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
         String EGGALREADYFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGALREADYFOUND");
+        String EGGBLOCK = plugin.getConfig().getString("EGG.EGGBLOCK");
         int EGGRESPAWNTIMER = plugin.getConfig().getInt("EGG.RESPAWNTIMER");
 
         // This stops the event from firing twice, since the event fires for each hand.
         if (EquipSlot.equals(EquipmentSlot.OFF_HAND) || event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
 
-        if (blockType.equals(Material.PLAYER_HEAD) || blockType.equals(Material.PLAYER_WALL_HEAD)) {
-
+        if (blockType.equals(EGGBLOCK)) {
             //
             // Database Query
             // Check if the player has already found that Easter Egg before.
@@ -78,7 +81,7 @@ public class EggFindEvent implements Listener {
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                replaceEggBlock(blockType, blockx, blocky, blockz);
+                                replaceEggBlock(blockType, EggBlockData, blockx, blocky, blockz);
                             }
                         }.runTaskLater(plugin, EGGRESPAWNTIMER);
 
@@ -96,7 +99,6 @@ public class EggFindEvent implements Listener {
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
                 event.setCancelled(true);
             }
-
         }
     }
 
@@ -105,9 +107,10 @@ public class EggFindEvent implements Listener {
         EggBlock.getBlock().setType(Material.AIR);
     }
 
-    public void replaceEggBlock(Material EggBlockHead, int blockx, int blocky, int blockz) {
+    public void replaceEggBlock(Material EggBlockHead, BlockData EggBlockData, int blockx, int blocky, int blockz) {
         Location EggBlock = new Location(Bukkit.getWorld("world"), blockx, blocky, blockz);
         EggBlock.getBlock().setType(EggBlockHead);
+        EggBlock.getBlock().setBlockData(EggBlockData);
     }
 
 }

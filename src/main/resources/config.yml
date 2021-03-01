@@ -4,14 +4,19 @@ DATABASE:
   DATABASE: "EasterEggHunt"
   USERNAME: "root"
   PASSWORD: "root"
+REGION:
+  UPPERREGION:
+    X: -54
+    Y: 88
+    Z: 48
+  LOWERREGION:
+    X: -33
+    Y: 63
+    Z: 4
 EGG:
-  # Respawn Timer is in Ticks [default is 1200, 1 minute]
-  RESPAWNTIMER: 1200
-SOUND:
-  EGGFOUND: "ENTITY_WITHER_BREAK_BLOCK"
-  EGGALREADYFOUND: "BLOCK_NOTE_BLOCK_SNARE"
-  MINORMILESTONE: "UI_TOAST_CHALLENGE_COMPLETE"
-  MAJORMILESTONE: "ENTITY_ENDER_DRAGON_DEATH"
+  EGGTOTAL:
+  EGGBLOCK: PLAYER_HEAD
+  # The radius of the map in order to count all of the eggs.
 LANG:
   DATABASE:
     CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
@@ -23,6 +28,6 @@ LANG:
   EGG:
     EGGFOUND: "&aYou have found an egg."
     EGGALREADYFOUND: "&eYou have already found this egg."
-    EGGCOUNT: "&eYou have found &l&6%NUMBEROFEGGS% &r&eeggs."
+    EGGCOUNT: "&eYou have found &l&6%FOUNDEGGS%/%NUMBEROFEGGS% &r&eeggs."
     # Use %PLAYER% to display players name, use %NUMBEROFEGGS% to display number of eggs.
     EGGCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFEGGS% &r&5eggs!"
