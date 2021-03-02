@@ -4,11 +4,12 @@ description: An Easter Egg Hunt minigame for the Easter break in collaberation w
 version: ${project.version}
 author: Crafting For Christ, Ben Robson
 api-version: 1.16
+depend: [WorldEdit]
 
 commands:
-  egg:
-    description: Grab the amount of eggs a hunter has.
-    usage: /egg
-  clearegg:
-    description: Clear all eggs the selected hunter has.
-    usage: /clearegg [player]
+  eggs:
+    description: Grab the amount of eggs you have.
+    usage: /eggs
+  cleareggs:
+    description: Clear all eggs from yourself.
+    usage: /cleareggs

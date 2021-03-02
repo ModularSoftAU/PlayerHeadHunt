@@ -7,16 +7,15 @@ DATABASE:
 REGION:
   UPPERREGION:
     X: -54
-    Y: 88
+    Y: 255 # Do not change this, this expands vertically.
     Z: 48
   LOWERREGION:
     X: -33
-    Y: 63
+    Y: 0 # Do not change this, this expands vertically.
     Z: 4
 EGG:
   EGGTOTAL:
   EGGBLOCK: PLAYER_HEAD
-  # The radius of the map in order to count all of the eggs.
 LANG:
   DATABASE:
     CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."

@@ -2,6 +2,11 @@
 Maintained By: [Ben Robson](https://github.com/benrobson) <br>
 <i>The Easter Egg Hunt is an Easter Break Hub event and a collaboration with KEC (Katoomba Easter Convention).</i>
 
+## Dependencies
+This Easter Egg Hunt minigame depends on 2 plugins, 1 of which is optional.<br>
+- `HolographicDisplays` is an option dependency which would be required if you would like a hologram of the Egg Hunter Leaderboard.
+- `WorldEdit` is required since it is used to count all of the eggs in the hunting region.
+
 ## Gameplay
 When a player right clicks a Player Head, the coordinates are logged in a database and a number incremented in their name.
 
@@ -15,5 +20,5 @@ To avoid hunters following other players to collect their eggs, eggs will disapp
 ## Commands
 | Command        | Description                            | Permission                |
 |----------------|----------------------------------------|---------------------------|
-| /egg           | Grab the amount of eggs a hunter has. |                          |
-| /clearegg      | Clear all eggs from targeted player.  | `easteregghunt.clearegg` |
+| /eggs          | See how many eggs you have.            |                           |
+| /cleareggs     | Clear all eggs from yourself.          | `easteregghunt.clearegg`  |

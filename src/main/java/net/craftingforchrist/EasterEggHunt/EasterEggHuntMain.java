@@ -1,7 +1,7 @@
 package net.craftingforchrist.EasterEggHunt;
 
-import net.craftingforchrist.EasterEggHunt.commands.clearegg;
-import net.craftingforchrist.EasterEggHunt.commands.egg;
+import net.craftingforchrist.EasterEggHunt.commands.cleareggs;
+import net.craftingforchrist.EasterEggHunt.commands.eggs;
 import net.craftingforchrist.EasterEggHunt.events.EggFindEvent;
 import net.craftingforchrist.EasterEggHunt.events.EggHunterOnJoin;
 import net.craftingforchrist.EasterEggHunt.events.EggMilestoneReachedEvent;
@@ -40,8 +40,8 @@ public class EasterEggHuntMain extends JavaPlugin {
         pluginmanager.registerEvents(new EggMilestoneReachedEvent(this), this);
 
         // Command Registry
-        this.getCommand("egg").setExecutor(new egg(this));
-        this.getCommand("clearegg").setExecutor(new clearegg(this));
+        this.getCommand("eggs").setExecutor(new eggs(this));
+        this.getCommand("cleareggs").setExecutor(new cleareggs(this));
 
         plugin.saveDefaultConfig(); // Generate configuration file
     }

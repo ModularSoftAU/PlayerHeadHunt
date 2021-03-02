@@ -8,9 +8,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class egg implements CommandExecutor {
+public class eggs implements CommandExecutor {
     public static EasterEggHuntMain plugin;
-    public egg(EasterEggHuntMain instance) {
+    public eggs(EasterEggHuntMain instance) {
         plugin = instance;
     }
 
