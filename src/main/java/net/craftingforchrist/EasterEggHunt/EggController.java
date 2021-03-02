@@ -108,18 +108,8 @@ public class EggController {
         EggBlockLocation.getBlock().setType(EggBlock);
     }
 
-
-
-
-
-
-
-
-
     public static void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
         int EGGRESPAWNTIMER = plugin.getConfig().getInt("EGG.RESPAWNTIMER");
-        String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
-
         String UserUUID = player.getUniqueId().toString();
         Material blockType = block.getType();
 
@@ -137,9 +127,7 @@ public class EggController {
 
             insertstatement.executeUpdate();
 
-            player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is found.
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")));
-
+            EggChatController.eggFoundResponse(player);
             breakEggBlock(x, y, z);
 
             new BukkitRunnable() {

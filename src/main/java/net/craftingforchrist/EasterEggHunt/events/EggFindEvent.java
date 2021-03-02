@@ -1,6 +1,7 @@
 package net.craftingforchrist.EasterEggHunt.events;
 
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
+import net.craftingforchrist.EasterEggHunt.EggChatController;
 import net.craftingforchrist.EasterEggHunt.EggController;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -35,7 +36,6 @@ public class EggFindEvent implements Listener {
         int y = block.getY();
         int z = block.getZ();
 
-        String EGGALREADYFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGALREADYFOUND");
         String EGGBLOCK = plugin.getConfig().getString("EGG.EGGBLOCK");
 
         // This stops the event from firing twice, since the event fires for each hand.
@@ -55,42 +55,9 @@ public class EggFindEvent implements Listener {
 
                 ResultSet results = findstatement.executeQuery();
                 if (!results.next()) {
-
                     EggController.insertCollectedEgg(player, block, x, y, z);
-
-//                    //
-//                    // Database Query
-//                    // Insert Easter Egg
-//                    //
-//                    try {
-//                        PreparedStatement insertstatement = plugin.getConnection().prepareStatement("INSERT INTO eastereggs (playerid, eggcordx, eggcordy, eggcordz) VALUES ((select id from playerdata where uuid=?), ?, ?, ?)");
-//
-//                        insertstatement.setString(1, UserUUID);
-//                        insertstatement.setString(2, String.valueOf(blockx));
-//                        insertstatement.setString(3, String.valueOf(blocky));
-//                        insertstatement.setString(4, String.valueOf(blockz));
-//
-//                        insertstatement.executeUpdate();
-//
-//                        player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is found.
-//                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")));
-//
-//                        breakEggBlock(blockx, blocky, blockz);
-//
-//                        new BukkitRunnable() {
-//                            @Override
-//                            public void run() {
-//                                replaceEggBlock(blockType, EggBlockData, blockx, blocky, blockz);
-//                            }
-//                        }.runTaskLater(plugin, EGGRESPAWNTIMER);
-//
-//                    } catch (SQLException e) {
-//                        e.printStackTrace();
-//                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
-//                    }
                 } else {
-                    player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGALREADYFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is already found.
-                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND")));
+                    EggChatController.eggAlreadyFoundResponse(player);
                     event.setCancelled(true);
                 }
             } catch (SQLException e) {
