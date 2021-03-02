@@ -17,13 +17,14 @@ public class EasterEggHuntMain extends JavaPlugin {
     public static EasterEggHuntMain plugin;
     private Connection connection;
 
-    public Variables Variables;
+//    public Variables Variables;
     public EggController EggController;
     public EggChatController EggChatController;
 
     @Override
     public void onEnable() {
         plugin = this;
+        plugin.saveDefaultConfig(); // Generate configuration file
 
 //        Variables Variables = new Variables(this);
         EggController EggController = new EggController(this);
@@ -44,8 +45,6 @@ public class EasterEggHuntMain extends JavaPlugin {
         // Command Registry
         this.getCommand("eggs").setExecutor(new eggs(this));
         this.getCommand("cleareggs").setExecutor(new cleareggs(this));
-
-        plugin.saveDefaultConfig(); // Generate configuration file
     }
 
     @Override
