@@ -41,13 +41,7 @@ public class EggFindEvent implements Listener {
         // This stops the event from firing twice, since the event fires for each hand.
         if (EquipSlot.equals(EquipmentSlot.OFF_HAND) || event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
 
-//        player.sendMessage(blockType);
-//        player.sendMessage(EGGBLOCK);
-
         if (blockType.equals(EGGBLOCK)) {
-
-            player.sendMessage("This equals right?");
-
             //
             // Database Query
             // Check if the player has already found that Easter Egg before.
