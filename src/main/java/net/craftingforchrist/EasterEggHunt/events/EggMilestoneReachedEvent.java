@@ -1,6 +1,7 @@
 package net.craftingforchrist.EasterEggHunt.events;
 
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
+import net.craftingforchrist.EasterEggHunt.EggChatController;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,31 +46,31 @@ public class EggMilestoneReachedEvent implements Listener {
 
             ResultSet results = findstatement.executeQuery();
             if (results.next()) {
-                int totaleggs = results.getInt("eastereggs");
+                int eggs = results.getInt("eastereggs");
 
-                switch(totaleggs) {
+                switch(eggs) {
                     case 10:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), totaleggs);
+                        EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), eggs);
                         event.setCancelled(true);
                         break;
                     case 50:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), totaleggs);
+                        EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), eggs);
                         event.setCancelled(true);
                         break;
                     case 100:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), totaleggs);
+                        EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), eggs);
                         event.setCancelled(true);
                         break;
                     case 150:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), totaleggs);
+                        EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), eggs);
                         event.setCancelled(true);
                         break;
                     case 200:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), totaleggs);
+                        EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), eggs);
                         event.setCancelled(true);
                         break;
                     case 500:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), totaleggs);
+                        EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), eggs);
                         event.setCancelled(true);
                         break;
                     default:
@@ -81,12 +82,4 @@ public class EggMilestoneReachedEvent implements Listener {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
         }
     }
-
-    public void MilestoneReachEvent(Player player, Sound EggSound, int totaleggs) {
-        String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
-
-        player.playSound(player.getLocation(), EggSound, 1, 1);
-        Bukkit.getServer().broadcast(new TextComponent(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%PLAYER%", player.getName()).replace("%NUMBEROFEGGS%", String.valueOf(totaleggs)))));
-    }
-
 }
