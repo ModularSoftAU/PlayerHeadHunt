@@ -19,6 +19,7 @@ public class EasterEggHuntMain extends JavaPlugin {
 
     public Variables Variables;
     public EggController EggController;
+    public EggChatController EggChatController;
 
     @Override
     public void onEnable() {
@@ -26,6 +27,7 @@ public class EasterEggHuntMain extends JavaPlugin {
 
 //        Variables Variables = new Variables(this);
         EggController EggController = new EggController(this);
+        EggChatController EggChatController = new EggChatController(this);
 
         establishConnection(); // Connect to the database
         EggController.setTotalEggBlocks();

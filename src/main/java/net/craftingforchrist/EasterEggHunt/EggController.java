@@ -12,9 +12,11 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -90,6 +92,63 @@ public class EggController {
 
             deletestatement.executeUpdate();
             player.sendMessage("All eggs have been cleared.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
+        }
+    }
+
+    public static void breakEggBlock(int x, int y, int z) {
+        Location EggBlock = new Location(Bukkit.getWorld("world"), x, y, z);
+        EggBlock.getBlock().setType(Material.AIR);
+    }
+
+    public static void replaceEggBlock(Material EggBlock, int x, int y, int z) {
+        Location EggBlockLocation = new Location(Bukkit.getWorld("world"), x, y, z);
+        EggBlockLocation.getBlock().setType(EggBlock);
+    }
+
+
+
+
+
+
+
+
+
+    public static void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
+        int EGGRESPAWNTIMER = plugin.getConfig().getInt("EGG.RESPAWNTIMER");
+        String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
+
+        String UserUUID = player.getUniqueId().toString();
+        Material blockType = block.getType();
+
+        //
+        // Database Query
+        // Insert Easter Egg
+        //
+        try {
+            PreparedStatement insertstatement = plugin.getConnection().prepareStatement("INSERT INTO eastereggs (playerid, eggcordx, eggcordy, eggcordz) VALUES ((select id from playerdata where uuid=?), ?, ?, ?)");
+
+            insertstatement.setString(1, UserUUID);
+            insertstatement.setString(2, String.valueOf(x));
+            insertstatement.setString(3, String.valueOf(y));
+            insertstatement.setString(4, String.valueOf(z));
+
+            insertstatement.executeUpdate();
+
+            player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is found.
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")));
+
+            breakEggBlock(x, y, z);
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    replaceEggBlock(blockType, x, y, z);
+                }
+            }.runTaskLater(plugin, EGGRESPAWNTIMER);
+
         } catch (SQLException e) {
             e.printStackTrace();
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));

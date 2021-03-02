@@ -28,10 +28,9 @@ public class EggMilestoneReachedEvent implements Listener {
         Player player = event.getPlayer();
         String UserUUID = player.getUniqueId().toString();
         EquipmentSlot EquipSlot = event.getHand();
-        Block block = event.getClickedBlock();
 
-        String MAJORMILESTONESOUND = plugin.getConfig().getString("SOUND.MAJORMILESTONE");
-        String MINORMILESTONESOUND = plugin.getConfig().getString("SOUND.MINORMILESTONE");
+        String MAJORCOLLECTIONMILESTONESOUND = plugin.getConfig().getString("SOUND.MAJORCOLLECTIONMILESTONE");
+        String MINORCOLLECTIONMILESTONESOUND = plugin.getConfig().getString("SOUND.MINORCOLLECTIONMILESTONE");
 
         // This stops the event from firing twice, since the event fires for each hand.
         if (EquipSlot.equals(EquipmentSlot.OFF_HAND) || event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
@@ -50,27 +49,27 @@ public class EggMilestoneReachedEvent implements Listener {
 
                 switch(totaleggs) {
                     case 10:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORMILESTONESOUND)), totaleggs);
+                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), totaleggs);
                         event.setCancelled(true);
                         break;
                     case 50:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORMILESTONESOUND)), totaleggs);
+                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), totaleggs);
                         event.setCancelled(true);
                         break;
                     case 100:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MAJORMILESTONESOUND)), totaleggs);
+                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), totaleggs);
                         event.setCancelled(true);
                         break;
                     case 150:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORMILESTONESOUND)), totaleggs);
+                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), totaleggs);
                         event.setCancelled(true);
                         break;
                     case 200:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORMILESTONESOUND)), totaleggs);
+                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), totaleggs);
                         event.setCancelled(true);
                         break;
                     case 500:
-                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MINORMILESTONESOUND)), totaleggs);
+                        MilestoneReachEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), totaleggs);
                         event.setCancelled(true);
                         break;
                     default:
