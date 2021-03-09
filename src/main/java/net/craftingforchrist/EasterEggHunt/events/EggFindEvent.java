@@ -14,6 +14,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import static net.craftingforchrist.EasterEggHunt.EggController.alreadyCollectedEgg;
 import static net.craftingforchrist.EasterEggHunt.EggController.getEggs;
+import static net.craftingforchrist.EasterEggHunt.EggScoreboardController.loadSidebarScoreboard;
 
 public class EggFindEvent implements Listener {
     public static EasterEggHuntMain plugin;
@@ -75,16 +76,12 @@ public class EggFindEvent implements Listener {
                 // code block
         }
 
-
-
-
-
-
         if (alreadyCollectedEgg(player, x, y, z) == true) {
             EggChatController.eggAlreadyFoundResponse(player);
             event.setCancelled(true);
         } else if (alreadyCollectedEgg(player, x, y, z) == false) {
             EggController.insertCollectedEgg(player, block, x, y, z);
+            loadSidebarScoreboard(player);
         }
     }
 }

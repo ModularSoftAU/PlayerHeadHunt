@@ -28,6 +28,7 @@ public class EasterEggHuntMain extends JavaPlugin {
 //        Variables Variables = new Variables(this);
         EggController EggController = new EggController(this);
         EggChatController EggChatController = new EggChatController(this);
+        EggScoreboardController EggScoreboardController = new EggScoreboardController(this);
 
         establishConnection(); // Connect to the database
         EggController.setTotalEggBlocks();
