@@ -31,7 +31,7 @@ LANG:
     INSUFFICENTPERMISSIONS: "&cYou do not have permission to use this command."
     COMMANDINCOMPLETE: "&cThis command is incomplete, please refer to the command guide for reference."
   EGG:
-    EGGFOUND: "&aYou have found an egg."
+    EGGFOUND: "&aYou have found an egg!"
     EGGALREADYFOUND: "&eYou have already found this egg."
     EGGCOUNT: "&eYou have found &l&6%FOUNDEGGS%/%NUMBEROFEGGS% &r&eeggs."
     # Use %PLAYER% to display players name, use %NUMBEROFEGGS% to display number of eggs.

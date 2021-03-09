@@ -6,6 +6,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import static net.craftingforchrist.EasterEggHunt.EggController.getEggs;
+
 public class EggChatController {
     private static EasterEggHuntMain plugin;
     public EggChatController(EasterEggHuntMain plugin){
@@ -21,9 +23,10 @@ public class EggChatController {
 
     public static void eggFoundResponse(Player player) {
         String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
+        String EGGTOTAL = plugin.getConfig().getString("EGG.EGGTOTAL");
 
         player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is found.
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")));
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND") + " (" + getEggs(player) + "/" + EGGTOTAL + ")"));
     }
 
     public static void eggMilestoneReachedEvent(Player player, Sound EggSound, int eggs) {
