@@ -3,6 +3,7 @@ package net.craftingforchrist.EasterEggHunt.events;
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
 import net.craftingforchrist.EasterEggHunt.EggChatController;
 import net.craftingforchrist.EasterEggHunt.EggController;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import static net.craftingforchrist.EasterEggHunt.EggController.alreadyCollectedEgg;
+import static net.craftingforchrist.EasterEggHunt.EggController.getEggs;
 
 public class EggFindEvent implements Listener {
     public static EasterEggHuntMain plugin;
@@ -30,19 +32,59 @@ public class EggFindEvent implements Listener {
         int x = block.getX();
         int y = block.getY();
         int z = block.getZ();
+        int eggs = getEggs(player) + 1;
 
         String EGGBLOCK = plugin.getConfig().getString("EGG.EGGBLOCK");
+        String MAJORCOLLECTIONMILESTONESOUND = plugin.getConfig().getString("SOUND.MAJORCOLLECTIONMILESTONE");
+        String MINORCOLLECTIONMILESTONESOUND = plugin.getConfig().getString("SOUND.MINORCOLLECTIONMILESTONE");
 
         // This stops the event from firing twice, since the event fires for each hand.
         if (EquipSlot.equals(EquipmentSlot.OFF_HAND) || event.getAction().equals(Action.LEFT_CLICK_BLOCK) || event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) return;
+        if (!EGGBLOCK.equals(blockType)) return;
 
-        if (blockType.equals(EGGBLOCK)) {
-            if (alreadyCollectedEgg(player, x, y, z) == true) {
-                EggChatController.eggAlreadyFoundResponse(player);
+        switch(eggs) {
+            case 10:
+                EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), eggs);
                 event.setCancelled(true);
-            } else if (alreadyCollectedEgg(player, x, y, z) == false) {
-                EggController.insertCollectedEgg(player, block, x, y, z);
-            }
+                break;
+            case 50:
+                EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), eggs);
+                event.setCancelled(true);
+                break;
+            case 100:
+                EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), eggs);
+                event.setCancelled(true);
+                break;
+            case 150:
+                EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), eggs);
+                event.setCancelled(true);
+                break;
+            case 200:
+                EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MINORCOLLECTIONMILESTONESOUND)), eggs);
+                event.setCancelled(true);
+                break;
+            case 500:
+                EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), eggs);
+                event.setCancelled(true);
+                break;
+            case 1000:
+                EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), eggs);
+                event.setCancelled(true);
+                break;
+            default:
+                // code block
+        }
+
+
+
+
+
+
+        if (alreadyCollectedEgg(player, x, y, z) == true) {
+            EggChatController.eggAlreadyFoundResponse(player);
+            event.setCancelled(true);
+        } else if (alreadyCollectedEgg(player, x, y, z) == false) {
+            EggController.insertCollectedEgg(player, block, x, y, z);
         }
     }
 }
