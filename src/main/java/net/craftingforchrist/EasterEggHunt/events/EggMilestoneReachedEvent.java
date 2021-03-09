@@ -2,11 +2,8 @@ package net.craftingforchrist.EasterEggHunt.events;
 
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
 import net.craftingforchrist.EasterEggHunt.EggChatController;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,7 +22,7 @@ public class EggMilestoneReachedEvent implements Listener {
     }
 
     @EventHandler
-    public void onEggFind(PlayerInteractEvent event) {
+    public void onEggMileStoneReached(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         String UserUUID = player.getUniqueId().toString();
         EquipmentSlot EquipSlot = event.getHand();
@@ -70,6 +67,10 @@ public class EggMilestoneReachedEvent implements Listener {
                         event.setCancelled(true);
                         break;
                     case 500:
+                        EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), eggs);
+                        event.setCancelled(true);
+                        break;
+                    case 1000:
                         EggChatController.eggMilestoneReachedEvent(player, Sound.valueOf(String.valueOf(MAJORCOLLECTIONMILESTONESOUND)), eggs);
                         event.setCancelled(true);
                         break;
