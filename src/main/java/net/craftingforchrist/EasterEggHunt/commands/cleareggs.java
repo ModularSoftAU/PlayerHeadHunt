@@ -2,16 +2,12 @@ package net.craftingforchrist.EasterEggHunt.commands;
 
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
 import net.craftingforchrist.EasterEggHunt.EggController;
-import org.bukkit.Bukkit;
+import net.craftingforchrist.EasterEggHunt.EggScoreboardController;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class cleareggs implements CommandExecutor {
     public static EasterEggHuntMain plugin;
@@ -34,6 +30,7 @@ public class cleareggs implements CommandExecutor {
         }
 
         EggController.clearEggs(player);
+        EggScoreboardController.loadSidebarScoreboard(player);
         return true;
     }
 
