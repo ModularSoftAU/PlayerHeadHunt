@@ -20,8 +20,8 @@ EGG:
 SOUND:
   EGGFOUND: "BLOCK_NOTE_BLOCK_SNARE"
   EGGALREADYFOUND: "BLOCK_NOTE_BLOCK_BASS"
-  MINORCOLLECTIONMILESTONE: "UI_TOAST_CHALLENGE_COMPLETE"
-  MAJORCOLLECTIONMILESTONE: "ENTITY_ENDER_DRAGON_DEATH"
+  MINORCOLLECTIONMILESTONE: "ENTITY_PLAYER_LEVELUP"
+  MAJORCOLLECTIONMILESTONE: "UI_TOAST_CHALLENGE_COMPLETE"
 LANG:
   DATABASE:
     CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
@@ -31,7 +31,7 @@ LANG:
     INSUFFICENTPERMISSIONS: "&cYou do not have permission to use this command."
     COMMANDINCOMPLETE: "&cThis command is incomplete, please refer to the command guide for reference."
   EGG:
-    EGGFOUND: "&aYou have found an egg!"
+    EGGFOUND: "&aYou have found an egg (%FOUNDEGGS%/%NUMBEROFEGGS%)"
     EGGALREADYFOUND: "&eYou have already found this egg."
     EGGCOUNT: "&eYou have found &l&6%FOUNDEGGS%/%NUMBEROFEGGS% &r&eeggs."
     # Use %PLAYER% to display players name, use %NUMBEROFEGGS% to display number of eggs.
