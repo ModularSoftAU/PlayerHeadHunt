@@ -1,14 +1,13 @@
 package net.craftingforchrist.EasterEggHunt.events;
 
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
+import net.craftingforchrist.EasterEggHunt.EggScoreboardController;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.scoreboard.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,19 +25,7 @@ public class EggHunterOnJoin implements Listener {
         String UserUUID = player.getUniqueId().toString();
         String Username = player.getName();
 
-
-
-
-        ScoreboardManager manager = Bukkit.getScoreboardManager();
-        Scoreboard board = manager.getNewScoreboard();
-        Objective objective = board.registerNewObjective("test", "dummy");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName("Display Name");
-
-        Score score = objective.getScore(ChatColor.GREEN + "Kills:");
-        score.setScore(1);
-        player.setScoreboard(board);
-
+        EggScoreboardController.loadSidebarScoreboard(player);
 
         //
         // Database Query
