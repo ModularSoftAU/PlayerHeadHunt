@@ -25,11 +25,10 @@ public class EggFindEvent implements Listener {
     @EventHandler
     public void onEggFind(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        String UserUUID = player.getUniqueId().toString();
         EquipmentSlot EquipSlot = event.getHand();
-
         Block block = event.getClickedBlock();
         String blockType = String.valueOf(block.getType());
+
         int x = block.getX();
         int y = block.getY();
         int z = block.getZ();
