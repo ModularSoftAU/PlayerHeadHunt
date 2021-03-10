@@ -1,7 +1,5 @@
 package net.craftingforchrist.EasterEggHunt;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -19,19 +17,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class EggController {
     private static EasterEggHuntMain plugin;
@@ -39,7 +31,7 @@ public class EggController {
         this.plugin = plugin;
     }
 
-    public String setTotalEggBlocks() {
+    public static String setTotalEggBlocks() {
         String eggBlock = plugin.getConfig().getString("EGG.EGGBLOCK").toLowerCase();
 
         int UPPERREGIONX = plugin.getConfig().getInt("REGION.UPPERREGION.X");
@@ -142,46 +134,7 @@ public class EggController {
         Location EggBlockLocation = new Location(Bukkit.getWorld("world"), x, y, z);
         EggBlockLocation.getBlock().setType(EggMaterialBlock);
         EggBlockLocation.getBlock().setBlockData(blockData);
-
-        if (EggBlockLocation.getBlock() instanceof Skull) {
-            Block skullBlock = EggBlockLocation.getBlock();
-            BlockState skullBlockStatestate = skullBlock.getState();
-
-
-            SkullMeta meta = (SkullMeta) head.getItemMeta();
-            GameProfile profile = new GameProfile(UUID.randomUUID(), "");
-            profile.getProperties().put("textures", new Property("textures", value));
-            Field profileField = null;
-            try {
-                profileField = meta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(meta, profile);
-            } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-                e.printStackTrace();
-            }
-            head.setItemMeta(meta);
-
-        }
     }
-
-    public ItemStack getCustomTextureHead(String value) {
-        ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1, (short)3);
-        SkullMeta meta = (SkullMeta) head.getItemMeta();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), "");
-        profile.getProperties().put("textures", new Property("textures", value));
-        Field profileField = null;
-        try {
-            profileField = meta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(meta, profile);
-        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-            e.printStackTrace();
-        }
-        head.setItemMeta(meta);
-        return head;
-    }
-
-
 
     public static void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
         int EGGRESPAWNTIMER = plugin.getConfig().getInt("EGG.RESPAWNTIMER");

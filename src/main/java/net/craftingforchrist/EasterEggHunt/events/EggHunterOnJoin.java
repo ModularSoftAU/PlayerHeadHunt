@@ -1,6 +1,7 @@
 package net.craftingforchrist.EasterEggHunt.events;
 
 import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
+import net.craftingforchrist.EasterEggHunt.EggController;
 import net.craftingforchrist.EasterEggHunt.EggScoreboardController;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
@@ -25,6 +26,7 @@ public class EggHunterOnJoin implements Listener {
         String Username = player.getName();
 
         EggScoreboardController.loadSidebarScoreboard(player);
+        EggController.setTotalEggBlocks();
 
         //
         // Database Query
