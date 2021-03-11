@@ -35,7 +35,7 @@ public class EggController {
         this.plugin = plugin;
     }
 
-    public static String setTotalEggBlocks() {
+    public String setTotalEggBlocks() {
         String eggBlock = plugin.getConfig().getString("EGG.EGGBLOCK").toLowerCase();
 
         int UPPERREGIONX = plugin.getConfig().getInt("REGION.UPPERREGION.X");
