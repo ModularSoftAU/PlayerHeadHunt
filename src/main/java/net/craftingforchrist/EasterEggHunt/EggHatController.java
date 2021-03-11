@@ -1,10 +1,8 @@
 package net.craftingforchrist.EasterEggHunt;
 
-import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import org.bukkit.inventory.ItemStack;
 
 public class EggHatController {
     private static EasterEggHuntMain plugin;
@@ -12,23 +10,17 @@ public class EggHatController {
         this.plugin = plugin;
     }
 
-    public static void clearEggs(Player player) {
-        String UserUUID = player.getUniqueId().toString();
+    public static void equipHelmet(Player player, Material helmet) {
+        ItemStack helmetItem = new ItemStack(helmet);
 
-        //
-        // Database Query
-        // Check how many eggs the player has collected.
-        //
-        try {
-            PreparedStatement deletestatement = plugin.getConnection().prepareStatement("DELETE from eastereggs where playerid=(select id from playerdata where uuid=?)");
-            deletestatement.setString(1, UserUUID);
+//        if (player.getInventory().getHelmet().equals(null)) return;
 
-            deletestatement.executeUpdate();
-            player.sendMessage("All eggs have been cleared.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
-        }
+        player.getInventory().setHelmet(helmetItem);
+    }
+
+    public static void clearHelmet(Player player) {
+        if (player.getInventory().getHelmet().equals(null)) return;
+        player.getInventory().setHelmet(null);
     }
 
 }

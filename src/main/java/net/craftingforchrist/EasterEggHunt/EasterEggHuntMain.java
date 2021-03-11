@@ -3,6 +3,7 @@ package net.craftingforchrist.EasterEggHunt;
 import net.craftingforchrist.EasterEggHunt.commands.cleareggs;
 import net.craftingforchrist.EasterEggHunt.commands.eggs;
 import net.craftingforchrist.EasterEggHunt.events.EggFindEvent;
+import net.craftingforchrist.EasterEggHunt.events.EggHatOnHead;
 import net.craftingforchrist.EasterEggHunt.events.EggHunterOnJoin;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
@@ -29,6 +30,7 @@ public class EasterEggHuntMain extends JavaPlugin {
         EggController EggController = new EggController(this);
         EggChatController EggChatController = new EggChatController(this);
         EggScoreboardController EggScoreboardController = new EggScoreboardController(this);
+        EggHatController EggHatController = new EggHatController(this);
 
         establishConnection(); // Connect to the database
         EggController.setTotalEggBlocks();
@@ -40,6 +42,7 @@ public class EasterEggHuntMain extends JavaPlugin {
         PluginManager pluginmanager = plugin.getServer().getPluginManager();
         pluginmanager.registerEvents(new EggFindEvent(this), this);
         pluginmanager.registerEvents(new EggHunterOnJoin(this), this);
+        pluginmanager.registerEvents(new EggHatOnHead(this), this);
 
         // Command Registry
         this.getCommand("eggs").setExecutor(new eggs(this));

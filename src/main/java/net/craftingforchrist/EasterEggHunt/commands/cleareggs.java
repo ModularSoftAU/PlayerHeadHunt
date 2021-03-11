@@ -1,8 +1,6 @@
 package net.craftingforchrist.EasterEggHunt.commands;
 
-import net.craftingforchrist.EasterEggHunt.EasterEggHuntMain;
-import net.craftingforchrist.EasterEggHunt.EggController;
-import net.craftingforchrist.EasterEggHunt.EggScoreboardController;
+import net.craftingforchrist.EasterEggHunt.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,6 +28,7 @@ public class cleareggs implements CommandExecutor {
         }
 
         EggController.clearEggs(player);
+        EggHatController.clearHelmet(player);
         EggScoreboardController.loadSidebarScoreboard(player);
         return true;
     }
