@@ -1,5 +1,7 @@
 package net.craftingforchrist.EasterEggHunt;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -17,6 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,6 +27,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class EggController {
     private static EasterEggHuntMain plugin;
@@ -31,7 +35,7 @@ public class EggController {
         this.plugin = plugin;
     }
 
-    public static String setTotalEggBlocks() {
+    public String setTotalEggBlocks() {
         String eggBlock = plugin.getConfig().getString("EGG.EGGBLOCK").toLowerCase();
 
         int UPPERREGIONX = plugin.getConfig().getInt("REGION.UPPERREGION.X");
@@ -134,6 +138,18 @@ public class EggController {
         Location EggBlockLocation = new Location(Bukkit.getWorld("world"), x, y, z);
         EggBlockLocation.getBlock().setType(EggMaterialBlock);
         EggBlockLocation.getBlock().setBlockData(blockData);
+
+        if (EggBlockLocation.getBlock() instanceof Skull) {
+            String skinValue = "91b9803fc0bf467559d5cb4f4ab339c9b097ea4a82c5a2a526e8b00924d3e345";
+
+            PlayerProfile profile = Bukkit.getServer().createProfile(UUID.randomUUID());
+            profile.setProperty(new ProfileProperty("textures", skinValue));
+
+            Block EggBlock = EggBlockLocation.getBlock().getRelative(x, y, z);
+            Skull skull = (Skull) EggBlock.getState();
+            skull.setPlayerProfile(profile);
+            skull.update(true);
+        }
     }
 
     public static void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
