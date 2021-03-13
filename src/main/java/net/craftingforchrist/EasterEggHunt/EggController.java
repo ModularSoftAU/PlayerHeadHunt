@@ -28,6 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.UUID;
 
 public class EggController {
@@ -142,15 +143,22 @@ public class EggController {
 
         BlockState EggBlockState = EggBlockLocation.getBlock().getState();
         if (EggBlockState instanceof Skull) {
-            String skinValue = "91b9803fc0bf467559d5cb4f4ab339c9b097ea4a82c5a2a526e8b00924d3e345";
+//            String skinValue = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFiOTgwM2ZjMGJmNDY3NTU5ZDVjYjRmNGFiMzM5YzliMDk3ZWE0YTgyYzVhMmE1MjZlOGIwMDkyNGQzZTM0NSJ9fX0=";
 
             PlayerProfile profile = Bukkit.getServer().createProfile(UUID.randomUUID());
-            profile.setProperty(new ProfileProperty("textures", skinValue));
+            profile.setProperty(new ProfileProperty("textures", getRandomHead()));
 
             Skull skull = (Skull) EggBlockState;
             skull.setPlayerProfile(profile);
             skull.update(true);
         }
+    }
+
+    static String getRandomHead() {
+        Random random = new Random();
+        int get = random.nextInt(plugin.getConfig().getInt("EGG.SKINSMAX"));
+        String skin = plugin.getConfig().getString("EGG.SKINS." + get);
+        return skin;
     }
 
     public static void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
