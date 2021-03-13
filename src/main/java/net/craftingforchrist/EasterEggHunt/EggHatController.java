@@ -19,7 +19,7 @@ public class EggHatController {
     }
 
     public static void clearHelmet(Player player) {
-        if (player.getInventory().getHelmet().equals(null)) return;
+//        if (player.getInventory().getHelmet().equals(null)) return;
         player.getInventory().setHelmet(null);
     }
 
