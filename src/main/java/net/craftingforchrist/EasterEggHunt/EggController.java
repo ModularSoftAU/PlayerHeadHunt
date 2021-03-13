@@ -143,8 +143,6 @@ public class EggController {
 
         BlockState EggBlockState = EggBlockLocation.getBlock().getState();
         if (EggBlockState instanceof Skull) {
-//            String skinValue = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTFiOTgwM2ZjMGJmNDY3NTU5ZDVjYjRmNGFiMzM5YzliMDk3ZWE0YTgyYzVhMmE1MjZlOGIwMDkyNGQzZTM0NSJ9fX0=";
-
             PlayerProfile profile = Bukkit.getServer().createProfile(UUID.randomUUID());
             profile.setProperty(new ProfileProperty("textures", getRandomHead()));
 
