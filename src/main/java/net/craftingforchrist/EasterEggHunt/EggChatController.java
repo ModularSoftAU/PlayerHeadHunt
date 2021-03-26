@@ -33,10 +33,13 @@ public class EggChatController {
     }
 
     public static void eggMilestoneReachedEvent(Player player, Sound EggSound, int eggs) {
-        String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
+        Boolean MILESTONEMESSAGE = plugin.getConfig().getBoolean("FEATURE.MILESTONEMESSAGE");
 
-        player.playSound(player.getLocation(), EggSound, 1, 1);
-        Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%PLAYER%", player.getName()).replace("%NUMBEROFEGGS%", String.valueOf(eggs))));
+        if (MILESTONEMESSAGE) {
+            String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
+            player.playSound(player.getLocation(), EggSound, 1, 1);
+            Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%PLAYER%", player.getName()).replace("%NUMBEROFEGGS%", String.valueOf(eggs))));
+        }
     }
 
 }
