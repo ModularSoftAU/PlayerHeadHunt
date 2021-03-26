@@ -13,6 +13,9 @@ REGION:
     X: -33
     Y: 0 # Do not change this, this expands vertically.
     Z: 4
+FEATURE:
+  MILESTONEHAT: TRUE
+  MILESTONEMESSAGE: TRUE
 EGG:
   EGGTOTAL:
   EGGBLOCK: PLAYER_HEAD

@@ -19,7 +19,7 @@ public class EggChatController {
         String EGGALREADYFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGALREADYFOUND");
 
         player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGALREADYFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is already found.
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND")));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND"))));
     }
 
     public static void eggFoundResponse(Player player) {
@@ -33,10 +33,13 @@ public class EggChatController {
     }
 
     public static void eggMilestoneReachedEvent(Player player, Sound EggSound, int eggs) {
-        String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
+        Boolean MILESTONEMESSAGE = plugin.getConfig().getBoolean("FEATURE.MILESTONEMESSAGE");
 
-        player.playSound(player.getLocation(), EggSound, 1, 1);
-        Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%PLAYER%", player.getName()).replace("%NUMBEROFEGGS%", String.valueOf(eggs))));
+        if (MILESTONEMESSAGE) {
+            String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
+            player.playSound(player.getLocation(), EggSound, 1, 1);
+            Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%PLAYER%", player.getName()).replace("%NUMBEROFEGGS%", String.valueOf(eggs))));
+        }
     }
 
 }

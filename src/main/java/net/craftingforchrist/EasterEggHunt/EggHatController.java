@@ -11,16 +11,18 @@ public class EggHatController {
     }
 
     public static void equipHelmet(Player player, Material helmet) {
-        ItemStack helmetItem = new ItemStack(helmet);
-
-//        if (player.getInventory().getHelmet().equals(null)) return;
-
-        player.getInventory().setHelmet(helmetItem);
+        Boolean HELMETFEATURE = plugin.getConfig().getBoolean("FEATURE.MILESTONEHAT");
+        if (HELMETFEATURE) {
+            ItemStack helmetItem = new ItemStack(helmet);
+            player.getInventory().setHelmet(helmetItem);
+        }
     }
 
     public static void clearHelmet(Player player) {
-//        if (player.getInventory().getHelmet().equals(null)) return;
-        player.getInventory().setHelmet(null);
+        Boolean HELMETFEATURE = plugin.getConfig().getBoolean("FEATURE.MILESTONEHAT");
+        if (HELMETFEATURE) {
+            player.getInventory().setHelmet(null);
+        }
     }
 
 }
