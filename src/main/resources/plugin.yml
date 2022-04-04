@@ -1,9 +1,9 @@
-main: net.craftingforchrist.EasterEggHunt.EasterEggHuntMain
+main: com.modularenigma.EasterEggHunt.EasterEggHuntMain
 name: EasterEggHunt
-description: An Easter Egg Hunt minigame for the Easter break in collaberation with Katoomba Easter Convention (KEC).
+description: An Easter Egg Hunt minigame for the Easter break for Crafting For Christ.
 version: ${project.version}
-author: Crafting For Christ, Ben Robson
-api-version: 1.16
+authors: [Crafting For Christ, Ben Robson, ModularEnigma]
+api-version: 1.18
 depend: [WorldEdit]
 
 commands:
