@@ -97,9 +97,12 @@ public class EggController {
         //
         try {
             PreparedStatement deletestatement = plugin.getConnection().prepareStatement("DELETE from eastereggs where playerid=(select id from playerdata where uuid=?)");
+			PreparedStatement resetEggCountStatement = plugin.getConnection().prepareStatement("UPDATE playerdata SET eggsCollected = 0 WHERE uuid = ?");
             deletestatement.setString(1, UserUUID);
+			resetEggCountStatement.setString(1, UserUUID);
 
             deletestatement.executeUpdate();
+			resetEggCountStatement.executeUpdate();
             player.sendMessage("All eggs have been cleared.");
         } catch (SQLException e) {
             e.printStackTrace();
