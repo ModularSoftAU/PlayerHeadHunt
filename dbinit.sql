@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS EasterEggHunt;
 CREATE DATABASE IF NOT EXISTS EasterEggHunt;
 USE EasterEggHunt;
 
- CREATE USER 'EasterEggHunt'@'%' IDENTIFIED WITH mysql_native_password BY 'PasswordEasterEggHunt321';
+ CREATE USER IF NOT EXISTS 'EasterEggHunt'@'%' IDENTIFIED WITH mysql_native_password BY 'PasswordEasterEggHunt321';
  FLUSH PRIVILEGES;
  GRANT SELECT ON EasterEggHunt.* TO EasterEggHunt@'%';
  GRANT INSERT ON EasterEggHunt.* TO EasterEggHunt@'%';
