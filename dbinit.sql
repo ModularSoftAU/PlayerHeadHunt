@@ -12,7 +12,8 @@ USE EasterEggHunt;
 CREATE TABLE playerdata (
   id int AUTO_INCREMENT PRIMARY KEY NOT NULL,
   uuid VARCHAR(36),
-  username VARCHAR(16)
+  username VARCHAR(16),
+  eggsCollected int
 );
 create index playerdata_username on playerdata (username);
 
