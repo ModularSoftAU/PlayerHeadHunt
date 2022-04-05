@@ -13,7 +13,8 @@ CREATE TABLE playerdata (
   id int AUTO_INCREMENT PRIMARY KEY NOT NULL,
   uuid VARCHAR(36),
   username VARCHAR(16),
-  eggsCollected int DEFAULT 0
+  eggsCollected int DEFAULT 0,
+  INDEX players (uuid(8))
 );
 create index playerdata_username on playerdata (username);
 
