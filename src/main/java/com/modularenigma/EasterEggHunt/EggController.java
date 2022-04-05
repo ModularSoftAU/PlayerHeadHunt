@@ -76,7 +76,7 @@ public class EggController {
         // Check how many eggs the player has collected.
         //
         try {
-            PreparedStatement findstatement = plugin.getConnection().prepareStatement("select count(*) as 'eastereggs' from eastereggs where playerid = (select id from playerdata where uuid=?)");
+            PreparedStatement findstatement = plugin.getConnection().prepareStatement("select eggsCollected as 'eastereggs' from playerdata where uuid=?");
             findstatement.setString(1, UserUUID);
 
             ResultSet results = findstatement.executeQuery();
