@@ -118,7 +118,7 @@ public class EggController {
         // Check if the player has already found that Easter Egg before.
         //
         try {
-            PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT * FROM eastereggs WHERE playerid=(select id from playerdata where uuid=?) AND eggcordx=? AND eggcordy=? AND eggcordz=?");
+            PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT e.* FROM eastereggs e JOIN playerdata p ON e.playerid = p.id WHERE p.uuid = ? AND eggcordx=? AND eggcordy=? AND eggcordz=?");
             findstatement.setString(1, UserUUID);
             findstatement.setString(2, String.valueOf(x));
             findstatement.setString(3, String.valueOf(y));
