@@ -25,3 +25,9 @@ CREATE TABLE eastereggs (
   eggcordz INT NOT NULL,
   FOREIGN KEY (playerid) REFERENCES playerdata (id)
 );
+
+-- Trigger that increments the eggsCollected column for the user when a new egg is added
+CREATE TRIGGER eastereggs_incrementEggsColected
+AFTER INSERT ON eastereggs FOR EACH ROW
+	UPDATE playerdata SET eggsCollected = eggsCollected + 1 WHERE id = NEW.playerid
+;
