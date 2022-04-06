@@ -8,10 +8,12 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.function.RegionMaskingFilter;
 import com.sk89q.worldedit.function.block.Counter;
 import com.sk89q.worldedit.function.mask.BlockTypeMask;
+import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.function.visitor.RegionVisitor;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.Bukkit;
@@ -28,43 +30,57 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
 public class EggController {
     private static EasterEggHuntMain plugin;
-    public EggController(EasterEggHuntMain plugin){
-        this.plugin = plugin;
+    private static String connectionError;
+
+    public static void onEnable(EasterEggHuntMain plugin) {
+        EggController.plugin = plugin;
+
+        String blankConnectionError = plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR");
+        assert blankConnectionError != null;
+        EggController.connectionError = ChatColor.translateAlternateColorCodes('&', blankConnectionError);
     }
 
-    public static String setTotalEggBlocks() {
-        String eggBlock = plugin.getConfig().getString("EGG.EGGBLOCK").toLowerCase();
+    public static void calculateTotalEggs() {
+        String eggBlock = Objects.requireNonNull(plugin.getConfig().getString("EGG.EGGBLOCK")).toLowerCase();
 
-        int UPPERREGIONX = plugin.getConfig().getInt("REGION.UPPERREGION.X");
-        int UPPERREGIONY = plugin.getConfig().getInt("REGION.UPPERREGION.Y");
-        int UPPERREGIONZ = plugin.getConfig().getInt("REGION.UPPERREGION.Z");
+        BlockVector3 upperRegion = BlockVector3.at(
+            plugin.getConfig().getInt("REGION.UPPERREGION.X"),
+            plugin.getConfig().getInt("REGION.UPPERREGION.Y"),
+            plugin.getConfig().getInt("REGION.UPPERREGION.Z")
+        );
 
-        int LOWERREGIONX = plugin.getConfig().getInt("REGION.LOWERREGION.X");
-        int LOWERREGIONY = plugin.getConfig().getInt("REGION.LOWERREGION.Y");
-        int LOWERREGIONZ = plugin.getConfig().getInt("REGION.LOWERREGION.Z");
+        BlockVector3 lowerRegion = BlockVector3.at(
+            plugin.getConfig().getInt("REGION.LOWERREGION.X"),
+            plugin.getConfig().getInt("REGION.LOWERREGION.Y"),
+            plugin.getConfig().getInt("REGION.LOWERREGION.Z")
+        );
 
-        World world = BukkitAdapter.adapt(Bukkit.getServer().getWorld("world"));
-        CuboidRegion selection = new CuboidRegion(world, BlockVector3.at(UPPERREGIONX, UPPERREGIONY, UPPERREGIONZ), BlockVector3.at(LOWERREGIONX, LOWERREGIONY, LOWERREGIONZ));
-        BlockTypeMask mask = new BlockTypeMask(world, BlockTypes.get(eggBlock));
+        World world = BukkitAdapter.adapt(Objects.requireNonNull(Bukkit.getServer().getWorld("world")));
 
-        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1)) {
-            Counter count = new Counter();
+        Region selection = new CuboidRegion(world, upperRegion, lowerRegion);
+        Mask mask = new BlockTypeMask(world, BlockTypes.get(eggBlock));
+        Counter count = new Counter();
+
+        try (EditSession editSession = WorldEdit.getInstance().newEditSession(world)) {
+            int countedBlocksMine = editSession.countBlocks(selection, mask);
+
             RegionMaskingFilter filter = new RegionMaskingFilter(mask, count);
             RegionVisitor visitor = new RegionVisitor(selection, filter);
             Operations.completeBlindly(visitor);
-
             int countedblocks = count.getCount();
+
+            plugin.getServer().getConsoleSender().sendMessage("Mine counted: " + countedBlocksMine);
+            plugin.getServer().getConsoleSender().sendMessage("Default counted: " + countedblocks);
 
             // Put total amount into config file.
             plugin.getConfig().set("EGG.EGGTOTAL", countedblocks);
             plugin.saveConfig();
-
-            return String.valueOf(countedblocks);
         }
     }
 
@@ -83,7 +99,7 @@ public class EggController {
             if (results.next()) return results.getInt("eastereggs");
         } catch (SQLException e) {
             e.printStackTrace();
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
+            player.sendMessage(connectionError);
         }
         return 0;
     }
@@ -98,16 +114,15 @@ public class EggController {
         try {
             PreparedStatement deletestatement = plugin.getConnection().prepareStatement("DELETE from eastereggs where playerid=(select id from playerdata where uuid=?)");
             deletestatement.setString(1, UserUUID);
-
             deletestatement.executeUpdate();
             player.sendMessage("All eggs have been cleared.");
         } catch (SQLException e) {
             e.printStackTrace();
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
+            player.sendMessage(connectionError);
         }
     }
 
-    public static boolean alreadyCollectedEgg(Player player, int x, int y, int z) {
+    public static boolean hasAlreadyCollectedEgg(Player player, int x, int y, int z) {
         String UserUUID = player.getUniqueId().toString();
 
         //
@@ -115,48 +130,48 @@ public class EggController {
         // Check if the player has already found that Easter Egg before.
         //
         try {
-            PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT * FROM eastereggs WHERE playerid=(select id from playerdata where uuid=?) AND eggcordx=? AND eggcordy=? AND eggcordz=?");
+            PreparedStatement findstatement = plugin.getConnection().prepareStatement(
+                    "SELECT * FROM eastereggs WHERE playerid=(select id from playerdata where uuid=?) AND eggcordx=? AND eggcordy=? AND eggcordz=?");
             findstatement.setString(1, UserUUID);
-            findstatement.setString(2, String.valueOf(x));
-            findstatement.setString(3, String.valueOf(y));
-            findstatement.setString(4, String.valueOf(z));
+            findstatement.setString(2, "" + x);
+            findstatement.setString(3, "" + y);
+            findstatement.setString(4, "" + z);
 
             ResultSet results = findstatement.executeQuery();
-            if (!results.next()) return false;
-            return true;
+
+            // Return's true if we already found the egg.
+            return results.next();
         } catch (SQLException e) {
             e.printStackTrace();
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
+            player.sendMessage(connectionError);
         }
         return false;
     }
 
-    public static void breakEggBlock(int x, int y, int z) {
-        Location EggBlock = new Location(Bukkit.getWorld("world"), x, y, z);
-        EggBlock.getBlock().setType(Material.AIR);
+    public static void breakBlock(int x, int y, int z) {
+        Location eggBlock = new Location(Bukkit.getWorld("world"), x, y, z);
+        eggBlock.getBlock().setType(Material.AIR);
     }
 
     public static void replaceEggBlock(Material EggMaterialBlock, BlockData blockData, int x, int y, int z) {
-        Location EggBlockLocation = new Location(Bukkit.getWorld("world"), x, y, z);
-        EggBlockLocation.getBlock().setType(EggMaterialBlock);
-        EggBlockLocation.getBlock().setBlockData(blockData);
+        Location eggBlockLocation = new Location(Bukkit.getWorld("world"), x, y, z);
+        eggBlockLocation.getBlock().setType(EggMaterialBlock);
+        eggBlockLocation.getBlock().setBlockData(blockData);
 
-        BlockState EggBlockState = EggBlockLocation.getBlock().getState();
-        if (EggBlockState instanceof Skull) {
+        BlockState eggBlockState = eggBlockLocation.getBlock().getState();
+        if (eggBlockState instanceof Skull skull) {
             PlayerProfile profile = Bukkit.getServer().createProfile(UUID.randomUUID());
             profile.setProperty(new ProfileProperty("textures", getRandomHead()));
 
-            Skull skull = (Skull) EggBlockState;
             skull.setPlayerProfile(profile);
             skull.update(true);
         }
     }
 
-    static String getRandomHead() {
+    private static String getRandomHead() {
         Random random = new Random();
         int get = random.nextInt(plugin.getConfig().getInt("EGG.SKINSMAX"));
-        String skin = plugin.getConfig().getString("EGG.SKINS." + get);
-        return skin;
+        return plugin.getConfig().getString("EGG.SKINS." + get);
     }
 
     public static void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
@@ -170,17 +185,20 @@ public class EggController {
         // Insert Easter Egg
         //
         try {
-            PreparedStatement insertstatement = plugin.getConnection().prepareStatement("INSERT INTO eastereggs (playerid, eggcordx, eggcordy, eggcordz) VALUES ((select id from playerdata where uuid=?), ?, ?, ?)");
+            PreparedStatement insertstatement = plugin.getConnection().prepareStatement(
+                "INSERT INTO eastereggs (playerid, eggcordx, eggcordy, eggcordz) " +
+                    "VALUES ((select id from playerdata where uuid=?), ?, ?, ?)");
 
             insertstatement.setString(1, UserUUID);
             insertstatement.setString(2, String.valueOf(x));
             insertstatement.setString(3, String.valueOf(y));
             insertstatement.setString(4, String.valueOf(z));
-
             insertstatement.executeUpdate();
 
             EggChatController.eggFoundResponse(player);
-            breakEggBlock(x, y, z);
+
+            // Break the egg block
+            breakBlock(x, y, z);
 
             new BukkitRunnable() {
                 @Override
@@ -191,7 +209,7 @@ public class EggController {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR")));
+            player.sendMessage(connectionError);
         }
     }
 }

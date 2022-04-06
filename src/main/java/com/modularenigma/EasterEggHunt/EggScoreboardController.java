@@ -1,34 +1,34 @@
 package com.modularenigma.EasterEggHunt;
 
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
-import static com.modularenigma.EasterEggHunt.EggController.getEggs;
-
 public class EggScoreboardController {
     private static EasterEggHuntMain plugin;
-    public EggScoreboardController(EasterEggHuntMain plugin){
-        this.plugin = plugin;
+
+    public static void onEnable(EasterEggHuntMain plugin) {
+        EasterEggHuntMain.plugin = plugin;
     }
 
     public static void loadSidebarScoreboard(Player player) {
-        String EGGTOTAL = plugin.getConfig().getString("EGG.EGGTOTAL");
+        String totalEggs = plugin.getConfig().getString("EGG.EGGTOTAL");
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
-        Objective objective = board.registerNewObjective("EggScoreboard", "dummy");
+        Objective objective = board.registerNewObjective("EggScoreboard", "dummy", Component.text("Easter Egg Hunt"));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName("Easter Egg Hunt");
 
         Score toplinebreak = objective.getScore(" ");
         toplinebreak.setScore(1);
 
-        Score advertisementline = objective.getScore(org.bukkit.ChatColor.YELLOW + "craftingforchrist.net");
+        Score advertisementline = objective.getScore(ChatColor.YELLOW + "craftingforchrist.net");
         advertisementline.setScore(2);
 
-        Score eggtotalline = objective.getScore(org.bukkit.ChatColor.YELLOW.toString() + org.bukkit.ChatColor.BOLD + "Eggs: " + org.bukkit.ChatColor.WHITE + getEggs(player) + "/" + EGGTOTAL);
+        int playerHasFound = EggController.getEggs(player);
+        Score eggtotalline = objective.getScore(ChatColor.YELLOW.toString() + ChatColor.BOLD + "Eggs: " + ChatColor.WHITE + playerHasFound + "/" + totalEggs);
         eggtotalline.setScore(3);
 
         Score bottomlinebreak = objective.getScore("  ");

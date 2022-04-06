@@ -1,45 +1,58 @@
 package com.modularenigma.EasterEggHunt;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import static com.modularenigma.EasterEggHunt.EggController.getEggs;
-
 public class EggChatController {
     private static EasterEggHuntMain plugin;
-    public EggChatController(EasterEggHuntMain plugin){
-        this.plugin = plugin;
+
+    public static void onEnable(EasterEggHuntMain plugin) {
+        EasterEggHuntMain.plugin = plugin;
     }
 
     public static void eggAlreadyFoundResponse(Player player) {
-        String EGGALREADYFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGALREADYFOUND");
+        Sound eggAlreadyFoundSound = Sound.valueOf(plugin.getConfig().getString("SOUND.EGGALREADYFOUND"));
+        String eggAlreadyFound = plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND");
 
-        player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGALREADYFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is already found.
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND"))));
+        assert eggAlreadyFound != null;
+
+        player.playSound(player.getLocation(), eggAlreadyFoundSound, 1, 1); // Play sound for an Easter Egg that is already found.
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', eggAlreadyFound));
     }
 
     public static void eggFoundResponse(Player player) {
-        String EGGFOUNDSOUND = plugin.getConfig().getString("SOUND.EGGFOUND");
-        String EGGTOTAL = plugin.getConfig().getString("EGG.EGGTOTAL");
+        Sound foundEggSound = Sound.valueOf(plugin.getConfig().getString("SOUND.EGGFOUND"));
+        String totalEggs = plugin.getConfig().getString("EGG.EGGTOTAL");
+        String foundEgg = plugin.getConfig().getString("LANG.EGG.EGGFOUND");
+        int playerHasFound = EggController.getEggs(player);
 
-        player.playSound(player.getLocation(), Sound.valueOf(String.valueOf(EGGFOUNDSOUND)), 1, 1); // Play sound for an Easter Egg that is found.
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString("LANG.EGG.EGGFOUND")
-                .replace("%FOUNDEGGS%", String.valueOf(getEggs(player)))
-                .replace("%NUMBEROFEGGS%", EGGTOTAL))));
+        assert foundEgg != null;
+        assert totalEggs != null;
+
+        String message = ChatColor.translateAlternateColorCodes('&', foundEgg)
+                .replace("%FOUNDEGGS%", playerHasFound + "")
+                .replace("%NUMBEROFEGGS%", totalEggs);
+        player.playSound(player.getLocation(), foundEggSound, 1, 1); // Play sound for an Easter Egg that is found.
+        player.sendMessage(message);
     }
 
-    public static void eggMilestoneReachedEvent(Player player, Sound EggSound, int eggs) {
-        Boolean MILESTONEMESSAGE = plugin.getConfig().getBoolean("FEATURE.MILESTONEMESSAGE");
+    public static void eggMilestoneReachedEvent(Player player, Sound eggSound, int eggs) {
+        boolean showMilestoneMessage = plugin.getConfig().getBoolean("FEATURE.MILESTONEMESSAGE");
+        String milestoneReached = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
 
-        if (MILESTONEMESSAGE) {
-            String MILESTONEREACHEDMESSAGE = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
-            player.playSound(player.getLocation(), EggSound, 1, 1);
-            Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', MILESTONEREACHEDMESSAGE.replace("%PLAYER%", player.getName()).replace("%NUMBEROFEGGS%", String.valueOf(eggs))));
+        assert milestoneReached != null;
+
+        if (showMilestoneMessage) {
+            player.playSound(player.getLocation(), eggSound, 1, 1);
+
+            String broadcastMessage = ChatColor.translateAlternateColorCodes('&', milestoneReached)
+                    .replace("%PLAYER%", player.getName())
+                    .replace("%NUMBEROFEGGS%", String.valueOf(eggs));
+            for (Player otherPlayers : Bukkit.getOnlinePlayers()) {
+                otherPlayers.sendMessage(broadcastMessage);
+            }
         }
     }
-
 }

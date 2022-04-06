@@ -1,9 +1,15 @@
+#DATABASE:
+#  HOST: "localhost"
+#  PORT: "3306"
+#  DATABASE: "EasterEggHunt"
+#  USERNAME: "root"
+#  PASSWORD: "root"
 DATABASE:
-  HOST: "localhost"
+  HOST: "127.0.0.1"
   PORT: "3306"
-  DATABASE: "EasterEggHunt"
-  USERNAME: "root"
-  PASSWORD: "root"
+  DATABASE: "craftingforchrist"
+  USERNAME: "jaedanc"
+  PASSWORD: "applesTOapples123$%"
 REGION:
   UPPERREGION:
     X: -54

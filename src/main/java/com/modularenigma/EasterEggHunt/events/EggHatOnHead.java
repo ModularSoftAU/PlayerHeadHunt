@@ -7,7 +7,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 
 public class EggHatOnHead implements Listener {
-    EasterEggHuntMain plugin;
+    private final EasterEggHuntMain plugin;
+
     public EggHatOnHead(EasterEggHuntMain instance) {
         plugin = instance;
     }
@@ -18,5 +19,4 @@ public class EggHatOnHead implements Listener {
             event.setCancelled(true);
         }
     }
-
 }
