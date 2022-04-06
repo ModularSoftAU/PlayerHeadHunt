@@ -76,7 +76,7 @@ public class EggController {
         // Check how many eggs the player has collected.
         //
         try {
-            PreparedStatement findstatement = plugin.getConnection().prepareStatement("select count(*) as 'eastereggs' from eastereggs where playerid = (select id from playerdata where uuid=?)");
+            PreparedStatement findstatement = plugin.getConnection().prepareStatement("select eggsCollected as 'eastereggs' from playerdata where uuid=?");
             findstatement.setString(1, UserUUID);
 
             ResultSet results = findstatement.executeQuery();
@@ -97,9 +97,12 @@ public class EggController {
         //
         try {
             PreparedStatement deletestatement = plugin.getConnection().prepareStatement("DELETE from eastereggs where playerid=(select id from playerdata where uuid=?)");
+			PreparedStatement resetEggCountStatement = plugin.getConnection().prepareStatement("UPDATE playerdata SET eggsCollected = 0 WHERE uuid = ?");
             deletestatement.setString(1, UserUUID);
+			resetEggCountStatement.setString(1, UserUUID);
 
             deletestatement.executeUpdate();
+			resetEggCountStatement.executeUpdate();
             player.sendMessage("All eggs have been cleared.");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -115,7 +118,7 @@ public class EggController {
         // Check if the player has already found that Easter Egg before.
         //
         try {
-            PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT * FROM eastereggs WHERE playerid=(select id from playerdata where uuid=?) AND eggcordx=? AND eggcordy=? AND eggcordz=?");
+            PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT e.* FROM eastereggs e JOIN playerdata p ON e.playerid = p.id WHERE p.uuid = ? AND eggcordx=? AND eggcordy=? AND eggcordz=?");
             findstatement.setString(1, UserUUID);
             findstatement.setString(2, String.valueOf(x));
             findstatement.setString(3, String.valueOf(y));
