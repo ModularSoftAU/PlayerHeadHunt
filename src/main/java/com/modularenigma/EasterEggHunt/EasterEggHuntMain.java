@@ -73,7 +73,7 @@ public class EasterEggHuntMain extends JavaPlugin {
         String host = plugin.getConfig().getString("DATABASE.HOST");
         String port = plugin.getConfig().getString("DATABASE.PORT");
         String database = plugin.getConfig().getString("DATABASE.DATABASE");
-        String url = "jdbc:mysql://" + host + ":" + port; // + "/" + database;
+        String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
 //        jdbc:mysql://127.0.0.1:3306/?user=jaedanc
         String username = plugin.getConfig().getString("DATABASE.USERNAME");
         String password = plugin.getConfig().getString("DATABASE.PASSWORD");
