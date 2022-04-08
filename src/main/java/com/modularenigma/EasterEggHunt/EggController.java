@@ -36,17 +36,27 @@ import java.util.UUID;
 
 public class EggController {
     private static EasterEggHuntMain plugin;
-    private static String connectionError;
+    private static EggController instance;
+    private final String connectionError;
 
     public static void onEnable(EasterEggHuntMain plugin) {
         EggController.plugin = plugin;
-
-        String blankConnectionError = plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR");
-        assert blankConnectionError != null;
-        EggController.connectionError = ChatColor.translateAlternateColorCodes('&', blankConnectionError);
     }
 
-    public static void calculateTotalEggs() {
+    public static EggController instance() {
+        assert plugin != null;
+        if (instance == null)
+            instance = new EggController();
+        return instance;
+    }
+
+    private EggController() {
+        String blankConnectionError = plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR");
+        assert blankConnectionError != null;
+        connectionError = ChatColor.translateAlternateColorCodes('&', blankConnectionError);
+    }
+
+    public void calculateTotalEggs() {
         String eggBlock = Objects.requireNonNull(plugin.getConfig().getString("EGG.EGGBLOCK")).toLowerCase();
 
         BlockVector3 upperRegion = BlockVector3.at(
@@ -84,7 +94,7 @@ public class EggController {
         }
     }
 
-    public static int getEggs(Player player) {
+    public int getEggs(Player player) {
         String UserUUID = player.getUniqueId().toString();
 
         //
@@ -104,7 +114,7 @@ public class EggController {
         return 0;
     }
 
-    public static void clearEggs(Player player) {
+    public void clearEggs(Player player) {
         String UserUUID = player.getUniqueId().toString();
 
         //
@@ -125,7 +135,7 @@ public class EggController {
         }
     }
 
-    public static boolean hasAlreadyCollectedEgg(Player player, int x, int y, int z) {
+    public boolean hasAlreadyCollectedEgg(Player player, int x, int y, int z) {
         String UserUUID = player.getUniqueId().toString();
 
         //
@@ -150,12 +160,12 @@ public class EggController {
         return false;
     }
 
-    public static void breakBlock(int x, int y, int z) {
+    public void breakBlock(int x, int y, int z) {
         Location eggBlock = new Location(Bukkit.getWorld("world"), x, y, z);
         eggBlock.getBlock().setType(Material.AIR);
     }
 
-    public static void replaceEggBlock(Material EggMaterialBlock, BlockData blockData, int x, int y, int z) {
+    public void replaceEggBlock(Material EggMaterialBlock, BlockData blockData, int x, int y, int z) {
         Location eggBlockLocation = new Location(Bukkit.getWorld("world"), x, y, z);
         eggBlockLocation.getBlock().setType(EggMaterialBlock);
         eggBlockLocation.getBlock().setBlockData(blockData);
@@ -170,13 +180,13 @@ public class EggController {
         }
     }
 
-    private static String getRandomHead() {
+    private String getRandomHead() {
         Random random = new Random();
         int get = random.nextInt(plugin.getConfig().getInt("EGG.SKINSMAX"));
         return plugin.getConfig().getString("EGG.SKINS." + get);
     }
 
-    public static void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
+    public void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
         int EGGRESPAWNTIMER = plugin.getConfig().getInt("EGG.RESPAWNTIMER");
         String UserUUID = player.getUniqueId().toString();
         Material blockType = block.getType();
@@ -197,7 +207,7 @@ public class EggController {
             insertstatement.setString(4, String.valueOf(z));
             insertstatement.executeUpdate();
 
-            EggChatController.eggFoundResponse(player);
+            EggChatController.instance().eggFoundResponse(player);
 
             // Break the egg block
             breakBlock(x, y, z);

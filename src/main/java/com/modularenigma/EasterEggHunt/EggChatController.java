@@ -7,29 +7,39 @@ import org.bukkit.entity.Player;
 
 public class EggChatController {
     private static EasterEggHuntMain plugin;
+    private static EggChatController instance;
+    private final Sound foundEggSound;
+    private final Sound alreadyFoundEggSound;
+    private final String foundEgg;
+    private final String alreadyFoundEgg;
+    private final String totalEggs;
 
     public static void onEnable(EasterEggHuntMain plugin) {
-        EasterEggHuntMain.plugin = plugin;
+        EggChatController.plugin = plugin;
     }
 
-    public static void eggAlreadyFoundResponse(Player player) {
-        Sound eggAlreadyFoundSound = Sound.valueOf(plugin.getConfig().getString("SOUND.EGGALREADYFOUND"));
-        String eggAlreadyFound = plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND");
-
-        assert eggAlreadyFound != null;
-
-        player.playSound(player.getLocation(), eggAlreadyFoundSound, 1, 1); // Play sound for an Easter Egg that is already found.
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', eggAlreadyFound));
+    public static EggChatController instance() {
+        assert plugin != null;
+        if (instance == null)
+            instance = new EggChatController();
+        return instance;
     }
 
-    public static void eggFoundResponse(Player player) {
-        Sound foundEggSound = Sound.valueOf(plugin.getConfig().getString("SOUND.EGGFOUND"));
-        String totalEggs = plugin.getConfig().getString("EGG.EGGTOTAL");
-        String foundEgg = plugin.getConfig().getString("LANG.EGG.EGGFOUND");
-        int playerHasFound = EggController.getEggs(player);
+    private EggChatController() {
+        foundEggSound = Sound.valueOf(plugin.getConfig().getString("SOUND.EGGFOUND"));
+        alreadyFoundEggSound = Sound.valueOf(plugin.getConfig().getString("SOUND.EGGALREADYFOUND"));
+        totalEggs = plugin.getConfig().getString("EGG.EGGTOTAL");
+        alreadyFoundEgg = plugin.getConfig().getString("LANG.EGG.EGGALREADYFOUND");
+        foundEgg = plugin.getConfig().getString("LANG.EGG.EGGFOUND");
+    }
 
-        assert foundEgg != null;
-        assert totalEggs != null;
+    public void eggAlreadyFoundResponse(Player player) {
+        player.playSound(player.getLocation(), alreadyFoundEggSound, 1, 1); // Play sound for an Easter Egg that is already found.
+        player.sendMessage(ChatColor.translateAlternateColorCodes('&', alreadyFoundEgg));
+    }
+
+    public void eggFoundResponse(Player player) {
+        int playerHasFound = EggController.instance().getEggs(player);
 
         String message = ChatColor.translateAlternateColorCodes('&', foundEgg)
                 .replace("%FOUNDEGGS%", playerHasFound + "")
@@ -38,7 +48,7 @@ public class EggChatController {
         player.sendMessage(message);
     }
 
-    public static void eggMilestoneReachedEvent(Player player, Sound eggSound, int eggs) {
+    public void eggMilestoneReachedEvent(Player player, Sound eggSound, int eggs) {
         boolean showMilestoneMessage = plugin.getConfig().getBoolean("FEATURE.MILESTONEMESSAGE");
         String milestoneReached = plugin.getConfig().getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED");
 

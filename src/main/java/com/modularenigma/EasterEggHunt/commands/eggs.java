@@ -32,7 +32,7 @@ public class eggs implements CommandExecutor {
         String blankMilestoneReachedMessage = plugin.getConfig().getString("LANG.EGG.EGGCOUNT");
         assert blankMilestoneReachedMessage != null;
         String milestoneReachedMessage = blankMilestoneReachedMessage
-                .replace("%FOUNDEGGS%", "" + EggController.getEggs(player))
+                .replace("%FOUNDEGGS%", "" + EggController.instance().getEggs(player))
                 .replace("%NUMBEROFEGGS%", numberOfEggs);
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', milestoneReachedMessage));
         return true;

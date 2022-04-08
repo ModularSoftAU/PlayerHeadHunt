@@ -41,9 +41,9 @@ public class cleareggs implements CommandExecutor {
             return true;
         }
 
-        EggController.clearEggs(player);
-        EggHatController.clearHelmet(player);
-        EggScoreboardController.loadSidebarScoreboard(player);
+        EggController.instance().clearEggs(player);
+        EggHatController.instance().clearHelmet(player);
+        EggScoreboardController.instance().loadSidebarScoreboard(player);
         return true;
     }
 }

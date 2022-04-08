@@ -16,15 +16,12 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class EasterEggHuntMain extends JavaPlugin {
-    public static EasterEggHuntMain plugin;
     private Connection connection;
-
     private String connectionSuccess;
     private String connectionError;
 
     @Override
     public void onEnable() {
-        plugin = this;
 //        plugin.saveDefaultConfig(); // Generate configuration file
 
         EggController.onEnable(this);
@@ -32,26 +29,26 @@ public class EasterEggHuntMain extends JavaPlugin {
         EggScoreboardController.onEnable(this);
         EggHatController.onEnable(this);
 
-        String blankConnectionSuccess = plugin.getConfig().getString("LANG.DATABASE.CONNECTIONSUCCESS");
-        String blankConnectionError = plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR");
+        String blankConnectionSuccess = getConfig().getString("LANG.DATABASE.CONNECTIONSUCCESS");
+        String blankConnectionError = getConfig().getString("LANG.DATABASE.CONNECTIONERROR");
         assert blankConnectionSuccess != null;
         assert blankConnectionError != null;
         connectionSuccess = ChatColor.translateAlternateColorCodes('&', blankConnectionSuccess);
         connectionError = ChatColor.translateAlternateColorCodes('&', blankConnectionError);
 
         establishConnection(); // Connect to the database
-        EggController.calculateTotalEggs();
+        EggController.instance().calculateTotalEggs();
 
         // Plugin Load Message
         getServer().getConsoleSender().sendMessage(
                 ChatColor.GREEN + "\n\n" +
-                plugin.getDescription().getName() + " is now enabled.\n" +
-                "Running Version: " + plugin.getDescription().getVersion() + "\n" +
+                getDescription().getName() + " is now enabled.\n" +
+                "Running Version: " + getDescription().getVersion() + "\n" +
                 "GitHub Repository: https://github.com/craftingforchrist/EasterEggHunt\n" +
-                "Created By: " + plugin.getDescription().getAuthors() + "\n\n");
+                "Created By: " + getDescription().getAuthors() + "\n\n");
 
         // Plugin Event Register
-        PluginManager pluginmanager = plugin.getServer().getPluginManager();
+        PluginManager pluginmanager = getServer().getPluginManager();
         pluginmanager.registerEvents(new EggFindEvent(this), this);
         pluginmanager.registerEvents(new EggHunterOnJoin(this), this);
         pluginmanager.registerEvents(new EggHatOnHead(this), this);
@@ -66,17 +63,17 @@ public class EasterEggHuntMain extends JavaPlugin {
         // Plugin Shutdown Message
         getServer().getConsoleSender().sendMessage(
                 ChatColor.RED + "\n\n" +
-                plugin.getDescription().getName() + " is now disabled.\n\n");
+                getDescription().getName() + " is now disabled.\n\n");
     }
 
     public void establishConnection() {
-        String host = plugin.getConfig().getString("DATABASE.HOST");
-        String port = plugin.getConfig().getString("DATABASE.PORT");
-        String database = plugin.getConfig().getString("DATABASE.DATABASE");
+        String host = getConfig().getString("DATABASE.HOST");
+        String port = getConfig().getString("DATABASE.PORT");
+        String database = getConfig().getString("DATABASE.DATABASE");
         String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
 //        jdbc:mysql://127.0.0.1:3306/?user=jaedanc
-        String username = plugin.getConfig().getString("DATABASE.USERNAME");
-        String password = plugin.getConfig().getString("DATABASE.PASSWORD");
+        String username = getConfig().getString("DATABASE.USERNAME");
+        String password = getConfig().getString("DATABASE.PASSWORD");
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -95,13 +92,13 @@ public class EasterEggHuntMain extends JavaPlugin {
     }
 
     public Connection getConnection() {
-        if (plugin.connection == null) {
+        if (connection == null) {
             establishConnection();
         } else {
             try {
-                plugin.connection.close();
+                connection.close();
             } catch (SQLException e) {
-                plugin.getLogger().info(connectionError);
+                getLogger().info(connectionError);
                 e.printStackTrace();
             }
             establishConnection();

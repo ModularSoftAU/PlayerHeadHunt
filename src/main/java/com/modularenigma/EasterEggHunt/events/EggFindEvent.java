@@ -25,9 +25,9 @@ public class EggFindEvent implements Listener {
 
     private record EggMileStone(int atEggsFound, Sound sound, Material helmet) {
         public void trigger(Player player, PlayerInteractEvent event) {
-            EggChatController.eggMilestoneReachedEvent(player, sound, atEggsFound);
+            EggChatController.instance().eggMilestoneReachedEvent(player, sound, atEggsFound);
             if (helmet != null)
-                EggHatController.equipHelmet(player, Material.LEATHER_HELMET);
+                EggHatController.instance().equipHelmet(player, Material.LEATHER_HELMET);
             event.setCancelled(true);
         }
     }
@@ -71,15 +71,15 @@ public class EggFindEvent implements Listener {
         int y = block.getY();
         int z = block.getZ();
 
-        if (EggController.hasAlreadyCollectedEgg(player, x, y, z)) {
-            EggChatController.eggAlreadyFoundResponse(player);
+        if (EggController.instance().hasAlreadyCollectedEgg(player, x, y, z)) {
+            EggChatController.instance().eggAlreadyFoundResponse(player);
             event.setCancelled(true);
         } else {
-            EggController.insertCollectedEgg(player, block, x, y, z);
-            EggScoreboardController.loadSidebarScoreboard(player);
+            EggController.instance().insertCollectedEgg(player, block, x, y, z);
+            EggScoreboardController.instance().loadSidebarScoreboard(player);
         }
 
-        int foundEggs = EggController.getEggs(player) + 1;
+        int foundEggs = EggController.instance().getEggs(player) + 1;
 
         // This stops the event from firing twice, since the event fires for each hand.
         if (equipSlot.equals(EquipmentSlot.OFF_HAND) ||
@@ -95,7 +95,5 @@ public class EggFindEvent implements Listener {
         if (milestones.containsKey(foundEggs)) {
             milestones.get(foundEggs).trigger(player, event);
         }
-
-
     }
 }

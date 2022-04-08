@@ -31,8 +31,8 @@ public class EggHunterOnJoin implements Listener {
         String userUUID = player.getUniqueId().toString();
         String username = player.getName();
 
-        EggScoreboardController.loadSidebarScoreboard(player);
-        EggController.calculateTotalEggs();
+        EggScoreboardController.instance().loadSidebarScoreboard(player);
+        EggController.instance().calculateTotalEggs();
 
         //
         // Database Query
