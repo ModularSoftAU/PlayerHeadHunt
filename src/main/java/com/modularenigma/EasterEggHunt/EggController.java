@@ -35,41 +35,21 @@ import java.util.Random;
 import java.util.UUID;
 
 public class EggController {
-    private static EasterEggHuntMain plugin;
     private static EggController instance;
-    private final String connectionError;
-
-    public static void onEnable(EasterEggHuntMain plugin) {
-        EggController.plugin = plugin;
-    }
 
     public static EggController instance() {
-        assert plugin != null;
         if (instance == null)
             instance = new EggController();
         return instance;
     }
 
-    private EggController() {
-        String blankConnectionError = plugin.getConfig().getString("LANG.DATABASE.CONNECTIONERROR");
-        assert blankConnectionError != null;
-        connectionError = ChatColor.translateAlternateColorCodes('&', blankConnectionError);
-    }
+    private EggController() {}
 
     public void calculateTotalEggs() {
-        String eggBlock = Objects.requireNonNull(plugin.getConfig().getString("EGG.EGGBLOCK")).toLowerCase();
+        String eggBlock = Objects.requireNonNull(EasterEggHuntMain.plugin().getConfig().getString("EGG.EGGBLOCK")).toLowerCase();
 
-        BlockVector3 upperRegion = BlockVector3.at(
-            plugin.getConfig().getInt("REGION.UPPERREGION.X"),
-            plugin.getConfig().getInt("REGION.UPPERREGION.Y"),
-            plugin.getConfig().getInt("REGION.UPPERREGION.Z")
-        );
-
-        BlockVector3 lowerRegion = BlockVector3.at(
-            plugin.getConfig().getInt("REGION.LOWERREGION.X"),
-            plugin.getConfig().getInt("REGION.LOWERREGION.Y"),
-            plugin.getConfig().getInt("REGION.LOWERREGION.Z")
-        );
+        BlockVector3 upperRegion = EasterEggHuntMain.plugin().config().getUpperRegion();
+        BlockVector3 lowerRegion = EasterEggHuntMain.plugin().config().getLowerRegion();
 
         World world = BukkitAdapter.adapt(Objects.requireNonNull(Bukkit.getServer().getWorld("world")));
 
@@ -85,12 +65,12 @@ public class EggController {
             Operations.completeBlindly(visitor);
             int countedblocks = count.getCount();
 
-            plugin.getServer().getConsoleSender().sendMessage("Mine counted: " + countedBlocksMine);
-            plugin.getServer().getConsoleSender().sendMessage("Default counted: " + countedblocks);
+            EasterEggHuntMain.plugin().getServer().getConsoleSender().sendMessage("Mine counted: " + countedBlocksMine);
+            EasterEggHuntMain.plugin().getServer().getConsoleSender().sendMessage("Default counted: " + countedblocks);
 
             // Put total amount into config file.
-            plugin.getConfig().set("EGG.EGGTOTAL", countedblocks);
-            plugin.saveConfig();
+            EasterEggHuntMain.plugin().config().setTotalEggs(countedblocks);
+            EasterEggHuntMain.plugin().config().save();
         }
     }
 
@@ -102,14 +82,14 @@ public class EggController {
         // Check how many eggs the player has collected.
         //
         try {
-            PreparedStatement findstatement = plugin.getConnection().prepareStatement("select eggsCollected as 'eastereggs' from playerdata where uuid=?");
+            PreparedStatement findstatement = EasterEggHuntMain.plugin().getConnection().prepareStatement("select eggsCollected as 'eastereggs' from playerdata where uuid=?");
             findstatement.setString(1, UserUUID);
 
             ResultSet results = findstatement.executeQuery();
             if (results.next()) return results.getInt("eastereggs");
         } catch (SQLException e) {
             e.printStackTrace();
-            player.sendMessage(connectionError);
+            player.sendMessage(EasterEggHuntMain.plugin().config().getLangDatabaseConnectionError());
         }
         return 0;
     }
@@ -122,8 +102,8 @@ public class EggController {
         // Check how many eggs the player has collected.
         //
         try {
-            PreparedStatement deletestatement = plugin.getConnection().prepareStatement("DELETE from eastereggs where playerid=(select id from playerdata where uuid=?)");
-			PreparedStatement resetEggCountStatement = plugin.getConnection().prepareStatement("UPDATE playerdata SET eggsCollected = 0 WHERE uuid = ?");
+            PreparedStatement deletestatement = EasterEggHuntMain.plugin().getConnection().prepareStatement("DELETE from eastereggs where playerid=(select id from playerdata where uuid=?)");
+			PreparedStatement resetEggCountStatement = EasterEggHuntMain.plugin().getConnection().prepareStatement("UPDATE playerdata SET eggsCollected = 0 WHERE uuid = ?");
             deletestatement.setString(1, UserUUID);
 			resetEggCountStatement.setString(1, UserUUID);
             deletestatement.executeUpdate();
@@ -131,7 +111,7 @@ public class EggController {
             player.sendMessage("All eggs have been cleared.");
         } catch (SQLException e) {
             e.printStackTrace();
-            player.sendMessage(connectionError);
+            player.sendMessage(EasterEggHuntMain.plugin().config().getLangDatabaseConnectionError());
         }
     }
 
@@ -143,7 +123,7 @@ public class EggController {
         // Check if the player has already found that Easter Egg before.
         //
         try {
-            PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT e.* FROM eastereggs e JOIN playerdata p ON e.playerid = p.id WHERE p.uuid = ? AND eggcordx=? AND eggcordy=? AND eggcordz=?");
+            PreparedStatement findstatement = EasterEggHuntMain.plugin().getConnection().prepareStatement("SELECT e.* FROM eastereggs e JOIN playerdata p ON e.playerid = p.id WHERE p.uuid = ? AND eggcordx=? AND eggcordy=? AND eggcordz=?");
             findstatement.setString(1, UserUUID);
             findstatement.setString(2, "" + x);
             findstatement.setString(3, "" + y);
@@ -155,7 +135,7 @@ public class EggController {
             return results.next();
         } catch (SQLException e) {
             e.printStackTrace();
-            player.sendMessage(connectionError);
+            player.sendMessage(EasterEggHuntMain.plugin().config().getLangDatabaseConnectionError());
         }
         return false;
     }
@@ -182,12 +162,12 @@ public class EggController {
 
     private String getRandomHead() {
         Random random = new Random();
-        int get = random.nextInt(plugin.getConfig().getInt("EGG.SKINSMAX"));
-        return plugin.getConfig().getString("EGG.SKINS." + get);
+        int skins = EasterEggHuntMain.plugin().config().getEggSkins().size();
+        return EasterEggHuntMain.plugin().config().getEggSkins().get(random.nextInt(0, skins));
     }
 
     public void insertCollectedEgg(Player player, Block block, int x, int y, int z) {
-        int EGGRESPAWNTIMER = plugin.getConfig().getInt("EGG.RESPAWNTIMER");
+        int eggRespawnTimer = EasterEggHuntMain.plugin().config().getEggRespawnTimer();
         String UserUUID = player.getUniqueId().toString();
         Material blockType = block.getType();
         BlockData blockData = block.getBlockData();
@@ -197,7 +177,7 @@ public class EggController {
         // Insert Easter Egg
         //
         try {
-            PreparedStatement insertstatement = plugin.getConnection().prepareStatement(
+            PreparedStatement insertstatement = EasterEggHuntMain.plugin().getConnection().prepareStatement(
                 "INSERT INTO eastereggs (playerid, eggcordx, eggcordy, eggcordz) " +
                     "VALUES ((select id from playerdata where uuid=?), ?, ?, ?)");
 
@@ -217,11 +197,11 @@ public class EggController {
                 public void run() {
                     replaceEggBlock(blockType, blockData, x, y, z);
                 }
-            }.runTaskLater(plugin, EGGRESPAWNTIMER);
+            }.runTaskLater(EasterEggHuntMain.plugin(), eggRespawnTimer);
 
         } catch (SQLException e) {
             e.printStackTrace();
-            player.sendMessage(connectionError);
+            player.sendMessage(EasterEggHuntMain.plugin().config().getLangDatabaseConnectionError());
         }
     }
 }

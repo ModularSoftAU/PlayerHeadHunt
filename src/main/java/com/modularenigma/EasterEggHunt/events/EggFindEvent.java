@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EggFindEvent implements Listener {
-    public final EasterEggHuntMain plugin;
-    private final String eggBlock;
     private final Map<Integer, EggMileStone> milestones = new HashMap<>();
 
     private record EggMileStone(int atEggsFound, Sound sound, Material helmet) {
@@ -32,12 +30,9 @@ public class EggFindEvent implements Listener {
         }
     }
 
-    public EggFindEvent(EasterEggHuntMain plugin) {
-        this.plugin = plugin;
-        Sound majorMilestone = Sound.valueOf(plugin.getConfig().getString("SOUND.MAJORCOLLECTIONMILESTONE"));
-        Sound minorMilestone = Sound.valueOf(plugin.getConfig().getString("SOUND.MINORCOLLECTIONMILESTONE"));
-        eggBlock = plugin.getConfig().getString("EGG.EGGBLOCK");
-
+    public EggFindEvent() {
+        Sound majorMilestone = EasterEggHuntMain.plugin().config().getMajorCollectionSound();
+        Sound minorMilestone = EasterEggHuntMain.plugin().config().getMinorCollectionSound();
         addMilestone(10, minorMilestone, null);
         addMilestone(50, minorMilestone, Material.LEATHER_HELMET);
         addMilestone(100, majorMilestone, Material.CHAINMAIL_HELMET);
@@ -65,12 +60,9 @@ public class EggFindEvent implements Listener {
         if (equipSlot == null)
             return;
 
-        String blockType = "" + block.getType();
-
         int x = block.getX();
         int y = block.getY();
         int z = block.getZ();
-
         if (EggController.instance().hasAlreadyCollectedEgg(player, x, y, z)) {
             EggChatController.instance().eggAlreadyFoundResponse(player);
             event.setCancelled(true);
@@ -78,8 +70,6 @@ public class EggFindEvent implements Listener {
             EggController.instance().insertCollectedEgg(player, block, x, y, z);
             EggScoreboardController.instance().loadSidebarScoreboard(player);
         }
-
-        int foundEggs = EggController.instance().getEggs(player) + 1;
 
         // This stops the event from firing twice, since the event fires for each hand.
         if (equipSlot.equals(EquipmentSlot.OFF_HAND) ||
@@ -89,9 +79,11 @@ public class EggFindEvent implements Listener {
             return;
 
         // Only continue if we clicked on an egg
-        if (!eggBlock.equals(blockType))
+        String blockType = "" + block.getType();
+        if (!EasterEggHuntMain.plugin().config().getEggBlock().equals(blockType))
             return;
 
+        int foundEggs = EggController.instance().getEggs(player) + 1;
         if (milestones.containsKey(foundEggs)) {
             milestones.get(foundEggs).trigger(player, event);
         }

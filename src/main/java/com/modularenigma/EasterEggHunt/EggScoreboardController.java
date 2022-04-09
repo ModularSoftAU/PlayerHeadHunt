@@ -7,15 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 public class EggScoreboardController {
-    private static EasterEggHuntMain plugin;
     private static EggScoreboardController instance;
 
-    public static void onEnable(EasterEggHuntMain plugin) {
-        EggScoreboardController.plugin = plugin;
-    }
-
     public static EggScoreboardController instance() {
-        assert plugin != null;
         if (instance == null)
             instance = new EggScoreboardController();
         return instance;
@@ -24,7 +18,7 @@ public class EggScoreboardController {
     private EggScoreboardController() { }
 
     public void loadSidebarScoreboard(Player player) {
-        String totalEggs = plugin.getConfig().getString("EGG.EGGTOTAL");
+        int totalEggs = EasterEggHuntMain.plugin().config().getTotalEggs();
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
