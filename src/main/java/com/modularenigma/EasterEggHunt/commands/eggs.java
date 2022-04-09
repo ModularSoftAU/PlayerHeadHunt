@@ -18,10 +18,9 @@ public class eggs implements CommandExecutor {
             return true;
         }
 
-        String milestoneReachedMessage = EasterEggHuntMain.plugin().config().getLangEggCollectionMilestoneReached()
+        player.sendMessage(EasterEggHuntMain.plugin().config().getLangEggCollectionMilestoneReached()
                 .replace("%FOUNDEGGS%", "" + EggController.instance().getEggs(player))
-                .replace("%NUMBEROFEGGS%", "" + EasterEggHuntMain.plugin().config().getTotalEggs());
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', milestoneReachedMessage));
+                .replace("%NUMBEROFEGGS%", "" + EasterEggHuntMain.plugin().config().getTotalEggs()));
         return true;
     }
 

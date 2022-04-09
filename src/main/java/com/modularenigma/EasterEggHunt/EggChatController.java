@@ -18,13 +18,13 @@ public class EggChatController {
 
     public void eggAlreadyFoundResponse(Player player) {
         player.playSound(player.getLocation(), EasterEggHuntMain.plugin().config().getEggAlreadyFoundSound(), 1, 1); // Play sound for an Easter Egg that is already found.
-        player.sendMessage(ChatColor.translateAlternateColorCodes('&', EasterEggHuntMain.plugin().config().getLangEggAlreadyFound()));
+        player.sendMessage(EasterEggHuntMain.plugin().config().getLangEggAlreadyFound());
     }
 
     public void eggFoundResponse(Player player) {
         int playerHasFound = EggController.instance().getEggs(player);
 
-        String message = ChatColor.translateAlternateColorCodes('&', EasterEggHuntMain.plugin().config().getLangEggFound())
+        String message = EasterEggHuntMain.plugin().config().getLangEggFound()
                 .replace("%FOUNDEGGS%", playerHasFound + "")
                 .replace("%NUMBEROFEGGS%", "" + EasterEggHuntMain.plugin().config().getTotalEggs());
 
@@ -37,7 +37,7 @@ public class EggChatController {
         if (EasterEggHuntMain.plugin().config().isMilestoneHatFeatureEnabled()) {
             player.playSound(player.getLocation(), eggSound, 1, 1);
 
-            String broadcastMessage = ChatColor.translateAlternateColorCodes('&', EasterEggHuntMain.plugin().config().getLangEggCollectionMilestoneReached())
+            String broadcastMessage = EasterEggHuntMain.plugin().config().getLangEggCollectionMilestoneReached()
                     .replace("%PLAYER%", player.getName())
                     .replace("%NUMBEROFEGGS%", String.valueOf(eggs));
             for (Player otherPlayers : Bukkit.getOnlinePlayers()) {
