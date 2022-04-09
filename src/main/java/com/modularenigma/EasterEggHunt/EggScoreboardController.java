@@ -1,40 +1,36 @@
 package com.modularenigma.EasterEggHunt;
 
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
-import static com.modularenigma.EasterEggHunt.EggController.getEggs;
-
 public class EggScoreboardController {
-    private static EasterEggHuntMain plugin;
-    public EggScoreboardController(EasterEggHuntMain plugin){
+    private final EasterEggHuntMain plugin;
+
+    public EggScoreboardController(EasterEggHuntMain plugin) {
         this.plugin = plugin;
     }
 
-    public static void loadSidebarScoreboard(Player player) {
-        String EGGTOTAL = plugin.getConfig().getString("EGG.EGGTOTAL");
+    public void reloadScoreboard(Player player, int eggsFound) {
+        int totalEggs = plugin.config().getTotalEggs();
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
-        Objective objective = board.registerNewObjective("EggScoreboard", "dummy");
+        Objective objective = board.registerNewObjective("EggScoreboard", "dummy", Component.text("Easter Egg Hunt"));
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName("Easter Egg Hunt");
 
         Score toplinebreak = objective.getScore(" ");
-        toplinebreak.setScore(1);
-
-        Score advertisementline = objective.getScore(org.bukkit.ChatColor.YELLOW + "craftingforchrist.net");
-        advertisementline.setScore(2);
-
-        Score eggtotalline = objective.getScore(org.bukkit.ChatColor.YELLOW.toString() + org.bukkit.ChatColor.BOLD + "Eggs: " + org.bukkit.ChatColor.WHITE + getEggs(player) + "/" + EGGTOTAL);
-        eggtotalline.setScore(3);
-
+        Score advertisementline = objective.getScore(ChatColor.YELLOW + "craftingforchrist.net");
+        Score eggtotalline = objective.getScore(ChatColor.YELLOW + "" + ChatColor.BOLD + "Eggs: " + ChatColor.WHITE + eggsFound + "/" + totalEggs);
         Score bottomlinebreak = objective.getScore("  ");
+
+        toplinebreak.setScore(1);
+        advertisementline.setScore(2);
+        eggtotalline.setScore(3);
         bottomlinebreak.setScore(4);
 
         player.setScoreboard(board);
     }
-
 }
