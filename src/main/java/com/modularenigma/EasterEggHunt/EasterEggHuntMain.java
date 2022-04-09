@@ -2,29 +2,24 @@ package com.modularenigma.EasterEggHunt;
 
 import com.modularenigma.EasterEggHunt.commands.cleareggs;
 import com.modularenigma.EasterEggHunt.commands.eggs;
+import com.modularenigma.EasterEggHunt.commands.counteggs;
 import com.modularenigma.EasterEggHunt.events.EggFindEvent;
 import com.modularenigma.EasterEggHunt.events.EggHatOnHead;
 import com.modularenigma.EasterEggHunt.events.EggHunterOnJoin;
+import com.mysql.cj.jdbc.MysqlDataSource;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Objects;
 
 public class EasterEggHuntMain extends JavaPlugin {
-    private static EasterEggHuntMain instance;
     private PluginConfig config;
     private Connection connection;
     private ConsoleCommandSender console;
-
-    public static EasterEggHuntMain plugin() {
-        assert instance != null;
-        return instance;
-    }
 
     public PluginConfig config() {
         return config;
@@ -32,29 +27,39 @@ public class EasterEggHuntMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        instance = this;
+        // Generate configuration file
+        // plugin.saveDefaultConfig();
         config = new PluginConfig(this);
-//        plugin.saveDefaultConfig(); // Generate configuration file
         console = getServer().getConsoleSender();
 
-        establishConnection(); // Connect to the database
-        EggController.instance().calculateTotalEggs();
+        EggChatController eggChatController = new EggChatController(this);
+        EggWorldController eggWorldController = new EggWorldController(this);
+        EggHatController eggHatController = new EggHatController(this);
+        EggScoreboardController eggScoreboardController = new EggScoreboardController(this);
+
+        // Connect to the database
+        establishConnection();
+
+        // Do an initial calculation of the number of eggs. This can be
+        // manually recalculated with the relevant command.
+        eggWorldController.countEggsInRegion();
+
+        // Plugin Event Register
+        PluginManager pluginmanager = getServer().getPluginManager();
+        pluginmanager.registerEvents(new EggFindEvent(this, eggWorldController, eggChatController, eggHatController, eggScoreboardController), this);
+        pluginmanager.registerEvents(new EggHunterOnJoin(this, eggChatController, eggScoreboardController), this);
+        pluginmanager.registerEvents(new EggHatOnHead(), this);
+
+        // Command Registry
+        Objects.requireNonNull(getCommand("eggs")).setExecutor(new eggs(this, eggChatController));
+        Objects.requireNonNull(getCommand("cleareggs")).setExecutor(new cleareggs(this, eggChatController, eggHatController, eggScoreboardController));
+        Objects.requireNonNull(getCommand("counteggs")).setExecutor(new counteggs(this, eggWorldController, eggScoreboardController));
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");
         console.sendMessage(ChatColor.GREEN + "Running Version: " + getDescription().getVersion());
         console.sendMessage(ChatColor.GREEN + "GitHub Repository: https://github.com/craftingforchrist/EasterEggHunt");
         console.sendMessage(ChatColor.GREEN + "Created By: " + getDescription().getAuthors());
-
-        // Plugin Event Register
-        PluginManager pluginmanager = getServer().getPluginManager();
-        pluginmanager.registerEvents(new EggFindEvent(), this);
-        pluginmanager.registerEvents(new EggHunterOnJoin(), this);
-        pluginmanager.registerEvents(new EggHatOnHead(), this);
-
-        // Command Registry
-        Objects.requireNonNull(getCommand("eggs")).setExecutor(new eggs());
-        Objects.requireNonNull(getCommand("cleareggs")).setExecutor(new cleareggs());
     }
 
     @Override
@@ -64,17 +69,15 @@ public class EasterEggHuntMain extends JavaPlugin {
     }
 
     public void establishConnection() {
-        String host = config.getDatabaseHost();
-        String port = config.getDatabasePort();
-        String database = config.getDatabaseName();
-        String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
-        String username = config.getDatabaseUsername();
-        String password = config.getDatabasePassword();
-
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(url, username, password);
-            getLogger().info(config.getLangDatabaseConnectionSuccess());
+            MysqlDataSource dataSource = new MysqlDataSource();
+            dataSource.setServerName(config.getDatabaseHost());
+            dataSource.setPort(config.getDatabasePort());
+            dataSource.setDatabaseName(config.getDatabaseName());
+            dataSource.setUser(config.getDatabaseUsername());
+            dataSource.setPassword(config.getDatabasePassword());
+            connection = dataSource.getConnection();
         } catch (SQLException | ClassNotFoundException e) {
             getLogger().info(config.getLangDatabaseConnectionError());
             e.printStackTrace();
@@ -82,17 +85,15 @@ public class EasterEggHuntMain extends JavaPlugin {
     }
 
     public Connection getConnection() {
-        if (connection == null) {
-            establishConnection();
-        } else {
+        if (connection != null) {
             try {
                 connection.close();
             } catch (SQLException e) {
                 getLogger().info(config.getLangDatabaseConnectionError());
                 e.printStackTrace();
             }
-            establishConnection();
         }
+        establishConnection();
         return connection;
     }
 }

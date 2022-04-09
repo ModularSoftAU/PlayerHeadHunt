@@ -15,13 +15,10 @@ public class PluginConfig {
     private final FileConfiguration config;
 
     @Getter private final String databaseHost;
-    @Getter private final String databasePort;
+    @Getter private final int databasePort;
     @Getter private final String databaseName;
     @Getter private final String databaseUsername;
     @Getter private final String databasePassword;
-
-    @Getter private final BlockVector3 upperRegion;
-    @Getter private final BlockVector3 lowerRegion;
 
     @Getter private final boolean milestoneHatFeatureEnabled;
     @Getter private final boolean milestoneMessageFeatureEnabled;
@@ -29,7 +26,6 @@ public class PluginConfig {
     @Getter private final String eggBlock;
     @Getter private final int eggRespawnTimer;
     @Getter private final List<String> eggSkins;
-    private int totalEggs;
 
     @Getter private final Sound eggFoundSound;
     @Getter private final Sound eggAlreadyFoundSound;
@@ -51,21 +47,10 @@ public class PluginConfig {
         this.config = plugin.getConfig();
 
         databaseHost = config.getString("DATABASE.HOST");
-        databasePort = config.getString("DATABASE.PORT");
+        databasePort = config.getInt("DATABASE.PORT");
         databaseName = config.getString("DATABASE.DATABASE");
         databaseUsername = config.getString("DATABASE.USERNAME");
         databasePassword = config.getString("DATABASE.PASSWORD");
-
-        upperRegion = BlockVector3.at(
-                config.getInt("REGION.UPPERREGION.X"),
-                config.getInt("REGION.UPPERREGION.Y"),
-                config.getInt("REGION.UPPERREGION.Z")
-        );
-        lowerRegion = BlockVector3.at(
-                config.getInt("REGION.LOWERREGION.X"),
-                config.getInt("REGION.LOWERREGION.Y"),
-                config.getInt("REGION.LOWERREGION.Z")
-        );
 
         milestoneHatFeatureEnabled = config.getBoolean("FEATURE.MILESTONEHAT");
         milestoneMessageFeatureEnabled = config.getBoolean("FEATURE.MILESTONEMESSAGE");
@@ -77,7 +62,6 @@ public class PluginConfig {
         for (int i = 0; i < maxSkins; i++) {
             eggSkins.add(config.getString("EGG.SKINS." + i));
         }
-        totalEggs = config.getInt("EGG.EGGTOTAL");
 
         eggFoundSound = Sound.valueOf(config.getString("SOUND.EGGFOUND"));
         eggAlreadyFoundSound = Sound.valueOf(config.getString("SOUND.EGGALREADYFOUND"));
@@ -105,5 +89,21 @@ public class PluginConfig {
 
     public int getTotalEggs() {
         return config.getInt("EGG.EGGTOTAL");
+    }
+
+    public BlockVector3 getLowerRegion() {
+        return BlockVector3.at(
+                config.getInt("REGION.LOWERREGION.X"),
+                config.getInt("REGION.LOWERREGION.Y"),
+                config.getInt("REGION.LOWERREGION.Z")
+        );
+    }
+
+    public BlockVector3 getUpperRegion() {
+        return BlockVector3.at(
+                config.getInt("REGION.UPPERREGION.X"),
+                config.getInt("REGION.UPPERREGION.Y"),
+                config.getInt("REGION.UPPERREGION.Z")
+        );
     }
 }

@@ -7,18 +7,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 public class EggScoreboardController {
-    private static EggScoreboardController instance;
+    private final EasterEggHuntMain plugin;
 
-    public static EggScoreboardController instance() {
-        if (instance == null)
-            instance = new EggScoreboardController();
-        return instance;
+    public EggScoreboardController(EasterEggHuntMain plugin) {
+        this.plugin = plugin;
     }
 
-    private EggScoreboardController() { }
-
-    public void loadSidebarScoreboard(Player player) {
-        int totalEggs = EasterEggHuntMain.plugin().config().getTotalEggs();
+    public void reloadScoreboard(Player player, int eggsFound) {
+        int totalEggs = plugin.config().getTotalEggs();
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
@@ -26,19 +22,15 @@ public class EggScoreboardController {
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         Score toplinebreak = objective.getScore(" ");
-        toplinebreak.setScore(1);
-
         Score advertisementline = objective.getScore(ChatColor.YELLOW + "craftingforchrist.net");
-        advertisementline.setScore(2);
-
-        int playerHasFound = EggController.instance().getEggs(player);
-        Score eggtotalline = objective.getScore(ChatColor.YELLOW.toString() + ChatColor.BOLD + "Eggs: " + ChatColor.WHITE + playerHasFound + "/" + totalEggs);
-        eggtotalline.setScore(3);
-
+        Score eggtotalline = objective.getScore(ChatColor.YELLOW + "" + ChatColor.BOLD + "Eggs: " + ChatColor.WHITE + eggsFound + "/" + totalEggs);
         Score bottomlinebreak = objective.getScore("  ");
+
+        toplinebreak.setScore(1);
+        advertisementline.setScore(2);
+        eggtotalline.setScore(3);
         bottomlinebreak.setScore(4);
 
         player.setScoreboard(board);
     }
-
 }

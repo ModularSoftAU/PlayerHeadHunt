@@ -13,3 +13,6 @@ commands:
   cleareggs:
     description: Clear all eggs from yourself.
     usage: /cleareggs
+  counteggs:
+    description: Recalculates the number of eggs in the world.
+    usage: /counteggs
