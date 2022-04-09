@@ -63,13 +63,6 @@ public class EggFindEvent implements Listener {
         int x = block.getX();
         int y = block.getY();
         int z = block.getZ();
-        if (EggController.instance().hasAlreadyCollectedEgg(player, x, y, z)) {
-            EggChatController.instance().eggAlreadyFoundResponse(player);
-            event.setCancelled(true);
-        } else {
-            EggController.instance().insertCollectedEgg(player, block, x, y, z);
-            EggScoreboardController.instance().loadSidebarScoreboard(player);
-        }
 
         // This stops the event from firing twice, since the event fires for each hand.
         if (equipSlot.equals(EquipmentSlot.OFF_HAND) ||
@@ -82,6 +75,14 @@ public class EggFindEvent implements Listener {
         String blockType = "" + block.getType();
         if (!EasterEggHuntMain.plugin().config().getEggBlock().equals(blockType))
             return;
+
+        if (EggController.instance().hasAlreadyCollectedEgg(player, x, y, z)) {
+            EggChatController.instance().eggAlreadyFoundResponse(player);
+            event.setCancelled(true);
+        } else {
+            EggController.instance().insertCollectedEgg(player, block, x, y, z);
+            EggScoreboardController.instance().loadSidebarScoreboard(player);
+        }
 
         int foundEggs = EggController.instance().getEggs(player) + 1;
         if (milestones.containsKey(foundEggs)) {
