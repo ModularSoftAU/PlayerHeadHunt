@@ -39,7 +39,6 @@ public class cleareggs implements CommandExecutor {
         if (!EggQuery.clearEggs(plugin, player))
             return true;
 
-        player.sendMessage("All eggs have been cleared.");
         eggChatController.playerClearedTheirEggsResponse(player);
         eggHatController.clearHelmet(player);
         scoreboardController.reloadScoreboard(player, EggQuery.foundEggsCount(plugin, player));

@@ -3,6 +3,7 @@ package com.modularenigma.EasterEggHunt;
 import com.modularenigma.EasterEggHunt.commands.cleareggs;
 import com.modularenigma.EasterEggHunt.commands.eggs;
 import com.modularenigma.EasterEggHunt.commands.counteggs;
+import com.modularenigma.EasterEggHunt.commands.leaderboardeggs;
 import com.modularenigma.EasterEggHunt.events.EggFindEvent;
 import com.modularenigma.EasterEggHunt.events.EggHatOnHead;
 import com.modularenigma.EasterEggHunt.events.EggHunterOnJoin;
@@ -54,6 +55,7 @@ public class EasterEggHuntMain extends JavaPlugin {
         Objects.requireNonNull(getCommand("eggs")).setExecutor(new eggs(this, eggChatController));
         Objects.requireNonNull(getCommand("cleareggs")).setExecutor(new cleareggs(this, eggChatController, eggHatController, eggScoreboardController));
         Objects.requireNonNull(getCommand("counteggs")).setExecutor(new counteggs(this, eggWorldController, eggScoreboardController));
+        Objects.requireNonNull(getCommand("leaderboardeggs")).setExecutor(new leaderboardeggs(this, eggChatController));
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");

@@ -1,12 +1,17 @@
 package com.modularenigma.EasterEggHunt;
 
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EggQuery {
+    public record EggHunter(@Getter String name, @Getter int eggsCollected) { }
+
     /**
      * @param plugin The EasterEggHunt main plugin
      * @param player The player to check
@@ -156,5 +161,33 @@ public class EggQuery {
             player.sendMessage(plugin.config().getLangDatabaseConnectionError());
         }
         return false;
+    }
+
+    /**
+     * @param plugin The EasterEggHunt main plugin
+     * @param player The player who joined
+     * @return Returns true if the player specified was indeed a new player.
+     */
+    public static List<EggHunter> getBestHunters(EasterEggHuntMain plugin, Player player, int topHunters) {
+        List<EggHunter> bestHunters = new ArrayList<>();
+
+        try {
+            // Check if a player has been added into the database already.
+            PreparedStatement getEggHuntersStatement = plugin.getConnection().prepareStatement(
+                    "SELECT username, eggsCollected FROM playerdata ORDER BY eggsCollected LIMIT ?");
+            getEggHuntersStatement.setInt(1, topHunters);
+            ResultSet results = getEggHuntersStatement.executeQuery();
+
+            // The player already exists
+            while (results.next()) {
+                String name = results.getString("username");
+                int eggsCollected = results.getInt("eggsCollected");
+                bestHunters.add(new EggHunter(name, eggsCollected));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            player.sendMessage(plugin.config().getLangDatabaseConnectionError());
+        }
+        return bestHunters;
     }
 }

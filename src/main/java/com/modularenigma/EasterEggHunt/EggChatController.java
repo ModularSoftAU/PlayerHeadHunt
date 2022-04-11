@@ -57,6 +57,10 @@ public class EggChatController {
     }
 
     public void playerClearedTheirEggsResponse(Player player) {
+        player.sendMessage("All eggs have been cleared.");
+    }
 
+    public void showHunterStatsResponse(Player player, EggQuery.EggHunter hunter, int rank) {
+        player.sendMessage(rank + ". " + hunter.name() + " with " + hunter.eggsCollected() + " eggs.");
     }
 }
