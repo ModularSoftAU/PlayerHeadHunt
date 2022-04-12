@@ -174,7 +174,7 @@ public class EggQuery {
         try {
             // Check if a player has been added into the database already.
             PreparedStatement getEggHuntersStatement = plugin.getConnection().prepareStatement(
-                    "SELECT username, eggsCollected FROM playerdata ORDER BY eggsCollected LIMIT ?");
+                    "SELECT username, eggsCollected FROM playerdata ORDER BY eggsCollected DESC LIMIT ?");
             getEggHuntersStatement.setInt(1, topHunters);
             ResultSet results = getEggHuntersStatement.executeQuery();
 

@@ -3,6 +3,7 @@ package com.modularenigma.EasterEggHunt;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class EggChatController {
@@ -27,18 +28,28 @@ public class EggChatController {
         player.sendMessage(message);
     }
 
-    public void eggMilestoneReachedEvent(Player player, Sound eggSound, int eggs) {
+    public void eggMilestoneReachedEvent(Player player, boolean isMajorSound, int eggs) {
         if (!plugin.config().isMilestoneMessageFeatureEnabled())
             return;
 
-        player.playSound(player.getLocation(), eggSound, 1, 1);
+        Sound majorSound = plugin.config().getMajorCollectionSound();
+        Sound minorSound = plugin.config().getMinorCollectionSound();
+
+        if (isMajorSound)
+            player.playSound(player.getLocation(), majorSound, 1, 1);
+        else
+            player.playSound(player.getLocation(), minorSound, 1, 1);
 
         String broadcastMessage = plugin.config().getLangEggCollectionMilestoneReached()
                 .replace("%PLAYER%", player.getName())
                 .replace("%NUMBEROFEGGS%", String.valueOf(eggs));
+
         // Tell other players about the milestone
+        World world = player.getWorld();
+
         for (Player otherPlayers : Bukkit.getOnlinePlayers()) {
             otherPlayers.sendMessage(broadcastMessage);
+            world.playSound(player.getLocation(), minorSound, 1, 1);
         }
     }
 

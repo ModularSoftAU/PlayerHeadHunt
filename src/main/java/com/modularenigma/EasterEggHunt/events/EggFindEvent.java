@@ -26,10 +26,20 @@ public class EggFindEvent implements Listener {
     private final EggScoreboardController eggScoreboardController;
     private final Map<Integer, EggMileStone> milestones = new HashMap<>();
 
-    private record EggMileStone(int atEggsFound, Sound sound, Material helmet) {
+   private class EggMileStone {
+        private final int atEggsFound;
+        private final boolean isMajorSound;
+        private final Material helmet;
+
+        public EggMileStone(int atEggsFound, boolean isMajorSound, Material helmet) {
+            this.atEggsFound = atEggsFound;
+            this.isMajorSound = isMajorSound;
+            this.helmet = helmet;
+        }
+
         public void trigger(EggChatController eggChatController, EggHatController eggHatController,
                             Player player, PlayerInteractEvent event) {
-            eggChatController.eggMilestoneReachedEvent(player, sound, atEggsFound);
+            eggChatController.eggMilestoneReachedEvent(player, isMajorSound, atEggsFound);
             if (helmet != null)
                 eggHatController.equipHelmet(player, Material.LEATHER_HELMET);
             event.setCancelled(true);
@@ -45,27 +55,25 @@ public class EggFindEvent implements Listener {
         this.eggHatController = eggHatController;
         this.eggScoreboardController = eggScoreboardController;
 
-        Sound majorMilestone = plugin.config().getMajorCollectionSound();
-        Sound minorMilestone = plugin.config().getMinorCollectionSound();
-        addMilestone(10, minorMilestone, Material.LEATHER_HELMET);
-        addMilestone(25, minorMilestone, Material.CHAINMAIL_HELMET);
-        addMilestone(50, minorMilestone, Material.IRON_HELMET);
-        addMilestone(100, majorMilestone, Material.GOLDEN_HELMET);
-        addMilestone(150, minorMilestone, null);
-        addMilestone(200, majorMilestone, Material.DIAMOND_HELMET);
-        addMilestone(250, minorMilestone, null);
-        addMilestone(300, majorMilestone, Material.NETHERITE_HELMET);
-        addMilestone(400, majorMilestone, null);
-        addMilestone(500, majorMilestone, null);
-        addMilestone(600, majorMilestone, null);
-        addMilestone(700, majorMilestone, null);
-        addMilestone(800, majorMilestone, null);
-        addMilestone(900, majorMilestone, null);
-        addMilestone(1000, majorMilestone, null);
+        addMilestone(10, false, Material.LEATHER_HELMET);
+        addMilestone(25, false, Material.CHAINMAIL_HELMET);
+        addMilestone(50, false, Material.IRON_HELMET);
+        addMilestone(100, true, Material.GOLDEN_HELMET);
+        addMilestone(150, false, null);
+        addMilestone(200, true, Material.DIAMOND_HELMET);
+        addMilestone(250, false, null);
+        addMilestone(300, true, Material.NETHERITE_HELMET);
+        addMilestone(400, true, null);
+        addMilestone(500, true, null);
+        addMilestone(600, true, null);
+        addMilestone(700, true, null);
+        addMilestone(800, true, null);
+        addMilestone(900, true, null);
+        addMilestone(1000, true, null);
     }
 
-    private void addMilestone(int atEggsFound, Sound sound, Material helmet) {
-        milestones.put(atEggsFound, new EggMileStone(atEggsFound, sound, helmet));
+    private void addMilestone(int atEggsFound, boolean isMajorSound, Material helmet) {
+        milestones.put(atEggsFound, new EggMileStone(atEggsFound, isMajorSound, helmet));
     }
 
     @EventHandler
