@@ -42,6 +42,13 @@ public class PluginConfig {
     @Getter private final String langEggCount;
     @Getter private final String langEggCollectionMilestoneReached;
 
+    @Getter private final String langLeaderboardNoEggs;
+    @Getter private final String langLeaderboardHeader;
+    @Getter private final String langLeaderboardFirstColour;
+    @Getter private final String langLeaderboardSecondColour;
+    @Getter private final String langLeaderboardThirdColour;
+    @Getter private final String langLeaderboardFormat;
+
     public PluginConfig(EasterEggHuntMain plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
@@ -77,6 +84,13 @@ public class PluginConfig {
         langEggAlreadyFound =               ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.EGGALREADYFOUND")));
         langEggCount =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.EGGCOUNT")));
         langEggCollectionMilestoneReached = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED")));
+
+        langLeaderboardNoEggs =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.NOEGGS")));
+        langLeaderboardHeader =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.HEADER")));
+        langLeaderboardFirstColour =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FIRSTCOLOUR")));
+        langLeaderboardSecondColour =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.SECONDCOLOUR")));
+        langLeaderboardThirdColour =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.THIRDCOLOUR")));
+        langLeaderboardFormat =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FORMAT")));
     }
 
     public void save() {

@@ -25,8 +25,8 @@ public class leaderboardeggs implements CommandExecutor {
             return true;
         }
 
-        List<EggQuery.EggHunter> bestHunters = EggQuery.getBestHunters(plugin, player, 10);
-        eggChatController.showHunterStatsResponse(player, bestHunters);
+        List<EggQuery.EggHunter> bestHunters = EggQuery.getBestHunters(plugin, player, 5);
+        eggChatController.showLeaderBoardResponse(player, bestHunters);
         return true;
     }
 }

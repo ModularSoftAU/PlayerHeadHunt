@@ -143,7 +143,8 @@ public class EggQuery {
 
         try {
             // Check if a player has been added into the database already.
-            PreparedStatement findstatement = plugin.getConnection().prepareStatement("SELECT * FROM playerdata WHERE uuid=?");
+            PreparedStatement findstatement = plugin.getConnection().prepareStatement(
+                    "SELECT * FROM playerdata WHERE uuid=?");
             findstatement.setString(1, playerUUID);
             ResultSet results = findstatement.executeQuery();
 
@@ -151,7 +152,8 @@ public class EggQuery {
             if (results.next())
                 return false;
 
-            PreparedStatement insertstatement = plugin.getConnection().prepareStatement("INSERT INTO playerdata (uuid, username) VALUES (?, ?)");
+            PreparedStatement insertstatement = plugin.getConnection().prepareStatement(
+                    "INSERT INTO playerdata (uuid, username) VALUES (?, ?)");
             insertstatement.setString(1, playerUUID);
             insertstatement.setString(2, username);
             insertstatement.executeUpdate();
@@ -165,8 +167,8 @@ public class EggQuery {
 
     /**
      * @param plugin The EasterEggHunt main plugin
-     * @param player The player who joined
-     * @return Returns true if the player specified was indeed a new player.
+     * @param player The player who issued the command
+     * @return Returns a list of the Best Hunters. idx 0 is the best player and so on...
      */
     public static List<EggHunter> getBestHunters(EasterEggHuntMain plugin, Player player, int topHunters) {
         List<EggHunter> bestHunters = new ArrayList<>();
@@ -174,7 +176,7 @@ public class EggQuery {
         try {
             // Check if a player has been added into the database already.
             PreparedStatement getEggHuntersStatement = plugin.getConnection().prepareStatement(
-                    "SELECT username, eggsCollected FROM playerdata ORDER BY eggsCollected DESC LIMIT ?");
+                    "SELECT username, eggsCollected, id FROM playerdata ORDER BY eggsCollected DESC LIMIT ?");
             getEggHuntersStatement.setInt(1, topHunters);
             ResultSet results = getEggHuntersStatement.executeQuery();
 

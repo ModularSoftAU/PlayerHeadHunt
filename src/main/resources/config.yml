@@ -57,3 +57,13 @@ LANG:
     EGGCOUNT: "&eYou have found &l&6%FOUNDEGGS%/%NUMBEROFEGGS% &r&eeggs."
     # Use %PLAYER% to display players name, use %NUMBEROFEGGS% to display number of eggs.
     EGGCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFEGGS% &r&5eggs!"
+  LEADERBOARD:
+    # You can change the length of the header to change where the "centre" is for
+    # the rest of the leaderboard. Keep the line below for reference:
+    # Longest header possible: "&l============================================="
+    HEADER: "&l============================================="
+    NOEGGS: "&lNo one has found any eggs"
+    FIRSTCOLOUR: "&e"
+    SECONDCOLOUR: "&7"
+    THIRDCOLOUR: "&6"
+    FORMAT: "%COLOUR%&l%RANKING%&r&f &7-&r %PLAYER% &7- %NUMBEROFEGGS%"
