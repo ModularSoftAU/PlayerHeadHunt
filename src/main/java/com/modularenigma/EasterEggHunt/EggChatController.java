@@ -5,6 +5,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public class EggChatController {
     private final EasterEggHuntMain plugin;
 
@@ -60,7 +62,20 @@ public class EggChatController {
         player.sendMessage("All eggs have been cleared.");
     }
 
-    public void showHunterStatsResponse(Player player, EggQuery.EggHunter hunter, int rank) {
-        player.sendMessage(rank + ". " + hunter.name() + " with " + hunter.eggsCollected() + " eggs.");
+    public void showHunterStatsResponse(Player player, List<EggQuery.EggHunter> bestHunters) {
+        for (int i = 0; i < bestHunters.size(); i++) {
+            EggQuery.EggHunter hunter = bestHunters.get(i);
+            int rank = i + 1;
+
+            // We probably shouldn't list players who have no eggs.
+            // Once we find a player with 0 eggs then the rest will
+            // also have 0.
+            if (hunter.eggsCollected() == 0)
+                return;
+            
+            // If they only have one egg don't add plural
+            String pluralEnding = hunter.eggsCollected() == 1 ? " egg." : " eggs.";
+            player.sendMessage(rank + ". " + hunter.name() + " with " + hunter.eggsCollected() + pluralEnding);
+        }
     }
 }
