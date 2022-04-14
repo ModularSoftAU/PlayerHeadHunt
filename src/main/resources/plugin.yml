@@ -1,9 +1,9 @@
-main: net.craftingforchrist.EasterEggHunt.EasterEggHuntMain
+main: com.modularenigma.EasterEggHunt.EasterEggHuntMain
 name: EasterEggHunt
-description: An Easter Egg Hunt minigame for the Easter break in collaberation with Katoomba Easter Convention (KEC).
+description: An Easter Egg Hunt minigame for the Easter break for Crafting For Christ.
 version: ${project.version}
-author: Crafting For Christ, Ben Robson
-api-version: 1.16
+authors: [Crafting For Christ, Ben Robson, ModularEnigma]
+api-version: 1.18
 depend: [WorldEdit]
 
 commands:
@@ -13,3 +13,10 @@ commands:
   cleareggs:
     description: Clear all eggs from yourself.
     usage: /cleareggs
+  counteggs:
+    description: Recalculates the number of eggs in the world.
+    usage: /counteggs
+  leaderboardeggs:
+    description: Show the 10 best egg hunters in the world.
+    usage: /leaderboardeggs
+    aliases: [lb, leaderboard]

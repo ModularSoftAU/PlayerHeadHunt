@@ -1,9 +1,15 @@
+#DATABASE:
+#  HOST: "localhost"
+#  PORT: "3306"
+#  DATABASE: "EasterEggHunt"
+#  USERNAME: "root"
+#  PASSWORD: "root"
 DATABASE:
-  HOST: "localhost"
-  PORT: "3306"
+  HOST: "127.0.0.1"
+  PORT: 3306
   DATABASE: "EasterEggHunt"
-  USERNAME: "root"
-  PASSWORD: "root"
+  USERNAME: "jaedanc"
+  PASSWORD: "applesTOapples123$%"
 REGION:
   UPPERREGION:
     X: -54
@@ -37,6 +43,25 @@ SOUND:
   EGGALREADYFOUND: "BLOCK_NOTE_BLOCK_BASS"
   MINORCOLLECTIONMILESTONE: "ENTITY_PLAYER_LEVELUP"
   MAJORCOLLECTIONMILESTONE: "UI_TOAST_CHALLENGE_COMPLETE"
+MILESTONES:
+  MINOR:
+    - 16
+    - 32
+    - 64
+    - 96
+    - 160
+    - 192
+    - 224
+  MAJOR:
+    - 128
+    - 256
+  # These need to match up 1 to 1 with a milestone above
+  LEATHERHELMET: 16
+  CHAINMAILHELMET: 32
+  IRONHELMET: 64
+  GOLDENHELMET: 128
+  DIAMONDHELMET: 192
+  NETHERITEHELMET: 256 # Should equal the egg count for maximum results.
 LANG:
   DATABASE:
     CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
@@ -47,7 +72,19 @@ LANG:
     COMMANDINCOMPLETE: "&cThis command is incomplete, please refer to the command guide for reference."
   EGG:
     EGGFOUND: "&aYou have found an egg (%FOUNDEGGS%/%NUMBEROFEGGS%)"
+    FIRSTEGGFOUND: "&e&l%PLAYER% &5has found their first egg!"
+    LASTEGGFOUND: "&e&l%PLAYER% &5has found all &e&l%NUMBEROFEGGS% &r&5eggs!"
     EGGALREADYFOUND: "&eYou have already found this egg."
     EGGCOUNT: "&eYou have found &l&6%FOUNDEGGS%/%NUMBEROFEGGS% &r&eeggs."
     # Use %PLAYER% to display players name, use %NUMBEROFEGGS% to display number of eggs.
     EGGCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFEGGS% &r&5eggs!"
+  LEADERBOARD:
+    # You can change the length of the header to change where the "centre" is for
+    # the rest of the leaderboard. Keep the line below for reference:
+    # Longest header possible: "&l============================================="
+    HEADER: "&l============================================="
+    NOEGGS: "&lNo one has found any eggs"
+    FIRSTCOLOUR: "&e"
+    SECONDCOLOUR: "&7"
+    THIRDCOLOUR: "&6"
+    FORMAT: "%COLOUR%&l%RANKING%&r&f &7-&r %PLAYER% &7- %NUMBEROFEGGS%"
