@@ -19,3 +19,4 @@ commands:
   leaderboardeggs:
     description: Show the 10 best egg hunters in the world.
     usage: /leaderboardeggs
+    aliases: [lb, leaderboard]
