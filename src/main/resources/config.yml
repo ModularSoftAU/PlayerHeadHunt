@@ -43,6 +43,25 @@ SOUND:
   EGGALREADYFOUND: "BLOCK_NOTE_BLOCK_BASS"
   MINORCOLLECTIONMILESTONE: "ENTITY_PLAYER_LEVELUP"
   MAJORCOLLECTIONMILESTONE: "UI_TOAST_CHALLENGE_COMPLETE"
+MILESTONES:
+  MINOR:
+    - 16
+    - 32
+    - 64
+    - 96
+    - 160
+    - 192
+    - 224
+  MAJOR:
+    - 128
+    - 256
+  # These need to match up 1 to 1 with a milestone above
+  LEATHERHELMET: 16
+  CHAINMAILHELMET: 32
+  IRONHELMET: 64
+  GOLDENHELMET: 128
+  DIAMONDHELMET: 192
+  NETHERITEHELMET: 256 # Should equal the egg count for maximum results.
 LANG:
   DATABASE:
     CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
@@ -53,6 +72,8 @@ LANG:
     COMMANDINCOMPLETE: "&cThis command is incomplete, please refer to the command guide for reference."
   EGG:
     EGGFOUND: "&aYou have found an egg (%FOUNDEGGS%/%NUMBEROFEGGS%)"
+    FIRSTEGGFOUND: "&e&l%PLAYER% &5has found their first egg!"
+    LASTEGGFOUND: "&e&l%PLAYER% &5has found all &e&l%NUMBEROFEGGS% &r&5eggs!"
     EGGALREADYFOUND: "&eYou have already found this egg."
     EGGCOUNT: "&eYou have found &l&6%FOUNDEGGS%/%NUMBEROFEGGS% &r&eeggs."
     # Use %PLAYER% to display players name, use %NUMBEROFEGGS% to display number of eggs.

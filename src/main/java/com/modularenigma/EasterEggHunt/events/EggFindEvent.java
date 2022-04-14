@@ -5,8 +5,7 @@ import com.modularenigma.EasterEggHunt.EasterEggHuntMain;
 import com.modularenigma.EasterEggHunt.EggChatController;
 import com.modularenigma.EasterEggHunt.EggWorldController;
 import com.modularenigma.EasterEggHunt.EggHatController;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import com.modularenigma.EasterEggHunt.helpers.EggMileStone;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,7 +14,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class EggFindEvent implements Listener {
@@ -24,27 +22,7 @@ public class EggFindEvent implements Listener {
     private final EggChatController eggChatController;
     private final EggHatController eggHatController;
     private final EggScoreboardController eggScoreboardController;
-    private final Map<Integer, EggMileStone> milestones = new HashMap<>();
-
-   private class EggMileStone {
-        private final int atEggsFound;
-        private final boolean isMajorSound;
-        private final Material helmet;
-
-        public EggMileStone(int atEggsFound, boolean isMajorSound, Material helmet) {
-            this.atEggsFound = atEggsFound;
-            this.isMajorSound = isMajorSound;
-            this.helmet = helmet;
-        }
-
-        public void trigger(EggChatController eggChatController, EggHatController eggHatController,
-                            Player player, PlayerInteractEvent event) {
-            eggChatController.eggMilestoneReachedEvent(player, isMajorSound, atEggsFound);
-            if (helmet != null)
-                eggHatController.equipHelmet(player, Material.LEATHER_HELMET);
-            event.setCancelled(true);
-        }
-    }
+    private final Map<Integer, EggMileStone> milestones;
 
     public EggFindEvent(EasterEggHuntMain plugin, EggWorldController eggWorldController,
                         EggChatController eggChatController, EggHatController eggHatController,
@@ -54,26 +32,7 @@ public class EggFindEvent implements Listener {
         this.eggChatController = eggChatController;
         this.eggHatController = eggHatController;
         this.eggScoreboardController = eggScoreboardController;
-
-        addMilestone(10, false, Material.LEATHER_HELMET);
-        addMilestone(25, false, Material.CHAINMAIL_HELMET);
-        addMilestone(50, false, Material.IRON_HELMET);
-        addMilestone(100, true, Material.GOLDEN_HELMET);
-        addMilestone(150, false, null);
-        addMilestone(200, true, Material.DIAMOND_HELMET);
-        addMilestone(250, false, null);
-        addMilestone(300, true, Material.NETHERITE_HELMET);
-        addMilestone(400, true, null);
-        addMilestone(500, true, null);
-        addMilestone(600, true, null);
-        addMilestone(700, true, null);
-        addMilestone(800, true, null);
-        addMilestone(900, true, null);
-        addMilestone(1000, true, null);
-    }
-
-    private void addMilestone(int atEggsFound, boolean isMajorSound, Material helmet) {
-        milestones.put(atEggsFound, new EggMileStone(atEggsFound, isMajorSound, helmet));
+        this.milestones = plugin.config().getEggMilestones();
     }
 
     @EventHandler
@@ -97,6 +56,11 @@ public class EggFindEvent implements Listener {
 
         int foundEggs = EggQuery.foundEggsCount(plugin, player);
         eggScoreboardController.reloadScoreboard(player, foundEggs);
+
+        if (foundEggs == 1) {
+            eggChatController.eggMilestoneReachedEvent(player, false, foundEggs);
+            return;
+        }
 
         // Trigger any milestones if they are relevant. We'll use the milestone text if it's available
         // otherwise we'll draw the default text to the screen.

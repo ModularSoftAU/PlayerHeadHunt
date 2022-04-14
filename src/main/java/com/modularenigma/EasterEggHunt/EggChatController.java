@@ -44,11 +44,25 @@ public class EggChatController {
         else
             player.playSound(player.getLocation(), minorSound, 1, 1);
 
+        // Congratulate the player on their first egg but don't tell everyone
+        if (eggs == 1) {
+            player.sendMessage(plugin.config().getLangFirstEggFound()
+                    .replace("%PLAYER%", player.getName()));
+            return;
+        }
+
         // Tell other players about the milestone
-        World world = player.getWorld();
-        String broadcastMessage = plugin.config().getLangEggCollectionMilestoneReached()
+        String broadcastMessage;
+        if (eggs == plugin.config().getTotalEggs()) {
+            broadcastMessage = plugin.config().getLangLastEggFound();
+        } else {
+            broadcastMessage = plugin.config().getLangEggCollectionMilestoneReached();
+        }
+        broadcastMessage = broadcastMessage
                 .replace("%PLAYER%", player.getName())
                 .replace("%NUMBEROFEGGS%", String.valueOf(eggs));
+
+        World world = player.getWorld();
         for (Player otherPlayers : Bukkit.getOnlinePlayers()) {
             otherPlayers.sendMessage(broadcastMessage);
             world.playSound(player.getLocation(), minorSound, 1, 1);

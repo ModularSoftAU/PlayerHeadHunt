@@ -1,14 +1,14 @@
 package com.modularenigma.EasterEggHunt;
 
+import com.modularenigma.EasterEggHunt.helpers.EggMileStone;
 import com.sk89q.worldedit.math.BlockVector3;
 import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class PluginConfig {
     private final EasterEggHuntMain plugin;
@@ -32,12 +32,16 @@ public class PluginConfig {
     @Getter private final Sound minorCollectionSound;
     @Getter private final Sound majorCollectionSound;
 
+    @Getter private final Map<Integer, EggMileStone> eggMilestones;
+
     @Getter private final String langDatabaseConnectionError;
     @Getter private final String langDatabaseConnectionSuccess;
     @Getter private final String langNotAPlayer;
     @Getter private final String langInsufficientPermissions;
     @Getter private final String langCommandIncomplete;
     @Getter private final String langEggFound;
+    @Getter private final String langFirstEggFound;
+    @Getter private final String langLastEggFound;
     @Getter private final String langEggAlreadyFound;
     @Getter private final String langEggCount;
     @Getter private final String langEggCollectionMilestoneReached;
@@ -75,12 +79,26 @@ public class PluginConfig {
         minorCollectionSound = Sound.valueOf(config.getString("SOUND.MINORCOLLECTIONMILESTONE"));
         majorCollectionSound = Sound.valueOf(config.getString("SOUND.MAJORCOLLECTIONMILESTONE"));
 
+        eggMilestones = new HashMap<>();
+        for (Integer minor : config.getIntegerList("MILESTONES.MINOR"))
+            eggMilestones.put(minor, new EggMileStone(minor, false));
+        for (Integer minor : config.getIntegerList("MILESTONES.MAJOR"))
+            eggMilestones.put(minor, new EggMileStone(minor, true));
+        eggMilestones.get(config.getInt("MILESTONES.LEATHERHELMET")).setHelmet(Material.LEATHER_HELMET);
+        eggMilestones.get(config.getInt("MILESTONES.CHAINMAILHELMET")).setHelmet(Material.CHAINMAIL_HELMET);
+        eggMilestones.get(config.getInt("MILESTONES.IRONHELMET")).setHelmet(Material.IRON_HELMET);
+        eggMilestones.get(config.getInt("MILESTONES.GOLDENHELMET")).setHelmet(Material.GOLDEN_HELMET);
+        eggMilestones.get(config.getInt("MILESTONES.DIAMONDHELMET")).setHelmet(Material.DIAMOND_HELMET);
+        eggMilestones.get(config.getInt("MILESTONES.NETHERITEHELMET")).setHelmet(Material.NETHERITE_HELMET);
+
         langDatabaseConnectionError =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONERROR")));
         langDatabaseConnectionSuccess =     ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONSUCCESS")));
         langNotAPlayer =                    ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.NOTAPLAYER")));
         langInsufficientPermissions =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.INSUFFICENTPERMISSIONS")));
         langCommandIncomplete =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.COMMANDINCOMPLETE")));
         langEggFound =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.EGGFOUND")));
+        langFirstEggFound =                 ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.FIRSTEGGFOUND")));
+        langLastEggFound =                  ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.LASTEGGFOUND")));
         langEggAlreadyFound =               ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.EGGALREADYFOUND")));
         langEggCount =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.EGGCOUNT")));
         langEggCollectionMilestoneReached = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.EGG.EGGCOLLECTIONMILESTONEREACHED")));
