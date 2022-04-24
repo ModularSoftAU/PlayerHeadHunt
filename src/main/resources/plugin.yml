@@ -2,7 +2,7 @@ main: com.modularenigma.EasterEggHunt.EasterEggHuntMain
 name: EasterEggHunt
 description: An Easter Egg Hunt minigame for the Easter break for Crafting For Christ.
 version: ${project.version}
-authors: [Crafting For Christ, Ben Robson, ModularEnigma]
+author: ModularEnigma
 api-version: 1.18
 depend: [WorldEdit]
 
