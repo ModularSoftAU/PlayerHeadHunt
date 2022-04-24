@@ -16,7 +16,7 @@ commands:
   counteggs:
     description: Recalculates the number of eggs in the world.
     usage: /counteggs
-  leaderboardeggs:
-    description: Show the 10 best egg hunters in the world.
-    usage: /leaderboardeggs
-    aliases: [lb, leaderboard]
+  leaderboard:
+    description: Show the 5 best egg hunters in the world.
+    usage: /leaderboard
+    aliases: [lb]

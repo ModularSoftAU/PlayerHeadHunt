@@ -1,9 +1,6 @@
 # Easter Egg Hunt
-Maintained By: [Ben Robson](https://github.com/benrobson) <br>
 
 ## Dependencies
-This Easter Egg Hunt minigame depends on 2 plugins, 1 of which is optional.<br>
-- `HolographicDisplays` is an option dependency which would be required if you would like a hologram of the Egg Hunter Leaderboard.
 - `WorldEdit` is **required** since it is used to count all of the eggs in the hunting region.
 
 ## Gameplay
@@ -29,7 +26,9 @@ To symbolise to other people in the Egg Hunt where people are at, every goal ach
 To avoid hunters following other players to collect their eggs, eggs will disappear and reappear in a configurable option `EGG.RESPAWNTIMER`
 
 ## Commands
-| Command        | Description                            | Permission                |
-|----------------|----------------------------------------|---------------------------|
-| /eggs          | See how many eggs you have.            |                           |
-| /cleareggs     | Clear all eggs from yourself.          | `easteregghunt.clearegg`  |
+| Command      | Description                                   | Permission                |
+|--------------|-----------------------------------------------|---------------------------|
+| /eggs        | Grab the amount of eggs you have.             |                           |
+| /cleareggs   | Clear all eggs from yourself.                 | `easteregghunt.clearegg`  |
+| /counteggs   | Recalculates the number of eggs in the world. | `easteregghunt.counteggs` |
+| /leaderboard | Show the 5 best egg hunters in the world.     |                           |
