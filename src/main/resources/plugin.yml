@@ -3,7 +3,7 @@ name: EasterEggHunt
 description: An Easter Egg Hunt minigame for the Easter break for Crafting For Christ.
 version: ${project.version}
 author: ModularEnigma
-api-version: 1.18
+api-version: 1.19.4
 depend: [WorldEdit]
 
 commands:
@@ -16,7 +16,7 @@ commands:
   counteggs:
     description: Recalculates the number of eggs in the world.
     usage: /counteggs
-  leaderboard:
+  leaderboardeggs:
     description: Show the 5 best egg hunters in the world.
-    usage: /leaderboard
+    usage: /leaderboardeggs
     aliases: [lb]
