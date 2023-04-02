@@ -1,13 +1,13 @@
-package com.modularenigma.EasterEggHunt.events;
+package org.modularsoft.PlayerHeadHunt.events;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 
-public class EggHatOnHead implements Listener {
+public class HeadHatOnHead implements Listener {
     @EventHandler
-    public void onEggHat(InventoryClickEvent event) {
+    public void onHeadHat(InventoryClickEvent event) {
         if (event.getSlotType().equals(InventoryType.SlotType.ARMOR)) {
             event.setCancelled(true);
         }

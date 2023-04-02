@@ -1,22 +1,25 @@
-main: com.modularenigma.EasterEggHunt.EasterEggHuntMain
-name: EasterEggHunt
-description: An Easter Egg Hunt minigame for the Easter break for Crafting For Christ.
+main: org.modularsoft.PlayerHeadHunt.PlayerHeadHuntMain
+name: PlayerHeadHunt
+description: An Player Head Hunt minigame.
 version: ${project.version}
-author: ModularEnigma
-api-version: 1.18
+author: ModularSoft
+api-version: 1.19
 depend: [WorldEdit]
 
 commands:
-  eggs:
-    description: Grab the amount of eggs you have.
-    usage: /eggs
-  cleareggs:
-    description: Clear all eggs from yourself.
-    usage: /cleareggs
-  counteggs:
-    description: Recalculates the number of eggs in the world.
-    usage: /counteggs
+  heads:
+    description: Grab the amount of heads you have.
+    usage: /heads
+    aliases: [eggs]
+  clearheads:
+    description: Clear all heads from yourself.
+    usage: /clearheads
+    aliases: [cleareggs]
+  countheads:
+    description: Recalculates the number of heads in the world.
+    usage: /countheads
+    aliases: [counteggs]
   leaderboard:
-    description: Show the 5 best egg hunters in the world.
+    description: Show the 5 best heads hunters on the Server.
     usage: /leaderboard
     aliases: [lb]

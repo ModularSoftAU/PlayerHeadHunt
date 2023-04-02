@@ -1,4 +1,4 @@
-package com.modularenigma.EasterEggHunt;
+package org.modularsoft.PlayerHeadHunt;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
@@ -29,69 +29,69 @@ import java.util.UUID;
 /**
  * This class controls any functionality that requires access to the world.
  */
-public class EggWorldController {
-    private final EasterEggHuntMain plugin;
+public class HeadWorldController {
+    private final PlayerHeadHuntMain plugin;
 
-    public EggWorldController(EasterEggHuntMain plugin) {
+    public HeadWorldController(PlayerHeadHuntMain plugin) {
         this.plugin = plugin;
     }
 
     /**
      * Using the lower region and upper region areas in the config file, count the
-     * number of eggs in the region (technically it counts the number of player heads)
-     * and update the "totalEggs" field in the config to reflect the answer.
+     * number of heads in the region (technically it counts the number of player heads)
+     * and update the "totalHeads" field in the config to reflect the answer.
      *
-     * Note: Eggs that have disappeared temporarily will not show up in this count.
+     * Note: Heads that have disappeared temporarily will not show up in this count.
      */
-    public void countEggsInRegion() {
-        String eggBlock = plugin.config().getEggBlock().toLowerCase();
+    public void countHeadsInRegion() {
+        String headBlock = plugin.config().getHeadBlock().toLowerCase();
         BlockVector3 upperRegion = plugin.config().getUpperRegion();
         BlockVector3 lowerRegion = plugin.config().getLowerRegion();
 
         World world = BukkitAdapter.adapt(Objects.requireNonNull(Bukkit.getServer().getWorld("world")));
         Region selection = new CuboidRegion(world, upperRegion, lowerRegion);
-        Mask mask = new BlockTypeMask(world, BlockTypes.get(eggBlock));
+        Mask mask = new BlockTypeMask(world, BlockTypes.get(headBlock));
 
         try (EditSession editSession = WorldEdit.getInstance().newEditSession(world)) {
             int countedblocks = editSession.countBlocks(selection, mask);
-            plugin.getServer().getConsoleSender().sendMessage("There are " + countedblocks + " total eggs in the region");
+            plugin.getServer().getConsoleSender().sendMessage("There are " + countedblocks + " total heads in the region");
 
             // Put total amount into config file.
-            plugin.config().setTotalEggs(countedblocks);
+            plugin.config().setTotalHeads(countedblocks);
             plugin.config().save();
         }
     }
 
-    public void playerCollectedEgg(Player player, Block block, int x, int y, int z) {
-        EggQuery.insertCollectedEgg(plugin, player, x, y, z);
+    public void playerCollectedHead(Player player, Block block, int x, int y, int z) {
+        HeadQuery.insertCollectedHead(plugin, player, x, y, z);
         Material blockType = block.getType();
         BlockData blockData = block.getBlockData();
 
         // Break and set the block to be replaced later
-        int eggRespawnTimer = plugin.config().getEggRespawnTimer();
+        int headRespawnTimer = plugin.config().getHeadRespawnTimer();
 
         breakBlock(x, y, z);
         new BukkitRunnable() {
             @Override
             public void run() {
-                replaceEggBlock(blockType, blockData, x, y, z);
+                replaceHeadBlock(blockType, blockData, x, y, z);
             }
-        }.runTaskLater(plugin, eggRespawnTimer);
+        }.runTaskLater(plugin, headRespawnTimer);
 
     }
 
     private void breakBlock(int x, int y, int z) {
-        Location eggBlock = new Location(Bukkit.getWorld("world"), x, y, z);
-        eggBlock.getBlock().setType(Material.AIR);
+        Location headBlock = new Location(Bukkit.getWorld("world"), x, y, z);
+        headBlock.getBlock().setType(Material.AIR);
     }
 
-    private void replaceEggBlock(Material eggMaterialBlock, BlockData blockData, int x, int y, int z) {
-        Location eggBlockLocation = new Location(Bukkit.getWorld("world"), x, y, z);
-        eggBlockLocation.getBlock().setType(eggMaterialBlock);
-        eggBlockLocation.getBlock().setBlockData(blockData);
+    private void replaceHeadBlock(Material headMaterialBlock, BlockData blockData, int x, int y, int z) {
+        Location headBlockLocation = new Location(Bukkit.getWorld("world"), x, y, z);
+        headBlockLocation.getBlock().setType(headMaterialBlock);
+        headBlockLocation.getBlock().setBlockData(blockData);
 
-        BlockState eggBlockState = eggBlockLocation.getBlock().getState();
-        if (eggBlockState instanceof Skull skull) {
+        BlockState headBlockState = headBlockLocation.getBlock().getState();
+        if (headBlockState instanceof Skull skull) {
             PlayerProfile profile = Bukkit.getServer().createProfile(UUID.randomUUID());
             profile.setProperty(new ProfileProperty("textures", getRandomHead()));
 
@@ -102,7 +102,7 @@ public class EggWorldController {
 
     private String getRandomHead() {
         Random random = new Random();
-        int skins = plugin.config().getEggSkins().size();
-        return plugin.config().getEggSkins().get(random.nextInt(0, skins));
+        int skins = plugin.config().getHeadSkins().size();
+        return plugin.config().getHeadSkins().get(random.nextInt(0, skins));
     }
 }
