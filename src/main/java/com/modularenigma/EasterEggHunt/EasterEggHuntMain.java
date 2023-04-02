@@ -55,7 +55,7 @@ public class EasterEggHuntMain extends JavaPlugin {
         Objects.requireNonNull(getCommand("eggs")).setExecutor(new eggs(this, eggChatController));
         Objects.requireNonNull(getCommand("cleareggs")).setExecutor(new cleareggs(this, eggChatController, eggHatController, eggScoreboardController));
         Objects.requireNonNull(getCommand("counteggs")).setExecutor(new counteggs(this, eggWorldController, eggScoreboardController));
-        Objects.requireNonNull(getCommand("leaderboardeggs")).setExecutor(new leaderboardeggs(this, eggChatController));
+//        Objects.requireNonNull(getCommand("leaderboardeggs")).setExecutor(new leaderboardeggs(this, eggChatController));
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");
