@@ -59,7 +59,6 @@ public class HeadQuery {
             resetHeadCountStatement.setString(1, playerUUID);
             resetHeadCountStatement.executeUpdate();
             return true;
-
         } catch (SQLException e) {
             e.printStackTrace();
             player.sendMessage(plugin.config().getLangDatabaseConnectionError());
@@ -123,7 +122,7 @@ public class HeadQuery {
             insertCollectedHeadStatement.executeUpdate();
 
             PreparedStatement updatePlayersHeadsCollectedStatement = plugin.getConnection().prepareStatement(
-                    "UPDATE heads SET headsCollected = headsCollected + 1 WHERE uuid = ?");
+                    "UPDATE playerdata SET headsCollected = headsCollected + 1 WHERE uuid = ?");
             updatePlayersHeadsCollectedStatement.setString(1, "" + player.getUniqueId());
             updatePlayersHeadsCollectedStatement.executeUpdate();
         } catch (SQLException e) {
