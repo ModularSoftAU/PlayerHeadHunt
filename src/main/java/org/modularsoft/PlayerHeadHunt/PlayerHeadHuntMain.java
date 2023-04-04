@@ -3,7 +3,7 @@ package org.modularsoft.PlayerHeadHunt;
 import org.modularsoft.PlayerHeadHunt.commands.clearheads;
 import org.modularsoft.PlayerHeadHunt.commands.heads;
 import org.modularsoft.PlayerHeadHunt.commands.countheads;
-import org.modularsoft.PlayerHeadHunt.commands.leaderboardheads;
+import org.modularsoft.PlayerHeadHunt.commands.leaderboard;
 import org.modularsoft.PlayerHeadHunt.events.HeadFindEvent;
 import org.modularsoft.PlayerHeadHunt.events.HeadHatOnHead;
 import org.modularsoft.PlayerHeadHunt.events.HeadHunterOnJoin;
@@ -55,7 +55,7 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));
         Objects.requireNonNull(getCommand("clearheads")).setExecutor(new clearheads(this, headChatController, headHatController, headScoreboardController));
         Objects.requireNonNull(getCommand("countheads")).setExecutor(new countheads(this, headWorldController, headScoreboardController));
-        Objects.requireNonNull(getCommand("leaderboardheads")).setExecutor(new leaderboardheads(this, headChatController));
+        Objects.requireNonNull(getCommand("leaderboard")).setExecutor(new leaderboard(this, headChatController));
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");

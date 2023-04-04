@@ -10,15 +10,15 @@ commands:
   heads:
     description: Grab the amount of heads you have.
     usage: /heads
-    aliases: [eggs]
+    aliases: [eggs, presents]
   clearheads:
     description: Clear all heads from yourself.
     usage: /clearheads
-    aliases: [cleareggs]
+    aliases: [cleareggs, clearpresents]
   countheads:
     description: Recalculates the number of heads in the world.
     usage: /countheads
-    aliases: [counteggs]
+    aliases: [counteggs, countpresents]
   leaderboard:
     description: Show the 5 best heads hunters on the Server.
     usage: /leaderboard

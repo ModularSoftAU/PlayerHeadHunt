@@ -11,11 +11,11 @@ import org.modularsoft.PlayerHeadHunt.PlayerHeadHuntMain;
 
 import java.util.List;
 
-public class leaderboardheads implements CommandExecutor {
+public class leaderboard implements CommandExecutor {
     private final PlayerHeadHuntMain plugin;
     private final HeadChatController headChatController;
 
-    public leaderboardheads(PlayerHeadHuntMain plugin, HeadChatController headChatController) {
+    public leaderboard(PlayerHeadHuntMain plugin, HeadChatController headChatController) {
         this.plugin = plugin;
         this.headChatController = headChatController;
     }

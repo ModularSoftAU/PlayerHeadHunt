@@ -70,21 +70,21 @@ LANG:
     NOTAPLAYER: "&cYou must be a player to run this command."
     INSUFFICENTPERMISSIONS: "&cYou do not have permission to use this command."
     COMMANDINCOMPLETE: "&cThis command is incomplete, please refer to the command guide for reference."
-  EGG:
-    EGGFOUND: "&aYou have found an egg (%FOUNDEGGS%/%NUMBEROFEGGS%)"
-    FIRSTEGGFOUND: "&e&l%PLAYER% &5has found their first egg!"
-    LASTEGGFOUND: "&e&l%PLAYER% &5has found all &e&l%NUMBEROFEGGS% &r&5eggs!"
-    EGGALREADYFOUND: "&eYou have already found this egg."
-    EGGCOUNT: "&eYou have found &l&6%FOUNDEGGS%/%NUMBEROFEGGS% &r&eeggs."
-    # Use %PLAYER% to display players name, use %NUMBEROFEGGS% to display number of eggs.
-    EGGCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFEGGS% &r&5eggs!"
+  HEAD:
+    HEADFOUND: "&aYou have found an egg (%FOUNDHEADS%/%NUMBEROFHEADS%)"
+    FIRSTHEADFOUND: "&e&l%PLAYER% &5has found their first egg!"
+    LASTHEADFOUND: "&e&l%PLAYER% &5has found all &e&l%NUMBEROFHEADS% &r&5eggs!"
+    HEADALREADYFOUND: "&eYou have already found this egg."
+    HEADCOUNT: "&eYou have found &l&6%FOUNDHEADS%/%NUMBEROFHEADS% &r&eheads."
+    # Use %PLAYER% to display players name, use %NUMBEROFHEADS% to display number of eggs.
+    HEADCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFHEADS% &r&5eggs!"
   LEADERBOARD:
     # You can change the length of the header to change where the "centre" is for
     # the rest of the leaderboard. Keep the line below for reference:
     # Longest header possible: "&l============================================="
     HEADER: "&l============================================="
-    NOEGGS: "&lNo one has found any eggs"
+    NOHEADS: "&lNo one has found any heads."
     FIRSTCOLOUR: "&e"
     SECONDCOLOUR: "&7"
     THIRDCOLOUR: "&6"
-    FORMAT: "%COLOUR%&l%RANKING%&r&f &7-&r %PLAYER% &7- %NUMBEROFEGGS%"
+    FORMAT: "%COLOUR%&l%RANKING%&r&f &7-&r %PLAYER% &7- %NUMBEROFHEADS%"
