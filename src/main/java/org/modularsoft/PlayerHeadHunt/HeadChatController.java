@@ -1,10 +1,7 @@
 package org.modularsoft.PlayerHeadHunt;
 
+import org.bukkit.*;
 import org.modularsoft.PlayerHeadHunt.helpers.DefaultFontInfo;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -174,6 +171,26 @@ public class HeadChatController {
         } else {
             for (int i = 0; i < bestHunters.size(); i++) {
                 HeadQuery.HeadHunter hunter = bestHunters.get(i);
+
+                // If hunter has playerheadhunt.leaderboardexempt permission node
+                // Exclude from leaderboard results
+                Player hunterlb = Bukkit.getPlayer(hunter.getName());
+                boolean isOnline = hunterlb.isOnline();
+
+                if (!isOnline) {
+                    OfflinePlayer hunterPlayer = Bukkit.getOfflinePlayer(hunter.getName());
+                    Player offlineHunterPlayer = hunterPlayer.getPlayer();
+                    boolean isLeaderboardExempt = offlineHunterPlayer.hasPermission("playerheadhunt.leaderboardexempt");
+                    if (!isLeaderboardExempt) {
+                        return;
+                    }
+                } else {
+                    Player onlineHunterPlayer = Bukkit.getPlayer(hunter.getName());
+                    boolean isLeaderboardExempt = onlineHunterPlayer.hasPermission("playerheadhunt.leaderboardexempt");
+                    if (!isLeaderboardExempt) {
+                        return;
+                    }
+                }
 
                 // We probably shouldn't list players who have no heads.
                 // Once we find a player with 0 heads then the rest will
