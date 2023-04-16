@@ -1,20 +1,20 @@
-package com.modularenigma.EasterEggHunt.commands;
+package org.modularsoft.PlayerHeadHunt.commands;
 
-import com.modularenigma.EasterEggHunt.EasterEggHuntMain;
-import com.modularenigma.EasterEggHunt.EggChatController;
+import org.modularsoft.PlayerHeadHunt.PlayerHeadHuntMain;
+import org.modularsoft.PlayerHeadHunt.HeadChatController;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class eggs implements CommandExecutor {
-    private final EasterEggHuntMain plugin;
-    private final EggChatController eggChatController;
+public class heads implements CommandExecutor {
+    private final PlayerHeadHuntMain plugin;
+    private final HeadChatController headChatController;
 
-    public eggs(EasterEggHuntMain plugin, EggChatController eggChatController) {
+    public heads(PlayerHeadHuntMain plugin, HeadChatController headChatController) {
         this.plugin = plugin;
-        this.eggChatController = eggChatController;
+        this.headChatController = headChatController;
     }
 
     @Override
@@ -24,7 +24,7 @@ public class eggs implements CommandExecutor {
             return true;
         }
 
-        eggChatController.playersOwnEggCountResponse(player);
+        headChatController.playersOwnHeadCountResponse(player);
         return true;
     }
 

@@ -1,12 +1,12 @@
-package com.modularenigma.EasterEggHunt;
+package org.modularsoft.PlayerHeadHunt;
 
-import com.modularenigma.EasterEggHunt.commands.cleareggs;
-import com.modularenigma.EasterEggHunt.commands.eggs;
-import com.modularenigma.EasterEggHunt.commands.counteggs;
-import com.modularenigma.EasterEggHunt.commands.leaderboardeggs;
-import com.modularenigma.EasterEggHunt.events.EggFindEvent;
-import com.modularenigma.EasterEggHunt.events.EggHatOnHead;
-import com.modularenigma.EasterEggHunt.events.EggHunterOnJoin;
+import org.modularsoft.PlayerHeadHunt.commands.clearheads;
+import org.modularsoft.PlayerHeadHunt.commands.heads;
+import org.modularsoft.PlayerHeadHunt.commands.countheads;
+import org.modularsoft.PlayerHeadHunt.commands.leaderboard;
+import org.modularsoft.PlayerHeadHunt.events.HeadFindEvent;
+import org.modularsoft.PlayerHeadHunt.events.HeadHatOnHead;
+import org.modularsoft.PlayerHeadHunt.events.HeadHunterOnJoin;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -17,7 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
 
-public class EasterEggHuntMain extends JavaPlugin {
+public class PlayerHeadHuntMain extends JavaPlugin {
     private PluginConfig config;
     private Connection connection;
     private ConsoleCommandSender console;
@@ -33,34 +33,34 @@ public class EasterEggHuntMain extends JavaPlugin {
         config = new PluginConfig(this);
         console = getServer().getConsoleSender();
 
-        EggChatController eggChatController = new EggChatController(this);
-        EggWorldController eggWorldController = new EggWorldController(this);
-        EggHatController eggHatController = new EggHatController(this);
-        EggScoreboardController eggScoreboardController = new EggScoreboardController(this);
+        HeadChatController headChatController = new HeadChatController(this);
+        HeadWorldController headWorldController = new HeadWorldController(this);
+        HeadHatController headHatController = new HeadHatController(this);
+        HeadScoreboardController headScoreboardController = new HeadScoreboardController(this);
 
         // Connect to the database
         establishConnection();
 
-        // Do an initial calculation of the number of eggs. This can be
+        // Do an initial calculation of the number of heads. This can be
         // manually recalculated with the relevant command.
-        eggWorldController.countEggsInRegion();
+        headWorldController.countHeadsInRegion();
 
         // Plugin Event Register
         PluginManager pluginmanager = getServer().getPluginManager();
-        pluginmanager.registerEvents(new EggFindEvent(this, eggWorldController, eggChatController, eggHatController, eggScoreboardController), this);
-        pluginmanager.registerEvents(new EggHunterOnJoin(this, eggChatController, eggScoreboardController), this);
-        pluginmanager.registerEvents(new EggHatOnHead(), this);
+        pluginmanager.registerEvents(new HeadFindEvent(this, headWorldController, headChatController, headHatController, headScoreboardController), this);
+        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController), this);
+        pluginmanager.registerEvents(new HeadHatOnHead(), this);
 
         // Command Registry
-        Objects.requireNonNull(getCommand("eggs")).setExecutor(new eggs(this, eggChatController));
-        Objects.requireNonNull(getCommand("cleareggs")).setExecutor(new cleareggs(this, eggChatController, eggHatController, eggScoreboardController));
-        Objects.requireNonNull(getCommand("counteggs")).setExecutor(new counteggs(this, eggWorldController, eggScoreboardController));
-        Objects.requireNonNull(getCommand("leaderboardeggs")).setExecutor(new leaderboardeggs(this, eggChatController));
+        Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));
+        Objects.requireNonNull(getCommand("clearheads")).setExecutor(new clearheads(this, headChatController, headHatController, headScoreboardController));
+        Objects.requireNonNull(getCommand("countheads")).setExecutor(new countheads(this, headWorldController, headScoreboardController));
+        Objects.requireNonNull(getCommand("leaderboard")).setExecutor(new leaderboard(this, headChatController));
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");
         console.sendMessage(ChatColor.GREEN + "Running Version: " + getDescription().getVersion());
-        console.sendMessage(ChatColor.GREEN + "GitHub Repository: https://github.com/craftingforchrist/EasterEggHunt");
+        console.sendMessage(ChatColor.GREEN + "GitHub Repository: https://github.com/ModularSoftAU/PlayerHeadHunt");
         console.sendMessage(ChatColor.GREEN + "Created By: " + getDescription().getAuthors());
     }
 

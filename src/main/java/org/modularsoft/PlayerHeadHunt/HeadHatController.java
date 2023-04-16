@@ -1,13 +1,13 @@
-package com.modularenigma.EasterEggHunt;
+package org.modularsoft.PlayerHeadHunt;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class EggHatController {
-    private final EasterEggHuntMain plugin;
+public class HeadHatController {
+    private final PlayerHeadHuntMain plugin;
 
-    public EggHatController(EasterEggHuntMain plugin) {
+    public HeadHatController(PlayerHeadHuntMain plugin) {
         this.plugin = plugin;
     }
 
