@@ -44,7 +44,7 @@ public class HeadFindEvent implements Listener {
         int y = block.getY();
         int z = block.getZ();
         if (HeadQuery.hasAlreadyCollectedHead(plugin, player, x, y, z)) {
-            headChatController.headAlreadyFoundResponse(player);
+            headChatController.headAlreadyFoundResponse(player, x, y, z);
             return;
         }
 
@@ -63,7 +63,7 @@ public class HeadFindEvent implements Listener {
         if (milestones.containsKey(foundHeads)) {
             milestones.get(foundHeads).trigger(headChatController, headHatController, player, event);
         } else {
-            headChatController.headFoundResponse(player, foundHeads);
+            headChatController.headFoundResponse(player, foundHeads, x, y, z);
         }
     }
 

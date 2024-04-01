@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
+import static org.modularsoft.PlayerHeadHunt.HeadQuery.foundHeadsAlreadyCount;
+
 public class HeadChatController {
     private final PlayerHeadHuntMain plugin;
 
@@ -16,16 +18,19 @@ public class HeadChatController {
         this.plugin = plugin;
     }
 
-    public void headAlreadyFoundResponse(Player player) {
+    public void headAlreadyFoundResponse(Player player, int x, int y, int z) {
         // Play sound for a Player Head that is already found.
         player.playSound(player.getLocation(), plugin.config().getHeadAlreadyFoundSound(), 1, 1);
-        player.sendMessage(plugin.config().getLangHeadAlreadyFound());
+        String message = plugin.config().getLangHeadAlreadyFound()
+                .replace("%ALREADYFOUNDHEADS%", String.valueOf(foundHeadsAlreadyCount(plugin, x, y, z)));
+        player.sendMessage(message);
     }
 
-    public void headFoundResponse(Player player, int headCount) {
+    public void headFoundResponse(Player player, int headCount, int x, int y, int z) {
         String message = plugin.config().getLangHeadFound()
                 .replace("%FOUNDHEADS%", headCount + "")
-                .replace("%NUMBEROFHEADS%", "" + plugin.config().getTotalHeads());
+                .replace("%NUMBEROFHEADS%", "" + plugin.config().getTotalHeads())
+                .replace("%ALREADYFOUNDHEADS%", String.valueOf(foundHeadsAlreadyCount(plugin, x, y, z)));
 
         // Play sound for a Player Head that is found.
         player.playSound(player.getLocation(), plugin.config().getHeadFoundSound(), 1, 1);
