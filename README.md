@@ -1,5 +1,13 @@
 # Player Head Hunt
 
+## Installation
+* Clone this repo.
+* Configure your config.
+* Run the dbinit.
+
+## Requirements
+* MySQL Database.
+
 ## Dependencies
 - `WorldEdit` is **required** since it is used to count all the heads in the hunting region.
 

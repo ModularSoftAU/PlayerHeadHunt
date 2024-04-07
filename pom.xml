@@ -6,7 +6,7 @@
 
     <groupId>org.modularsoft</groupId>
     <artifactId>PlayerHeadHunt</artifactId>
-    <version>2</version>
+    <version>1.2.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -64,14 +64,14 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.23</version>
+            <version>8.0.33</version>
         </dependency>
 
         <!-- WorldEdit -->
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.0-SNAPSHOT</version>
+            <version>7.3.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
-            <version>7.2.0-SNAPSHOT</version>
+            <version>7.3.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>

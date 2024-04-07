@@ -36,6 +36,30 @@ public class HeadQuery {
     }
 
     /**
+     * @param plugin The PlayerHeadHunt main plugin
+     * @param xCord  The x int to check
+     * @param yCord  The y int to check
+     * @param zCord  The z int to check
+     * @return Returns the number of other players who have found this head already
+     */
+    public static int foundHeadsAlreadyCount(PlayerHeadHuntMain plugin, int xCord, int yCord, int zCord) {
+        try {
+            // Check how many heads the player has collected.
+            PreparedStatement foundHeadsCount = plugin.getConnection().prepareStatement(
+                    "SELECT COUNT(*) AS total_heads FROM heads WHERE headcordx=? AND headcordy=? AND headcordz=?;");
+            foundHeadsCount.setInt(1, xCord);
+            foundHeadsCount.setInt(2, yCord);
+            foundHeadsCount.setInt(3, zCord);
+            ResultSet results = foundHeadsCount.executeQuery();
+
+            if (results.next()) return results.getInt("total_heads");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    /**
      * Clears the number of heads found by the player to 0
      * @param plugin The PlayerHeadHunt main plugin
      * @param player The player to reset
