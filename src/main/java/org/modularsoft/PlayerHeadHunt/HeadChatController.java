@@ -18,22 +18,39 @@ public class HeadChatController {
         this.plugin = plugin;
     }
 
-    public void headAlreadyFoundResponse(Player player, int x, int y, int z) {
-        // Play sound for a Player Head that is already found.
-        player.playSound(player.getLocation(), plugin.config().getHeadAlreadyFoundSound(), 1, 1);
-        String message = plugin.config().getLangHeadAlreadyFound()
-                .replace("%ALREADYFOUNDHEADS%", String.valueOf(foundHeadsAlreadyCount(plugin, x, y, z)));
-        player.sendMessage(message);
-    }
+    public void headFoundResponse(Player player, boolean hasAlreadyBeenFound, int headCount, int x, int y, int z) {
+        String baseMessage;
+        if (hasAlreadyBeenFound) {
+            baseMessage = plugin.config().getLangHeadAlreadyFound();
+            player.playSound(player.getLocation(), plugin.config().getHeadAlreadyFoundSound(), 1, 1);
+        } else {
+            baseMessage = plugin.config().getLangHeadFound();
+            player.playSound(player.getLocation(), plugin.config().getHeadFoundSound(), 1, 1);
+        }
 
-    public void headFoundResponse(Player player, int headCount, int x, int y, int z) {
-        String message = plugin.config().getLangHeadFound()
-                .replace("%FOUNDHEADS%", headCount + "")
+        int otherPlayerFoundHead = foundHeadsAlreadyCount(plugin, x, y, z) - 1;
+
+        String otherPlayersHaveFoundSuffix;
+        if (otherPlayerFoundHead == 0) {
+            if (hasAlreadyBeenFound) {
+                otherPlayersHaveFoundSuffix = plugin.config().getLangHeadFirstFinderStill();
+            } else {
+                otherPlayersHaveFoundSuffix = plugin.config().getLangHeadFirstFinder();
+            }
+        } else if (otherPlayerFoundHead == 1) {
+            otherPlayersHaveFoundSuffix = plugin.config().getLangHeadNotFirstFinderSingle()
+                    .replace("%OTHERPLAYERSFOUNDHEAD%", "" + otherPlayerFoundHead);
+        } else {
+            otherPlayersHaveFoundSuffix = plugin.config().getLangHeadNotFirstFinderMultiple()
+                    .replace("%OTHERPLAYERSFOUNDHEAD%", "" + otherPlayerFoundHead);
+        }
+
+        String message = baseMessage
+                .replace("%FOUNDHEADS%", "" + headCount)
                 .replace("%NUMBEROFHEADS%", "" + plugin.config().getTotalHeads())
-                .replace("%ALREADYFOUNDHEADS%", String.valueOf(foundHeadsAlreadyCount(plugin, x, y, z)));
+                .replace("%ALREADYFOUNDHEADS%", otherPlayersHaveFoundSuffix);
 
         // Play sound for a Player Head that is found.
-        player.playSound(player.getLocation(), plugin.config().getHeadFoundSound(), 1, 1);
         player.sendMessage(message);
     }
 
