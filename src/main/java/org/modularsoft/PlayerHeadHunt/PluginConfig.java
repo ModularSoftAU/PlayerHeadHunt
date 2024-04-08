@@ -40,9 +40,13 @@ public class PluginConfig {
     @Getter private final String langInsufficientPermissions;
     @Getter private final String langCommandIncomplete;
     @Getter private final String langHeadFound;
+    @Getter private final String langHeadAlreadyFound;
+    @Getter private final String langHeadFirstFinder;
+    @Getter private final String langHeadFirstFinderStill;
+    @Getter private final String langHeadNotFirstFinderSingle;
+    @Getter private final String langHeadNotFirstFinderMultiple;
     @Getter private final String langFirstHeadFound;
     @Getter private final String langLastHeadFound;
-    @Getter private final String langHeadAlreadyFound;
     @Getter private final String langHeadCount;
     @Getter private final String langHeadCollectionMilestoneReached;
 
@@ -91,24 +95,28 @@ public class PluginConfig {
         headMilestones.get(config.getInt("MILESTONES.DIAMONDHELMET")).setHelmet(Material.DIAMOND_HELMET);
         headMilestones.get(config.getInt("MILESTONES.NETHERITEHELMET")).setHelmet(Material.NETHERITE_HELMET);
 
-        langDatabaseConnectionError =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONERROR")));
-        langDatabaseConnectionSuccess =     ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONSUCCESS")));
-        langNotAPlayer =                    ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.NOTAPLAYER")));
-        langInsufficientPermissions =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.INSUFFICENTPERMISSIONS")));
-        langCommandIncomplete =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.COMMANDINCOMPLETE")));
+        langDatabaseConnectionError =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONERROR")));
+        langDatabaseConnectionSuccess =      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONSUCCESS")));
+        langNotAPlayer =                     ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.NOTAPLAYER")));
+        langInsufficientPermissions =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.INSUFFICENTPERMISSIONS")));
+        langCommandIncomplete =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.COMMANDINCOMPLETE")));
         langHeadFound =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADFOUND")));
+        langHeadAlreadyFound =               ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADALREADYFOUND")));
+        langHeadFirstFinder =                ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTFINDER")));
+        langHeadFirstFinderStill =           ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTFINDERSTILL")));
+        langHeadNotFirstFinderSingle =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.NOTFIRSTFINDERSINGLE")));
+        langHeadNotFirstFinderMultiple =     ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.NOTFIRSTFINDERMULTIPLE")));
         langFirstHeadFound =                 ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTHEADFOUND")));
         langLastHeadFound =                  ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.LASTHEADFOUND")));
-        langHeadAlreadyFound =               ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADALREADYFOUND")));
         langHeadCount =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOUNT")));
         langHeadCollectionMilestoneReached = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOLLECTIONMILESTONEREACHED")));
 
         langLeaderboardNoHeads =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.NOHEADS")));
-        langLeaderboardHeader =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.HEADER")));
-        langLeaderboardFirstColour =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FIRSTCOLOUR")));
-        langLeaderboardSecondColour =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.SECONDCOLOUR")));
-        langLeaderboardThirdColour =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.THIRDCOLOUR")));
-        langLeaderboardFormat =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FORMAT")));
+        langLeaderboardHeader =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.HEADER")));
+        langLeaderboardFirstColour =         ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FIRSTCOLOUR")));
+        langLeaderboardSecondColour =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.SECONDCOLOUR")));
+        langLeaderboardThirdColour =         ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.THIRDCOLOUR")));
+        langLeaderboardFormat =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FORMAT")));
     }
 
     public void save() {

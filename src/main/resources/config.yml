@@ -65,10 +65,14 @@ LANG:
     INSUFFICENTPERMISSIONS: "&cYou do not have permission to use this command."
     COMMANDINCOMPLETE: "&cThis command is incomplete, please refer to the command guide for reference."
   HEAD:
-    HEADFOUND: "&aYou have found an egg (%FOUNDHEADS%/%NUMBEROFHEADS%), %ALREADYFOUNDHEADS% hunters have found this egg."
+    HEADFOUND: "&aYou have found an egg (%FOUNDHEADS%/%NUMBEROFHEADS%). %ALREADYFOUNDHEADS%."
+    HEADALREADYFOUND: "&eYou have already found this egg, %ALREADYFOUNDHEADS%."
+    FIRSTFINDER: "You are the first to find this egg"
+    FIRSTFINDERSTILL: "You are the only person to find this egg"
+    NOTFIRSTFINDERSINGLE: "%OTHERPLAYERSFOUNDHEAD% other player has found this egg"
+    NOTFIRSTFINDERMULTIPLE: "%OTHERPLAYERSFOUNDHEAD% other players have found this egg"
     FIRSTHEADFOUND: "&e&l%PLAYER% &5has found their first egg!"
     LASTHEADFOUND: "&e&l%PLAYER% &5has found all &e&l%NUMBEROFHEADS% &r&5eggs!"
-    HEADALREADYFOUND: "&eYou have already found this egg, %ALREADYFOUNDHEADS% hunters have already found this egg."
     HEADCOUNT: "&eYou have found &l&6%FOUNDHEADS%/%NUMBEROFHEADS% &r&eheads."
     # Use %PLAYER% to display players name, use %NUMBEROFHEADS% to display number of eggs.
     HEADCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFHEADS% &r&5eggs!"
