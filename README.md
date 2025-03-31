@@ -1,4 +1,4 @@
-# Player Head Hunt
+![img](https://github.com/ModularSoftAU/assets/blob/master/playerheadhunt/playerheadhunt-icon-text-256.png?raw=true)
 
 ## Installation
 * Clone this repo.
