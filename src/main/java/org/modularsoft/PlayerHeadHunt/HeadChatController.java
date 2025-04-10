@@ -9,13 +9,13 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static org.modularsoft.PlayerHeadHunt.HeadQuery.foundHeadsAlreadyCount;
-
 public class HeadChatController {
     private final PlayerHeadHuntMain plugin;
+    private final HeadQuery headQuery;
 
-    public HeadChatController(PlayerHeadHuntMain plugin) {
+    public HeadChatController(PlayerHeadHuntMain plugin, HeadQuery headQuery) {
         this.plugin = plugin;
+        this.headQuery = headQuery;
     }
 
     public void headFoundResponse(Player player, boolean hasAlreadyBeenFound, int headCount, int x, int y, int z) {
@@ -28,7 +28,7 @@ public class HeadChatController {
             player.playSound(player.getLocation(), plugin.config().getHeadFoundSound(), 1, 1);
         }
 
-        int otherPlayerFoundHead = foundHeadsAlreadyCount(plugin, x, y, z) - 1;
+        int otherPlayerFoundHead = headQuery.foundHeadsAlreadyCount(x, y, z) - 1;
 
         String otherPlayersHaveFoundSuffix;
         if (otherPlayerFoundHead == 0) {
@@ -100,9 +100,9 @@ public class HeadChatController {
     }
 
     public void playersOwnHeadCountResponse(Player player) {
-        // Players wants to see their own head count
+        // Use the instance of HeadQuery to call the method
         player.sendMessage(plugin.config().getLangHeadCount()
-                .replace("%FOUNDHEADS%", "" + HeadQuery.foundHeadsCount(plugin, player))
+                .replace("%FOUNDHEADS%", "" + headQuery.foundHeadsCount(player))
                 .replace("%NUMBEROFHEADS%", "" + plugin.config().getTotalHeads()));
     }
 

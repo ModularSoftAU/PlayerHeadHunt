@@ -14,10 +14,12 @@ import java.util.List;
 public class leaderboard implements CommandExecutor {
     private final PlayerHeadHuntMain plugin;
     private final HeadChatController headChatController;
+    private final HeadQuery headQuery; // Add HeadQuery instance
 
-    public leaderboard(PlayerHeadHuntMain plugin, HeadChatController headChatController) {
+    public leaderboard(PlayerHeadHuntMain plugin, HeadChatController headChatController, HeadQuery headQuery) {
         this.plugin = plugin;
         this.headChatController = headChatController;
+        this.headQuery = headQuery; // Initialize HeadQuery
     }
 
     @Override
@@ -27,7 +29,8 @@ public class leaderboard implements CommandExecutor {
             return true;
         }
 
-        List<HeadQuery.HeadHunter> bestHunters = HeadQuery.getBestHunters(plugin, player, 5);
+        // Use the HeadQuery instance to call getBestHunters
+        List<HeadQuery.HeadHunter> bestHunters = headQuery.getBestHunters(5);
         headChatController.showLeaderBoardResponse(player, bestHunters);
         return true;
     }

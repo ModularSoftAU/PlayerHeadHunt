@@ -15,11 +15,16 @@ public class countheads implements CommandExecutor {
     private final PlayerHeadHuntMain plugin;
     private final HeadWorldController headWorldController;
     private final HeadScoreboardController headScoreboardController;
+    private final HeadQuery headQuery;
 
-    public countheads(PlayerHeadHuntMain plugin, HeadWorldController headWorldController, HeadScoreboardController headScoreboardController) {
+    public countheads(PlayerHeadHuntMain plugin,
+                      HeadWorldController headWorldController,
+                      HeadScoreboardController headScoreboardController,
+                      HeadQuery headQuery) {
         this.plugin = plugin;
         this.headWorldController = headWorldController;
         this.headScoreboardController = headScoreboardController;
+        this.headQuery = headQuery;
     }
 
     @Override
@@ -34,14 +39,22 @@ public class countheads implements CommandExecutor {
             return true;
         }
 
+        // Count heads in the region
         headWorldController.countHeadsInRegion();
+
+        // Update HEAD.HEADTOTAL in the configuration
+        int totalHeads = plugin.config().getTotalHeads();
+        plugin.getConfig().set("HEAD.HEADTOTAL", totalHeads);
+        plugin.saveConfig(); // Save the updated configuration to disk
+
+        // Notify the sender
         BlockVector3 upper = plugin.config().getUpperRegion();
         BlockVector3 lower = plugin.config().getLowerRegion();
-        sender.sendMessage("There are " + plugin.config().getTotalHeads() +
-                " total heads in " + lower + ", " + upper + ".");
+        sender.sendMessage("There are " + totalHeads + " total heads in " + lower + ", " + upper + ".");
 
+        // Update the scoreboard for all online players
         for (Player otherPlayer : plugin.getServer().getOnlinePlayers()) {
-            int headsFound = HeadQuery.foundHeadsCount(plugin, otherPlayer);
+            int headsFound = headQuery.foundHeadsCount(otherPlayer);
             headScoreboardController.reloadScoreboard(otherPlayer, headsFound);
         }
         return true;

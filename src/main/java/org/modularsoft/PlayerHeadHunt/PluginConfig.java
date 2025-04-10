@@ -14,12 +14,6 @@ public class PluginConfig {
     private final PlayerHeadHuntMain plugin;
     private final FileConfiguration config;
 
-    @Getter private final String databaseHost;
-    @Getter private final int databasePort;
-    @Getter private final String databaseName;
-    @Getter private final String databaseUsername;
-    @Getter private final String databasePassword;
-
     @Getter private final boolean milestoneHatFeatureEnabled;
     @Getter private final boolean milestoneMessageFeatureEnabled;
 
@@ -60,12 +54,6 @@ public class PluginConfig {
     public PluginConfig(PlayerHeadHuntMain plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
-
-        databaseHost = config.getString("DATABASE.HOST");
-        databasePort = config.getInt("DATABASE.PORT");
-        databaseName = config.getString("DATABASE.DATABASE");
-        databaseUsername = config.getString("DATABASE.USERNAME");
-        databasePassword = config.getString("DATABASE.PASSWORD");
 
         milestoneHatFeatureEnabled = config.getBoolean("FEATURE.MILESTONEHAT");
         milestoneMessageFeatureEnabled = config.getBoolean("FEATURE.MILESTONEMESSAGE");

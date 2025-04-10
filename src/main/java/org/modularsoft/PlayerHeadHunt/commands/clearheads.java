@@ -12,13 +12,18 @@ public class clearheads implements CommandExecutor {
     private final HeadChatController headChatController;
     private final HeadHatController headHatController;
     private final HeadScoreboardController scoreboardController;
+    private final HeadQuery headQuery;
 
-    public clearheads(PlayerHeadHuntMain plugin, HeadChatController headChatController,
-                      HeadHatController headHatController, HeadScoreboardController scoreboardController) {
+    public clearheads(PlayerHeadHuntMain plugin,
+                      HeadChatController headChatController,
+                      HeadHatController headHatController,
+                      HeadScoreboardController scoreboardController,
+                      HeadQuery headQuery) {
         this.plugin = plugin;
         this.headChatController = headChatController;
         this.headHatController = headHatController;
         this.scoreboardController = scoreboardController;
+        this.headQuery = headQuery;
     }
 
     @Override
@@ -33,12 +38,12 @@ public class clearheads implements CommandExecutor {
             return true;
         }
 
-        if (!HeadQuery.clearHeads(plugin, player))
+        if (!headQuery.clearHeads(player)) // Use the HeadQuery instance to call clearHeads
             return true;
 
         headChatController.playerClearedTheirHeadsResponse(player);
         headHatController.clearHelmet(player);
-        scoreboardController.reloadScoreboard(player, HeadQuery.foundHeadsCount(plugin, player));
+        scoreboardController.reloadScoreboard(player, headQuery.foundHeadsCount(player)); // Use headQuery for foundHeadsCount
         return true;
     }
 }
