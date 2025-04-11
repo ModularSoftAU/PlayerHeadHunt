@@ -60,7 +60,21 @@ public class HeadQuery {
     public boolean clearHeads(Player player) {
         String playerUUID = player.getUniqueId().toString();
         Map<String, Object> data = yamlFileManager.getData();
-        data.remove(playerUUID);
+        Map<String, Object> playerData = (Map<String, Object>) data.get(playerUUID);
+
+        if (playerData == null) {
+            return false; // No data for the player
+        }
+
+        // Clear the contents of the headsCollected list
+        List<Map<String, Integer>> headsCollected = (List<Map<String, Integer>>) playerData.get("headsCollected");
+        if (headsCollected != null) {
+            headsCollected.clear();
+        }
+
+        // Reset the headsCollectedCount to 0
+        playerData.put("headsCollectedCount", 0);
+
         yamlFileManager.save();
         return true;
     }

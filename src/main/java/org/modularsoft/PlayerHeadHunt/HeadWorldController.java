@@ -61,11 +61,15 @@ public class HeadWorldController {
 
         if (playerData == null) {
             playerData = new HashMap<>();
-            playerData.put("collected", new ArrayList<Map<String, Integer>>());
+            playerData.put("headsCollected", new ArrayList<Map<String, Integer>>());
             data.put(playerUUID, playerData);
         }
 
-        List<Map<String, Integer>> collectedHeads = (List<Map<String, Integer>>) playerData.get("collected");
+        List<Map<String, Integer>> collectedHeads = (List<Map<String, Integer>>) playerData.get("headsCollected");
+        if (collectedHeads == null) {
+            collectedHeads = new ArrayList<>();
+            playerData.put("headsCollected", collectedHeads);
+        }
 
         boolean alreadyCollected = collectedHeads.stream().anyMatch(head ->
                 head.get("x") == x && head.get("y") == y && head.get("z") == z);

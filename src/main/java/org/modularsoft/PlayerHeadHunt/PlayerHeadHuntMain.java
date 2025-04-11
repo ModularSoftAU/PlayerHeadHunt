@@ -1,14 +1,10 @@
 package org.modularsoft.PlayerHeadHunt;
 
 import lombok.Getter;
-import org.modularsoft.PlayerHeadHunt.commands.clearheads;
-import org.modularsoft.PlayerHeadHunt.commands.heads;
-import org.modularsoft.PlayerHeadHunt.commands.countheads;
-import org.modularsoft.PlayerHeadHunt.commands.leaderboard;
+import org.modularsoft.PlayerHeadHunt.commands.*;
 import org.modularsoft.PlayerHeadHunt.events.HeadFindEvent;
 import org.modularsoft.PlayerHeadHunt.events.HeadHatOnHead;
 import org.modularsoft.PlayerHeadHunt.events.HeadHunterOnJoin;
-import com.mysql.cj.jdbc.MysqlDataSource;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.PluginManager;
@@ -16,8 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Objects;
 
 public class PlayerHeadHuntMain extends JavaPlugin {
@@ -58,10 +52,8 @@ public class PlayerHeadHuntMain extends JavaPlugin {
 
         // Command Registry
         Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));
-        Objects.requireNonNull(getCommand("clearheads")).setExecutor(new clearheads(this, headChatController, headHatController, headScoreboardController, headQuery));
-        Objects.requireNonNull(getCommand("countheads")).setExecutor(new countheads(this, headWorldController, headScoreboardController, headQuery));
-        Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));
         Objects.requireNonNull(getCommand("leaderboard")).setExecutor(new leaderboard(this, headChatController, headQuery)); // Register leaderboard command
+        Objects.requireNonNull(getCommand("debugheadhunt")).setExecutor(new debugheadhunt(this, headChatController, headHatController, headScoreboardController, headWorldController, headQuery));
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");
