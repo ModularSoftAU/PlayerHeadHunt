@@ -35,8 +35,9 @@ public class HeadFindEvent implements Listener {
 
     @EventHandler
     public void onHeadFind(PlayerInteractEvent event) {
-        if (!isFindHeadEvent(event))
+        if (!isFindHeadEvent(event)) {
             return;
+        }
 
         event.setCancelled(true);
 
@@ -46,21 +47,23 @@ public class HeadFindEvent implements Listener {
         int y = block.getY();
         int z = block.getZ();
 
+        // Check if the head has already been collected
         if (headQuery.hasAlreadyCollectedHead(player, x, y, z)) {
-            headChatController.headFoundResponse(player, true, 0, x, y, z);
-            return;
+            // Send the "head already found" message and stop further processing
+            headChatController.headFoundResponse(player, true, headQuery.foundHeadsCount(player), x, y, z);
+            return; // Ensure no further processing occurs
         }
 
+        // Process head collection
         headWorldController.playerCollectedHead(player, block, x, y, z);
 
+        // Retrieve the updated count of heads found
         int foundHeads = headQuery.foundHeadsCount(player);
+
+        // Update the scoreboard with the new count
         headScoreboardController.reloadScoreboard(player, foundHeads);
 
-        if (foundHeads == 1) {
-            headChatController.headMilestoneReachedEvent(player, false, foundHeads);
-            return;
-        }
-
+        // Handle milestones or send a success message
         if (milestones.containsKey(foundHeads)) {
             milestones.get(foundHeads).trigger(headChatController, headHatController, player, event);
         } else {

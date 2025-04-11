@@ -55,22 +55,35 @@ public class HeadWorldController {
     }
 
     public void playerCollectedHead(Player player, Block block, int x, int y, int z) {
+        String playerUUID = player.getUniqueId().toString();
         Map<String, Object> data = yamlFileManager.getData();
-        List<Map<String, Object>> collectedHeads = (List<Map<String, Object>>) data.get("collectedHeads");
+        Map<String, Object> playerData = (Map<String, Object>) data.get(playerUUID);
 
-        // Initialize the list if it is null
-        if (collectedHeads == null) {
-            collectedHeads = new ArrayList<>();
-            data.put("collectedHeads", collectedHeads);
+        if (playerData == null) {
+            playerData = new HashMap<>();
+            playerData.put("collected", new ArrayList<Map<String, Integer>>());
+            data.put(playerUUID, playerData);
         }
 
-        collectedHeads.add(Map.of("player", player.getUniqueId().toString(), "x", x, "y", y, "z", z));
+        List<Map<String, Integer>> collectedHeads = (List<Map<String, Integer>>) playerData.get("collected");
+
+        boolean alreadyCollected = collectedHeads.stream().anyMatch(head ->
+                head.get("x") == x && head.get("y") == y && head.get("z") == z);
+
+        if (alreadyCollected) {
+            player.sendMessage(plugin.config().getLangHeadAlreadyFound());
+            return;
+        }
+
+        collectedHeads.add(Map.of("x", x, "y", y, "z", z));
         yamlFileManager.save();
+
+        // Increment the player's head count
+        plugin.getHeadQuery().insertCollectedHead(player, x, y, z);
 
         Material blockType = block.getType();
         BlockData blockData = block.getBlockData();
 
-        // Break and set the block to be replaced later
         int headRespawnTimer = plugin.config().getHeadRespawnTimer();
 
         breakBlock(x, y, z);

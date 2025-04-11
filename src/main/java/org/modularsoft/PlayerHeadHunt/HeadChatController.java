@@ -28,7 +28,8 @@ public class HeadChatController {
             player.playSound(player.getLocation(), plugin.config().getHeadFoundSound(), 1, 1);
         }
 
-        int otherPlayerFoundHead = headQuery.foundHeadsAlreadyCount(x, y, z) - 1;
+        // Get the number of other players who have found this head
+        int otherPlayerFoundHead = Math.max(0, headQuery.foundHeadsAlreadyCount(x, y, z) - 1);
 
         String otherPlayersHaveFoundSuffix;
         if (otherPlayerFoundHead == 0) {
@@ -39,18 +40,18 @@ public class HeadChatController {
             }
         } else if (otherPlayerFoundHead == 1) {
             otherPlayersHaveFoundSuffix = plugin.config().getLangHeadNotFirstFinderSingle()
-                    .replace("%OTHERPLAYERSFOUNDHEAD%", "" + otherPlayerFoundHead);
+                    .replace("%OTHERPLAYERSFOUNDHEAD%", String.valueOf(otherPlayerFoundHead));
         } else {
             otherPlayersHaveFoundSuffix = plugin.config().getLangHeadNotFirstFinderMultiple()
-                    .replace("%OTHERPLAYERSFOUNDHEAD%", "" + otherPlayerFoundHead);
+                    .replace("%OTHERPLAYERSFOUNDHEAD%", String.valueOf(otherPlayerFoundHead));
         }
 
+        // Replace placeholders in the message
         String message = baseMessage
-                .replace("%FOUNDHEADS%", "" + headCount)
-                .replace("%NUMBEROFHEADS%", "" + plugin.config().getTotalHeads())
+                .replace("%FOUNDHEADS%", String.valueOf(headCount))
+                .replace("%NUMBEROFHEADS%", String.valueOf(plugin.config().getTotalHeads()))
                 .replace("%ALREADYFOUNDHEADS%", otherPlayersHaveFoundSuffix);
 
-        // Play sound for a Player Head that is found.
         player.sendMessage(message);
     }
 

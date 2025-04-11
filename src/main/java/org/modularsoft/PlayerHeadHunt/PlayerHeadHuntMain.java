@@ -1,5 +1,6 @@
 package org.modularsoft.PlayerHeadHunt;
 
+import lombok.Getter;
 import org.modularsoft.PlayerHeadHunt.commands.clearheads;
 import org.modularsoft.PlayerHeadHunt.commands.heads;
 import org.modularsoft.PlayerHeadHunt.commands.countheads;
@@ -21,12 +22,14 @@ import java.util.Objects;
 
 public class PlayerHeadHuntMain extends JavaPlugin {
     private PluginConfig config;
-    private Connection connection;
     private ConsoleCommandSender console;
 
     public PluginConfig config() {
         return config;
     }
+
+    @Getter
+    private HeadQuery headQuery;
 
     @Override
     public void onEnable() {
@@ -36,7 +39,8 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         console = getServer().getConsoleSender();
 
         YamlFileManager yamlFileManager = new YamlFileManager(new File(getDataFolder(), "player-data.yml"));
-        HeadQuery headQuery = new HeadQuery(yamlFileManager);
+        headQuery = new HeadQuery(yamlFileManager);
+
         HeadChatController headChatController = new HeadChatController(this, headQuery);
         HeadWorldController headWorldController = new HeadWorldController(this);
         HeadHatController headHatController = new HeadHatController(this);
@@ -57,6 +61,7 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         Objects.requireNonNull(getCommand("clearheads")).setExecutor(new clearheads(this, headChatController, headHatController, headScoreboardController, headQuery));
         Objects.requireNonNull(getCommand("countheads")).setExecutor(new countheads(this, headWorldController, headScoreboardController, headQuery));
         Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));
+        Objects.requireNonNull(getCommand("leaderboard")).setExecutor(new leaderboard(this, headChatController, headQuery)); // Register leaderboard command
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");
