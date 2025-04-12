@@ -29,10 +29,12 @@ import java.util.*;
 public class HeadWorldController {
     private final PlayerHeadHuntMain plugin;
     private final YamlFileManager yamlFileManager;
+    private final HeadQuery headQuery;
 
-    public HeadWorldController(PlayerHeadHuntMain plugin) {
+    public HeadWorldController(PlayerHeadHuntMain plugin, HeadQuery headQuery) {
         this.plugin = plugin;
         this.yamlFileManager = new YamlFileManager(new File(plugin.getDataFolder(), "player-data.yml"));
+        this.headQuery = headQuery;
     }
 
     public void countHeadsInRegion() {
@@ -123,5 +125,38 @@ public class HeadWorldController {
         Random random = new Random();
         int skins = plugin.config().getHeadSkins().size();
         return plugin.config().getHeadSkins().get(random.nextInt(0, skins));
+    }
+
+    public Location findNearestUnclaimedHead(Player player) {
+        Location playerLocation = player.getLocation();
+        Map<String, Object> data = yamlFileManager.getData();
+        Object headsObject = data.get("heads");
+
+        if (!(headsObject instanceof List<?> heads)) {
+            return null; // No heads available
+        }
+
+        Location nearestHead = null;
+        double nearestDistance = Double.MAX_VALUE;
+
+        for (Object headObj : heads) {
+            if (headObj instanceof Map<?, ?> head) {
+                int x = (int) head.get("x");
+                int y = (int) head.get("y");
+                int z = (int) head.get("z");
+
+                if (!headQuery.hasAlreadyCollectedHead(player, x, y, z)) {
+                    Location headLocation = new Location(player.getWorld(), x, y, z);
+                    double distance = playerLocation.distance(headLocation);
+
+                    if (distance < nearestDistance) {
+                        nearestDistance = distance;
+                        nearestHead = headLocation;
+                    }
+                }
+            }
+        }
+
+        return nearestHead;
     }
 }

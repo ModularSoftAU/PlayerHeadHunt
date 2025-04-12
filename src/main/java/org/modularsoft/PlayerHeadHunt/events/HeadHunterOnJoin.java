@@ -39,5 +39,8 @@ public class HeadHunterOnJoin implements Listener {
             plugin.getServer().getConsoleSender().sendMessage("Added a new hunter, " + username + ".");
             headChatController.newPlayerJoinsTheHunt(player);
         }
+
+        // Give the player a Head Locator compass
+        player.getInventory().addItem(org.modularsoft.PlayerHeadHunt.items.HeadLocator.createHeadLocator());
     }
 }

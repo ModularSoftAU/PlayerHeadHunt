@@ -36,7 +36,7 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         headQuery = new HeadQuery(yamlFileManager);
 
         HeadChatController headChatController = new HeadChatController(this, headQuery);
-        HeadWorldController headWorldController = new HeadWorldController(this);
+        HeadWorldController headWorldController = new HeadWorldController(this, headQuery);
         HeadHatController headHatController = new HeadHatController(this);
         HeadScoreboardController headScoreboardController = new HeadScoreboardController(this);
 
