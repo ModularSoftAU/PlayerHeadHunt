@@ -7,7 +7,7 @@ import java.util.List;
 
 public class HeadLocator {
     public static ItemStack createHeadLocator() {
-        ItemStack headLocator = new ItemStack(Material.COMPASS);
+        ItemStack headLocator = new ItemStack(Material.RECOVERY_COMPASS); // Use Recovery Compass
         ItemMeta meta = headLocator.getItemMeta();
         if (meta != null) {
             meta.setDisplayName("§6Head Locator");

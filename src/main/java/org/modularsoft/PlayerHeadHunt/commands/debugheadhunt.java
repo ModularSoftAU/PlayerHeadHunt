@@ -59,7 +59,9 @@ public class debugheadhunt implements CommandExecutor {
             }
             case "countheads" -> {
                 headWorldController.countHeadsInRegion();
-                sender.sendMessage("Heads counted successfully.");
+                int totalHeads = plugin.config().getTotalHeads(); // Retrieve the updated total head count
+                scoreboardController.updateLeaderboard(totalHeads); // Update the leaderboard with the new total
+                sender.sendMessage("Heads counted and leaderboard updated successfully.");
             }
             default -> sender.sendMessage("Invalid subcommand. Use: clearheads or countheads.");
         }

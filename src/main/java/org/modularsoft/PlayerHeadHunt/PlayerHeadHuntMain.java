@@ -17,6 +17,7 @@ import java.util.Objects;
 public class PlayerHeadHuntMain extends JavaPlugin {
     private PluginConfig config;
     private ConsoleCommandSender console;
+    private HeadWorldController headWorldController;
 
     public PluginConfig config() {
         return config;
@@ -47,7 +48,7 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         // Plugin Event Register
         PluginManager pluginmanager = getServer().getPluginManager();
         pluginmanager.registerEvents(new HeadFindEvent(this, headWorldController, headChatController, headHatController, headScoreboardController, headQuery), this);
-        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery), this);
+        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery, headWorldController), this);
         pluginmanager.registerEvents(new HeadHatOnHead(), this);
 
         // Command Registry

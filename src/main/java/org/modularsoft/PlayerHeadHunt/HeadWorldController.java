@@ -133,6 +133,7 @@ public class HeadWorldController {
         Object headsObject = data.get("heads");
 
         if (!(headsObject instanceof List<?> heads)) {
+            plugin.getServer().getConsoleSender().sendMessage("§cNo heads data found in the YAML file.");
             return null; // No heads available
         }
 
@@ -149,12 +150,20 @@ public class HeadWorldController {
                     Location headLocation = new Location(player.getWorld(), x, y, z);
                     double distance = playerLocation.distance(headLocation);
 
+                    plugin.getServer().getConsoleSender().sendMessage("§aFound unclaimed head at: " + x + ", " + y + ", " + z + " (Distance: " + distance + ")");
+
                     if (distance < nearestDistance) {
                         nearestDistance = distance;
                         nearestHead = headLocation;
                     }
+                } else {
+                    plugin.getServer().getConsoleSender().sendMessage("§eHead at " + x + ", " + y + ", " + z + " already collected by the player.");
                 }
             }
+        }
+
+        if (nearestHead == null) {
+            plugin.getServer().getConsoleSender().sendMessage("§cNo unclaimed heads found for the player.");
         }
 
         return nearestHead;

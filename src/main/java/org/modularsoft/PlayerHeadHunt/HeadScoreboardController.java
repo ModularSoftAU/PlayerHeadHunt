@@ -33,4 +33,11 @@ public class HeadScoreboardController {
 
         player.setScoreboard(board);
     }
+
+    public void updateLeaderboard(int totalHeads) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            int headsFound = plugin.getHeadQuery().foundHeadsCount(player); // Get the player's collected heads
+            reloadScoreboard(player, headsFound); // Reload the scoreboard with the updated total
+        }
+    }
 }
