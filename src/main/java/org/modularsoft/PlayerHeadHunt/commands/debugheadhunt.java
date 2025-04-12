@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.modularsoft.PlayerHeadHunt.*;
+import org.modularsoft.PlayerHeadHunt.helpers.WebhookUtil;
 
 public class debugheadhunt implements CommandExecutor {
     private final PlayerHeadHuntMain plugin;
@@ -14,6 +15,7 @@ public class debugheadhunt implements CommandExecutor {
     private final HeadScoreboardController scoreboardController;
     private final HeadWorldController headWorldController;
     private final HeadQuery headQuery;
+    private final WebhookUtil webhookUtil;
 
     public debugheadhunt(PlayerHeadHuntMain plugin,
                          HeadChatController headChatController,
@@ -27,6 +29,7 @@ public class debugheadhunt implements CommandExecutor {
         this.scoreboardController = scoreboardController;
         this.headWorldController = headWorldController;
         this.headQuery = headQuery;
+        this.webhookUtil = new WebhookUtil(plugin);
     }
 
     @Override
@@ -42,7 +45,7 @@ public class debugheadhunt implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            sender.sendMessage("Usage: /debugheadhunt <clearheads|countheads>");
+            sender.sendMessage("Usage: /debugheadhunt <clearheads|countheads|firewebhook>");
             return true;
         }
 
@@ -61,7 +64,17 @@ public class debugheadhunt implements CommandExecutor {
                 headWorldController.countHeadsInRegion();
                 sender.sendMessage("Heads counted successfully.");
             }
-            default -> sender.sendMessage("Invalid subcommand. Use: clearheads or countheads.");
+            case "firewebhook" -> {
+                try {
+                    String webhookUrl = plugin.getConfig().getString("DISCORD.WEBHOOKURL");
+                    webhookUtil.sendLeaderboardWebhook(webhookUrl, headQuery);
+                    sender.sendMessage("Webhook fired successfully.");
+                } catch (Exception e) {
+                    sender.sendMessage("Failed to fire webhook: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+            default -> sender.sendMessage("Invalid subcommand. Use: clearheads, countheads, or firewebhook.");
         }
         return true;
     }
