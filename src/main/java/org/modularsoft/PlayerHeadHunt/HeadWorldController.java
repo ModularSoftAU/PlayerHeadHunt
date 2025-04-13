@@ -21,28 +21,20 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.io.File;
+import java.util.*;
 
-/**
- * This class controls any functionality that requires access to the world.
- */
 public class HeadWorldController {
     private final PlayerHeadHuntMain plugin;
+    private final YamlFileManager yamlFileManager;
 
     public HeadWorldController(PlayerHeadHuntMain plugin) {
         this.plugin = plugin;
+        this.yamlFileManager = new YamlFileManager(new File(plugin.getDataFolder(), "player-data.yml"));
     }
 
-    /**
-     * Using the lower region and upper region areas in the config file, count the
-     * number of heads in the region (technically it counts the number of player heads)
-     * and update the "totalHeads" field in the config to reflect the answer.
-     *
-     * Note: Heads that have disappeared temporarily will not show up in this count.
-     */
     public void countHeadsInRegion() {
         String headBlock = plugin.config().getHeadBlock().toLowerCase();
         BlockVector3 upperRegion = plugin.config().getUpperRegion();
@@ -53,21 +45,49 @@ public class HeadWorldController {
         Mask mask = new BlockTypeMask(world, BlockTypes.get(headBlock));
 
         try (EditSession editSession = WorldEdit.getInstance().newEditSession(world)) {
-            int countedblocks = editSession.countBlocks(selection, mask);
-            plugin.getServer().getConsoleSender().sendMessage("There are " + countedblocks + " total heads in the region");
+            int countedBlocks = editSession.countBlocks(selection, mask);
+            plugin.getServer().getConsoleSender().sendMessage("There are " + countedBlocks + " total heads in the region");
 
-            // Put total amount into config file.
-            plugin.config().setTotalHeads(countedblocks);
+            // Update the HEAD.HEADTOTAL in the plugin config
+            plugin.config().setTotalHeads(countedBlocks);
             plugin.config().save();
         }
     }
 
     public void playerCollectedHead(Player player, Block block, int x, int y, int z) {
-        HeadQuery.insertCollectedHead(plugin, player, x, y, z);
+        String playerUUID = player.getUniqueId().toString();
+        Map<String, Object> data = yamlFileManager.getData();
+        Map<String, Object> playerData = (Map<String, Object>) data.get(playerUUID);
+
+        if (playerData == null) {
+            playerData = new HashMap<>();
+            playerData.put("headsCollected", new ArrayList<Map<String, Integer>>());
+            data.put(playerUUID, playerData);
+        }
+
+        List<Map<String, Integer>> collectedHeads = (List<Map<String, Integer>>) playerData.get("headsCollected");
+        if (collectedHeads == null) {
+            collectedHeads = new ArrayList<>();
+            playerData.put("headsCollected", collectedHeads);
+        }
+
+        boolean alreadyCollected = collectedHeads.stream().anyMatch(head ->
+                head.get("x") == x && head.get("y") == y && head.get("z") == z);
+
+        if (alreadyCollected) {
+            player.sendMessage(plugin.config().getLangHeadAlreadyFound());
+            return;
+        }
+
+        collectedHeads.add(Map.of("x", x, "y", y, "z", z));
+        yamlFileManager.save();
+
+        // Increment the player's head count
+        plugin.getHeadQuery().insertCollectedHead(player, x, y, z);
+
         Material blockType = block.getType();
         BlockData blockData = block.getBlockData();
 
-        // Break and set the block to be replaced later
         int headRespawnTimer = plugin.config().getHeadRespawnTimer();
 
         breakBlock(x, y, z);
@@ -77,7 +97,6 @@ public class HeadWorldController {
                 replaceHeadBlock(blockType, blockData, x, y, z);
             }
         }.runTaskLater(plugin, headRespawnTimer);
-
     }
 
     private void breakBlock(int x, int y, int z) {
