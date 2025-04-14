@@ -6,6 +6,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.modularsoft.PlayerHeadHunt.HeadQuery;
@@ -58,58 +59,62 @@ public class WebhookUtil {
         return delay > 0 ? delay : TimeUnit.DAYS.toSeconds(1) + delay;
     }
 
-    public void sendLeaderboardWebhook(String webhookUrl, HeadQuery headQuery) throws Exception {
-        // Retrieve the top 5 hunters
-        List<HeadQuery.HeadHunter> topHunters = headQuery.getBestHunters(5);
-
-        // Build the fields dynamically
-        StringBuilder fieldsJson = new StringBuilder();
-        for (HeadQuery.HeadHunter hunter : topHunters) {
-            fieldsJson.append(String.format("""
-            {
-                "name": "%s",
-                "value": "%d heads collected",
-                "inline": false
-            }
-        """, hunter.name(), hunter.headsCollected()));
-            fieldsJson.append(","); // Add a comma after each field
-        }
-
-        // Remove the trailing comma
-        if (fieldsJson.length() > 0 && fieldsJson.charAt(fieldsJson.length() - 1) == ',') {
-            fieldsJson.setLength(fieldsJson.length() - 1);
-        }
-
-        String embedJson = String.format("""
-        {
-            "embeds": [
-                {
-                    "title": "Leaderboard Standings",
-                    "description": "Here are the current leaderboard standings:",
-                    "color": 3447003,
-                    "fields": [
-                        %s
-                    ],
-                    "thumbnail": {
-                        "url": "https://github.com/ModularSoftAU/assets/blob/master/playerheadhunt/playerheadhunt-icon-text-256.png?raw=true0"
-                    },
-                    "footer": {
-                        "text": "Developed by Modular Software"
+    public void sendLeaderboardWebhook(String webhookUrl, HeadQuery headQuery) {
+        headQuery.getBestHunters(5).thenAccept((List<HeadQuery.HeadHunter> topHunters) -> {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    // Build the fields dynamically
+                    StringBuilder fieldsJson = new StringBuilder();
+                    for (HeadQuery.HeadHunter hunter : topHunters) {
+                        fieldsJson.append(String.format("""
+                        {
+                            "name": "%s",
+                            "value": "%d heads collected",
+                            "inline": false
+                        },
+                    """, hunter.name(), hunter.headsCollected()));
                     }
+
+                    // Remove trailing comma
+                    if (fieldsJson.length() > 0 && fieldsJson.charAt(fieldsJson.length() - 2) == ',') {
+                        fieldsJson.setLength(fieldsJson.length() - 2);
+                    }
+
+                    String embedJson = String.format("""
+                    {
+                        "embeds": [
+                            {
+                                "title": "Leaderboard Standings",
+                                "description": "Here are the current leaderboard standings:",
+                                "color": 3447003,
+                                "fields": [
+                                    %s
+                                ],
+                                "thumbnail": {
+                                    "url": "https://github.com/ModularSoftAU/assets/blob/master/playerheadhunt/playerheadhunt-icon-text-256.png?raw=true"
+                                },
+                                "footer": {
+                                    "text": "Developed by Modular Software"
+                                }
+                            }
+                        ]
+                    }
+                """, fieldsJson);
+
+                    plugin.getLogger().info("Generated JSON: " + embedJson);
+
+                    try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                        HttpPost post = new HttpPost(webhookUrl);
+                        post.setEntity(new StringEntity(embedJson, ContentType.APPLICATION_JSON));
+                        try (CloseableHttpResponse response = httpClient.execute(post)) {
+                            plugin.getLogger().info("Webhook response: " + response.getCode());
+                        }
+                    }
+                } catch (Exception e) {
+                    plugin.getLogger().severe("Failed to send webhook: " + e.getMessage());
+                    e.printStackTrace();
                 }
-            ]
-        }
-        """, fieldsJson);
-
-        // Log the generated JSON for debugging
-        plugin.getLogger().info("Generated JSON: " + embedJson);
-
-        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(webhookUrl);
-            post.setEntity(new StringEntity(embedJson, ContentType.APPLICATION_JSON));
-            try (CloseableHttpResponse response = httpClient.execute(post)) {
-                plugin.getLogger().info("Response: " + response.getCode());
-            }
-        }
+            });
+        });
     }
 }

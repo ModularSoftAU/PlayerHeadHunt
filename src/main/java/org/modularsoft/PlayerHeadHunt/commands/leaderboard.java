@@ -1,5 +1,6 @@
 package org.modularsoft.PlayerHeadHunt.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,9 +30,14 @@ public class leaderboard implements CommandExecutor {
             return true;
         }
 
-        // Use the HeadQuery instance to call getBestHunters
-        List<HeadQuery.HeadHunter> bestHunters = headQuery.getBestHunters(5);
-        headChatController.showLeaderBoardResponse(player, bestHunters);
+        // Async leaderboard fetching to avoid blocking main thread
+        headQuery.getBestHunters(5).thenAccept(bestHunters -> {
+            // Must run sync to safely interact with Bukkit API
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                headChatController.showLeaderBoardResponse(player, bestHunters);
+            });
+        });
+
         return true;
     }
 }
