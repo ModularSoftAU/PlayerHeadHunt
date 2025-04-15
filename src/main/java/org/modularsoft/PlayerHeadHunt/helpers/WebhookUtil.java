@@ -12,10 +12,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.modularsoft.PlayerHeadHunt.HeadQuery;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class WebhookUtil {
 
@@ -39,15 +38,14 @@ public class WebhookUtil {
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-        // Calculate initial delay
         LocalTime targetTime = LocalTime.of(hour, minute);
         long initialDelay = calculateInitialDelay(targetTime);
 
-        // Schedule the task
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 sendLeaderboardWebhook(webhookUrl, headQuery);
             } catch (Exception e) {
+                plugin.getLogger().severe("Exception in scheduled webhook task: " + e.getMessage());
                 e.printStackTrace();
             }
         }, initialDelay, TimeUnit.DAYS.toSeconds(1), TimeUnit.SECONDS);
@@ -63,43 +61,59 @@ public class WebhookUtil {
         headQuery.getBestHunters(5).thenAccept((List<HeadQuery.HeadHunter> topHunters) -> {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
-                    // Build the fields dynamically
-                    StringBuilder fieldsJson = new StringBuilder();
-                    for (HeadQuery.HeadHunter hunter : topHunters) {
-                        fieldsJson.append(String.format("""
-                        {
-                            "name": "%s",
-                            "value": "%d heads collected",
-                            "inline": false
-                        },
-                    """, hunter.name(), hunter.headsCollected()));
+                    if (topHunters == null || topHunters.isEmpty()) {
+                        plugin.getLogger().warning("No top hunters found. Skipping webhook.");
+                        return;
                     }
 
-                    // Remove trailing comma
-                    if (fieldsJson.length() > 0 && fieldsJson.charAt(fieldsJson.length() - 2) == ',') {
-                        fieldsJson.setLength(fieldsJson.length() - 2);
+                    plugin.getLogger().info("Top hunters size: " + topHunters.size());
+
+                    List<String> fieldsList = new ArrayList<>();
+                    for (HeadQuery.HeadHunter hunter : topHunters) {
+                        if (hunter == null) continue;
+
+                        String name = hunter.name();
+                        int headsCollected = hunter.headsCollected();
+
+                        plugin.getLogger().info("Hunter: " + name + ", Heads Collected: " + headsCollected);
+
+                        if (name != null && !name.isEmpty()) {
+                            fieldsList.add(String.format("""
+                                {
+                                    "name": "%s",
+                                    "value": "%d heads collected",
+                                    "inline": false
+                                }""", name, headsCollected));
+                        }
                     }
+
+                    if (fieldsList.isEmpty()) {
+                        plugin.getLogger().warning("Top hunters list was populated, but all entries were invalid or excluded.");
+                        return;
+                    }
+
+                    String fieldsJson = String.join(",", fieldsList);
 
                     String embedJson = String.format("""
-                    {
-                        "embeds": [
-                            {
-                                "title": "Leaderboard Standings",
-                                "description": "Here are the current leaderboard standings:",
-                                "color": 3447003,
-                                "fields": [
-                                    %s
-                                ],
-                                "thumbnail": {
-                                    "url": "https://github.com/ModularSoftAU/assets/blob/master/playerheadhunt/playerheadhunt-icon-text-256.png?raw=true"
-                                },
-                                "footer": {
-                                    "text": "Developed by Modular Software"
+                        {
+                            "embeds": [
+                                {
+                                    "title": "Leaderboard Standings",
+                                    "description": "Here are the current leaderboard standings:",
+                                    "color": 3447003,
+                                    "fields": [
+                                        %s
+                                    ],
+                                    "thumbnail": {
+                                        "url": "https://github.com/ModularSoftAU/assets/blob/master/playerheadhunt/playerheadhunt-icon-text-256.png?raw=true"
+                                    },
+                                    "footer": {
+                                        "text": "Developed by Modular Software"
+                                    }
                                 }
-                            }
-                        ]
-                    }
-                """, fieldsJson);
+                            ]
+                        }
+                    """, fieldsJson);
 
                     plugin.getLogger().info("Generated JSON: " + embedJson);
 

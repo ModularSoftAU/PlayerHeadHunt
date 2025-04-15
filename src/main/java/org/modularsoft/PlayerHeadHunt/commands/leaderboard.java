@@ -15,29 +15,34 @@ import java.util.List;
 public class leaderboard implements CommandExecutor {
     private final PlayerHeadHuntMain plugin;
     private final HeadChatController headChatController;
-    private final HeadQuery headQuery; // Add HeadQuery instance
+    private final HeadQuery headQuery;
 
     public leaderboard(PlayerHeadHuntMain plugin, HeadChatController headChatController, HeadQuery headQuery) {
         this.plugin = plugin;
         this.headChatController = headChatController;
-        this.headQuery = headQuery; // Initialize HeadQuery
+        this.headQuery = headQuery;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(plugin.config().getLangNotAPlayer());
-            return true;
-        }
-
-        // Async leaderboard fetching to avoid blocking main thread
-        headQuery.getBestHunters(5).thenAccept(bestHunters -> {
-            // Must run sync to safely interact with Bukkit API
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                headChatController.showLeaderBoardResponse(player, bestHunters);
+        if (sender instanceof Player player) {
+            // Handle the command for players
+            headQuery.getBestHunters(5).thenAccept(bestHunters -> {
+                // Must run sync to safely interact with Bukkit API
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    headChatController.showLeaderBoardResponse(player, bestHunters);
+                });
             });
-        });
-
+        } else {
+            // Handle the command for the console
+            headQuery.getBestHunters(5).thenAccept(bestHunters -> {
+                // Log the leaderboard to the console
+                plugin.getServer().getConsoleSender().sendMessage("Top 5 Hunters:");
+                for (int i = 0; i < bestHunters.size(); i++) {
+                    plugin.getServer().getConsoleSender().sendMessage((i + 1) + ". " + bestHunters.get(i));
+                }
+            });
+        }
         return true;
     }
 }

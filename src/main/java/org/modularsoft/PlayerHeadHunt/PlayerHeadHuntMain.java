@@ -53,7 +53,12 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         // Command Registry
         Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));
         Objects.requireNonNull(getCommand("leaderboard")).setExecutor(new leaderboard(this, headChatController, headQuery)); // Register leaderboard command
-        Objects.requireNonNull(getCommand("debugheadhunt")).setExecutor(new debugheadhunt(this, headChatController, headHatController, headScoreboardController, headWorldController, headQuery));
+        Objects.requireNonNull(getCommand("debugheadhunt")).setExecutor(
+                new debugheadhunt(this, headChatController, headHatController, headScoreboardController, headWorldController, headQuery)
+        );
+        Objects.requireNonNull(getCommand("debugheadhunt")).setTabCompleter(
+                new debugheadhunt(this, headChatController, headHatController, headScoreboardController, headWorldController, headQuery)
+        );
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");

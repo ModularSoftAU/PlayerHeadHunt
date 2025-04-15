@@ -3,12 +3,18 @@ package org.modularsoft.PlayerHeadHunt.commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.modularsoft.PlayerHeadHunt.*;
 import org.modularsoft.PlayerHeadHunt.helpers.WebhookUtil;
 
-public class debugheadhunt implements CommandExecutor {
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class debugheadhunt implements CommandExecutor, TabCompleter {
     private final PlayerHeadHuntMain plugin;
     private final HeadChatController headChatController;
     private final HeadHatController headHatController;
@@ -34,11 +40,6 @@ public class debugheadhunt implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(plugin.config().getLangNotAPlayer());
-            return true;
-        }
-
         if (!sender.hasPermission("playerheadhunt.debug") || !sender.isOp()) {
             sender.sendMessage(plugin.config().getLangInsufficientPermissions());
             return true;
@@ -51,14 +52,18 @@ public class debugheadhunt implements CommandExecutor {
 
         switch (args[0].toLowerCase()) {
             case "clearheads" -> {
-                if (!headQuery.clearHeads(player)) {
-                    sender.sendMessage("No heads to clear.");
-                    return true;
+                if (sender instanceof Player player) {
+                    if (!headQuery.clearHeads(player)) {
+                        sender.sendMessage("No heads to clear.");
+                        return true;
+                    }
+                    headChatController.playerClearedTheirHeadsResponse(player);
+                    headHatController.clearHelmet(player);
+                    scoreboardController.reloadScoreboard(player, headQuery.foundHeadsCount(player));
+                    sender.sendMessage("Heads cleared successfully.");
+                } else {
+                    sender.sendMessage("The 'clearheads' command can only be executed by a player.");
                 }
-                headChatController.playerClearedTheirHeadsResponse(player);
-                headHatController.clearHelmet(player);
-                scoreboardController.reloadScoreboard(player, headQuery.foundHeadsCount(player));
-                sender.sendMessage("Heads cleared successfully.");
             }
             case "countheads" -> {
                 headWorldController.countHeadsInRegion();
@@ -77,5 +82,13 @@ public class debugheadhunt implements CommandExecutor {
             default -> sender.sendMessage("Invalid subcommand. Use: clearheads, countheads, or firewebhook.");
         }
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("clearheads", "countheads", "firewebhook");
+        }
+        return Collections.emptyList();
     }
 }
