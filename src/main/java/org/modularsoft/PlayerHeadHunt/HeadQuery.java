@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 public class HeadQuery {
     private final YamlFileManager yamlFileManager;
-    RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
     private final LuckPerms luckPerms;
 
     public HeadQuery(YamlFileManager yamlFileManager) {
