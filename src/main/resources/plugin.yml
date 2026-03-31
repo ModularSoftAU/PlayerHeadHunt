@@ -17,5 +17,10 @@ commands:
     aliases: [lb]
   debugheadhunt:
     description: Debug command for developers.
-    usage: /debugheadhunt <clearheads|countheads>
+    usage: /debugheadhunt <clearheads|countheads|firewebhook>
     aliases: [ dhh ]
+
+permissions:
+    playerheadhunt.leaderboard.exempt:
+        description: Allows the player to be exempt from the leaderboard.
+        default: false

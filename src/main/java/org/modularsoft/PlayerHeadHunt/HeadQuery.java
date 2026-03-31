@@ -1,19 +1,32 @@
 package org.modularsoft.PlayerHeadHunt;
 
 import lombok.Getter;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.util.Tristate;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class HeadQuery {
     private final YamlFileManager yamlFileManager;
+    private final LuckPerms luckPerms;
 
     public HeadQuery(YamlFileManager yamlFileManager) {
         this.yamlFileManager = yamlFileManager;
+
+        // Get the LuckPerms provider from the Bukkit services manager
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if (provider != null) {
+            this.luckPerms = provider.getProvider();
+        } else {
+            throw new IllegalStateException("LuckPerms API is not available!");
+        }
     }
 
     public record HeadHunter(@Getter String name, @Getter int headsCollected) { }
@@ -150,29 +163,76 @@ public class HeadQuery {
         return true;
     }
 
-    public List<HeadHunter> getBestHunters(int topHunters) {
+    private boolean isPlayerExcluded(UUID uuid, String username) {
+        return luckPerms.getUserManager().loadUser(uuid)
+                .thenApply(user -> {
+                    if (user == null) {
+                        Bukkit.getLogger().warning("LuckPerms failed to load user for UUID: " + uuid);
+                        return false; // Include the player if user data cannot be loaded
+                    }
+
+                    Tristate permissionResult = user.getCachedData()
+                            .getPermissionData()
+                            .checkPermission("playerheadhunt.leaderboard.exclude");
+
+                    // Only exclude if the permission is explicitly TRUE
+                    boolean isExcluded = permissionResult == Tristate.TRUE;
+
+                    Bukkit.getLogger().info("Player " + username + " exclusion status: " + isExcluded);
+                    return isExcluded;
+                }).join();
+    }
+
+    private Optional<HeadHunter> processPlayerData(String uuidStr, Map<String, Object> playerData) {
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(uuidStr);
+        } catch (IllegalArgumentException e) {
+            Bukkit.getLogger().warning("Invalid UUID string: " + uuidStr);
+            return Optional.empty();
+        }
+
+        String username = (String) playerData.get("username");
+        Object headsCollectedObj = playerData.get("headsCollected");
+
+        if (username == null || !(headsCollectedObj instanceof List<?> headsCollected)) {
+            Bukkit.getLogger().warning("Invalid data for user " + uuidStr + ": username=" + username + ", headsCollected=" + headsCollectedObj);
+            return Optional.empty();
+        }
+
+        Bukkit.getLogger().info("Processing player: " + username + ", Heads Collected: " + headsCollected.size());
+
+        if (isPlayerExcluded(uuid, username)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new HeadHunter(username, headsCollected.size()));
+    }
+
+    public CompletableFuture<List<HeadHunter>> getBestHunters(int topHunters) {
         Map<String, Object> data = yamlFileManager.getData();
-        List<HeadHunter> bestHunters = new ArrayList<>();
+        List<CompletableFuture<Optional<HeadHunter>>> futures = new ArrayList<>();
 
-        data.forEach((key, value) -> {
-            if (value instanceof Map) {
-                Map<String, Object> playerData = (Map<String, Object>) value;
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            String uuidStr = entry.getKey();
+            Map<String, Object> playerData = (Map<String, Object>) entry.getValue();
 
-                String username = (String) playerData.get("username");
-                Object headsCollectedObj = playerData.get("headsCollected");
-
-                // Validate that headsCollected is a list
-                if (username != null && headsCollectedObj instanceof List<?>) {
-                    int headsCollectedCount = ((List<?>) headsCollectedObj).size();
-                    bestHunters.add(new HeadHunter(username, headsCollectedCount));
-                }
+            if (playerData == null) {
+                Bukkit.getLogger().warning("Missing playerData for UUID: " + uuidStr);
+                continue;
             }
-        });
 
-        // Sort hunters by the number of heads collected in descending order
-        bestHunters.sort((a, b) -> Integer.compare(b.headsCollected(), a.headsCollected()));
+            CompletableFuture<Optional<HeadHunter>> future = CompletableFuture.supplyAsync(() -> processPlayerData(uuidStr, playerData));
+            futures.add(future);
+        }
 
-        // Return the top hunters
-        return bestHunters.subList(0, Math.min(topHunters, bestHunters.size()));
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply(v -> futures.stream()
+                        .map(CompletableFuture::join)
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .sorted((a, b) -> Integer.compare(b.headsCollected(), a.headsCollected()))
+                        .limit(topHunters)
+                        .collect(Collectors.toList()));
     }
 }
