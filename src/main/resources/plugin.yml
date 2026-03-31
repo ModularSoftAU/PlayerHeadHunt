@@ -8,8 +8,8 @@ depend: [WorldEdit]
 
 commands:
   heads:
-    description: Grab the amount of heads you have.
-    usage: /heads
+    description: Grab the amount of heads you have, or check another player's count.
+    usage: /heads [player]
     aliases: [eggs, presents]
   leaderboard:
     description: Show the 5 best heads hunters on the Server.
@@ -17,7 +17,7 @@ commands:
     aliases: [lb]
   debugheadhunt:
     description: Debug command for developers.
-    usage: /debugheadhunt <clearheads|countheads|firewebhook>
+    usage: /debugheadhunt <clearheads [player]|countheads|firewebhook>
     aliases: [ dhh ]
 
 permissions:

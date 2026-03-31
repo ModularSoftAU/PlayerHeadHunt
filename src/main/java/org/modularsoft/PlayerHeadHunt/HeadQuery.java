@@ -12,6 +12,7 @@ import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class HeadQuery {
     private final YamlFileManager yamlFileManager;
@@ -50,24 +51,28 @@ public class HeadQuery {
 
     public int foundHeadsAlreadyCount(int xCord, int yCord, int zCord) {
         Map<String, Object> data = yamlFileManager.getData();
-        Object headsObject = data.get("heads");
+        int count = 0;
 
-        // Ensure the "heads" object is a list
-        if (!(headsObject instanceof List<?>)) {
-            return 0; // Return 0 if the data is not a list
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            if (!(entry.getValue() instanceof Map<?, ?> playerData)) continue;
+
+            Object headsObj = playerData.get("headsCollected");
+            if (!(headsObj instanceof List<?> heads)) continue;
+
+            for (Object head : heads) {
+                if (!(head instanceof Map<?, ?> headMap)) continue;
+                Object hx = headMap.get("x");
+                Object hy = headMap.get("y");
+                Object hz = headMap.get("z");
+                if (hx instanceof Integer && hy instanceof Integer && hz instanceof Integer
+                        && (Integer) hx == xCord && (Integer) hy == yCord && (Integer) hz == zCord) {
+                    count++;
+                    break; // each player counts once per head location
+                }
+            }
         }
 
-        List<?> heads = (List<?>) headsObject;
-
-        // Filter and count matching heads
-        return (int) heads.stream()
-                .filter(head -> head instanceof Map)
-                .map(head -> (Map<String, Object>) head)
-                .filter(head ->
-                        head.get("x") instanceof Integer && head.get("y") instanceof Integer && head.get("z") instanceof Integer &&
-                                head.get("x").equals(xCord) && head.get("y").equals(yCord) && head.get("z").equals(zCord)
-                )
-                .count();
+        return count;
     }
 
     public boolean clearHeads(Player player) {
@@ -108,7 +113,7 @@ public class HeadQuery {
 
         // Check if the head coordinates already exist in the list
         return headsCollected.stream().anyMatch(head ->
-                head.get("x") == x && head.get("y") == y && head.get("z") == z);
+                Objects.equals(head.get("x"), x) && Objects.equals(head.get("y"), y) && Objects.equals(head.get("z"), z));
     }
 
     public void insertCollectedHead(Player player, int x, int y, int z) {
@@ -161,6 +166,52 @@ public class HeadQuery {
 
         yamlFileManager.save();
         return true;
+    }
+
+    public int foundHeadsCountByName(String playerName) {
+        Map<String, Object> data = yamlFileManager.getData();
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            if (!(entry.getValue() instanceof Map<?, ?> playerData)) continue;
+            String username = (String) playerData.get("username");
+            if (!playerName.equalsIgnoreCase(username)) continue;
+            Object headsObj = playerData.get("headsCollected");
+            if (headsObj instanceof List<?> heads) {
+                return heads.size();
+            }
+            return 0;
+        }
+        return -1; // -1 indicates player not found in data
+    }
+
+    public boolean clearHeadsByName(String playerName) {
+        Map<String, Object> data = yamlFileManager.getData();
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            if (!(entry.getValue() instanceof Map<?, ?> rawPlayerData)) continue;
+            String username = (String) rawPlayerData.get("username");
+            if (!playerName.equalsIgnoreCase(username)) continue;
+
+            Map<String, Object> playerData = (Map<String, Object>) entry.getValue();
+            List<Map<String, Integer>> headsCollected = (List<Map<String, Integer>>) playerData.get("headsCollected");
+            if (headsCollected != null) headsCollected.clear();
+            playerData.put("headsCollectedCount", 0);
+            yamlFileManager.save();
+            return true;
+        }
+        return false;
+    }
+
+    public int getLoadedPlayerCount() {
+        return yamlFileManager.getData().size();
+    }
+
+    public int getTotalHeadsCollectedAcrossAllPlayers() {
+        return yamlFileManager.getData().values().stream()
+                .filter(v -> v instanceof Map<?, ?>)
+                .mapToInt(v -> {
+                    Object headsObj = ((Map<?, ?>) v).get("headsCollected");
+                    return (headsObj instanceof List<?> list) ? list.size() : 0;
+                })
+                .sum();
     }
 
     private boolean isPlayerExcluded(UUID uuid, String username) {

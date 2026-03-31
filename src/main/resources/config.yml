@@ -19,7 +19,7 @@ HEAD:
   HEADTOTAL:
   HEADBLOCK: PLAYER_HEAD
   RESPAWNTIMER: 1200 # Default is 1200 (1 minute)
-  SKINSMAX: 9
+  SKINSMAX: 10
   SKINS:
     0: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGM1MGFlZTg4MDEzZThmYWY0MjdlMTlmM2I4OTgyOGI4NmJiZjAzZGQyZjE3YzRjNzYwZDFkZGUyMmRlMyJ9fX0="
     1: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzc2NTk1ZWZmY2M1NjI3ZTg1YjE0YzljODgyNDY3MWI1ZWMyOTY1NjU5YzhjNDE3ODQ5YTY2Nzg3OGZhNDkwIn19fQ=="
@@ -78,6 +78,7 @@ LANG:
     FIRSTHEADFOUND: "&e&l%PLAYER% &5has found their first egg!"
     LASTHEADFOUND: "&e&l%PLAYER% &5has found all &e&l%NUMBEROFHEADS% &r&5eggs!"
     HEADCOUNT: "&eYou have found &l&6%FOUNDHEADS%/%NUMBEROFHEADS% &r&eheads."
+    ALLHEADSCOLLECTED: "&eYou have already collected all available eggs!"
     # Use %PLAYER% to display players name, use %NUMBEROFHEADS% to display number of eggs.
     HEADCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFHEADS% &r&5eggs!"
   LEADERBOARD:

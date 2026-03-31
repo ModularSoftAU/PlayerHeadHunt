@@ -6,7 +6,7 @@
 
     <groupId>org.modularsoft</groupId>
     <artifactId>PlayerHeadHunt</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,7 +18,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <release>17</release>
                 </configuration>
@@ -26,7 +26,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -37,7 +37,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.apache.hc</pattern>
-                                    <shadedPattern> org.modularsoft.PlayerHeadHunt.shaded.org.apache.hc</shadedPattern>
+                                    <shadedPattern>org.modularsoft.PlayerHeadHunt.shaded.org.apache.hc</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -111,20 +111,20 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
+            <version>1.18.36</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>2.0</version>
+            <version>2.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
-            <version>5.2</version>
+            <version>5.4.1</version>
         </dependency>
 
         <dependency>

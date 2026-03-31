@@ -40,6 +40,12 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         HeadHatController headHatController = new HeadHatController(this);
         HeadScoreboardController headScoreboardController = new HeadScoreboardController(this);
 
+        // Log loaded player and head statistics
+        int playerCount = headQuery.getLoadedPlayerCount();
+        int totalCollected = headQuery.getTotalHeadsCollectedAcrossAllPlayers();
+        console.sendMessage(ChatColor.GREEN + "Loaded " + playerCount + " player profile(s) from storage.");
+        console.sendMessage(ChatColor.GREEN + "Total heads collected across all players: " + totalCollected);
+
         // Do an initial calculation of the number of heads. This can be
         // manually recalculated with the relevant command.
         headWorldController.countHeadsInRegion();

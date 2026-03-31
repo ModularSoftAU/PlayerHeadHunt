@@ -43,6 +43,7 @@ public class PluginConfig {
     @Getter private final String langLastHeadFound;
     @Getter private final String langHeadCount;
     @Getter private final String langHeadCollectionMilestoneReached;
+    @Getter private final String langAllHeadsCollected;
 
     @Getter private final String langLeaderboardNoHeads;
     @Getter private final String langLeaderboardHeader;
@@ -98,6 +99,7 @@ public class PluginConfig {
         langLastHeadFound =                  ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.LASTHEADFOUND")));
         langHeadCount =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOUNT")));
         langHeadCollectionMilestoneReached = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOLLECTIONMILESTONEREACHED")));
+        langAllHeadsCollected =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.ALLHEADSCOLLECTED")));
 
         langLeaderboardNoHeads =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.NOHEADS")));
         langLeaderboardHeader =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.HEADER")));

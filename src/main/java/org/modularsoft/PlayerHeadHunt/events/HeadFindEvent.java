@@ -47,10 +47,18 @@ public class HeadFindEvent implements Listener {
         int y = block.getY();
         int z = block.getZ();
 
+        // Check if the player has already collected all available heads
+        int foundHeadsBeforeCollection = headQuery.foundHeadsCount(player);
+        int totalHeads = plugin.config().getTotalHeads();
+        if (totalHeads > 0 && foundHeadsBeforeCollection >= totalHeads) {
+            player.sendMessage(plugin.config().getLangAllHeadsCollected());
+            return;
+        }
+
         // Check if the head has already been collected
         if (headQuery.hasAlreadyCollectedHead(player, x, y, z)) {
             // Send the "head already found" message and stop further processing
-            headChatController.headFoundResponse(player, true, headQuery.foundHeadsCount(player), x, y, z);
+            headChatController.headFoundResponse(player, true, foundHeadsBeforeCollection, x, y, z);
             return; // Ensure no further processing occurs
         }
 
