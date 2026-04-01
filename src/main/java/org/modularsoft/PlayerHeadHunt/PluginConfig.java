@@ -78,6 +78,7 @@ public class PluginConfig {
         for (Integer minor : config.getIntegerList("MILESTONES.MAJOR"))
             headMilestones.put(minor, new HeadMileStone(minor, true));
         headMilestones.get(config.getInt("MILESTONES.LEATHERHELMET")).setHelmet(Material.LEATHER_HELMET);
+        headMilestones.get(config.getInt("MILESTONES.COPPERHELMET")).setHelmet(Material.COPPER_HELMET);
         headMilestones.get(config.getInt("MILESTONES.CHAINMAILHELMET")).setHelmet(Material.CHAINMAIL_HELMET);
         headMilestones.get(config.getInt("MILESTONES.IRONHELMET")).setHelmet(Material.IRON_HELMET);
         headMilestones.get(config.getInt("MILESTONES.GOLDENHELMET")).setHelmet(Material.GOLDEN_HELMET);
