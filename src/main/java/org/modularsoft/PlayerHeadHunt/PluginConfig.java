@@ -73,17 +73,10 @@ public class PluginConfig {
         majorCollectionSound = Sound.valueOf(config.getString("SOUND.MAJORCOLLECTIONMILESTONE"));
 
         headMilestones = new HashMap<>();
-        for (Integer minor : config.getIntegerList("MILESTONES.MINOR"))
-            headMilestones.put(minor, new HeadMileStone(minor, false));
-        for (Integer minor : config.getIntegerList("MILESTONES.MAJOR"))
-            headMilestones.put(minor, new HeadMileStone(minor, true));
-        headMilestones.get(config.getInt("MILESTONES.LEATHERHELMET")).setHelmet(Material.LEATHER_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.COPPERHELMET")).setHelmet(Material.COPPER_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.CHAINMAILHELMET")).setHelmet(Material.CHAINMAIL_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.IRONHELMET")).setHelmet(Material.IRON_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.GOLDENHELMET")).setHelmet(Material.GOLDEN_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.DIAMONDHELMET")).setHelmet(Material.DIAMOND_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.NETHERITEHELMET")).setHelmet(Material.NETHERITE_HELMET);
+        for (Object entry : config.getList("MILESTONES.MINOR", Collections.emptyList()))
+            parseMilestoneEntry(entry, false);
+        for (Object entry : config.getList("MILESTONES.MAJOR", Collections.emptyList()))
+            parseMilestoneEntry(entry, true);
 
         langDatabaseConnectionError =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONERROR")));
         langDatabaseConnectionSuccess =      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONSUCCESS")));
@@ -108,6 +101,26 @@ public class PluginConfig {
         langLeaderboardSecondColour =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.SECONDCOLOUR")));
         langLeaderboardThirdColour =         ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.THIRDCOLOUR")));
         langLeaderboardFormat =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FORMAT")));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void parseMilestoneEntry(Object entry, boolean isMajor) {
+        if (entry instanceof Integer count) {
+            headMilestones.put(count, new HeadMileStone(count, isMajor));
+        } else if (entry instanceof Map<?, ?> map) {
+            Object countObj = map.get("count");
+            if (!(countObj instanceof Integer count)) return;
+            HeadMileStone milestone = new HeadMileStone(count, isMajor);
+            Object helmetStr = map.get("helmet");
+            if (helmetStr instanceof String name) {
+                try {
+                    milestone.setHelmet(Material.valueOf(name.toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("Unknown helmet material in milestones config: " + name);
+                }
+            }
+            headMilestones.put(count, milestone);
+        }
     }
 
     public void save() {

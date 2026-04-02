@@ -37,30 +37,32 @@ SOUND:
   MINORCOLLECTIONMILESTONE: "ENTITY_PLAYER_LEVELUP"
   MAJORCOLLECTIONMILESTONE: "UI_TOAST_CHALLENGE_COMPLETE"
 MILESTONES:
+  # Each entry is either a plain number (no helmet reward) or a map with
+  # a 'count' and optional 'helmet' (any valid Bukkit Material name).
+  # MINOR uses the minor sound; MAJOR uses the major sound.
   MINOR:
     - 10
     - 25
-    - 50
-    - 75
-    - 100
+    - count: 50
+      helmet: LEATHER_HELMET
+    - count: 75
+      helmet: COPPER_HELMET
+    - count: 100
+      helmet: CHAINMAIL_HELMET
     - 200
     - 300
     - 400
     - 500
     - 600
   MAJOR:
-    - 156
-    - 314
-    - 468
-    - 625
-  # These need to match up 1 to 1 with a milestone above
-  LEATHERHELMET: 25
-  COPPERHELMET: 75
-  CHAINMAILHELMET: 100
-  IRONHELMET: 156
-  GOLDENHELMET: 314
-  DIAMONDHELMET: 468
-  NETHERITEHELMET: 625 # Should equal the head count for maximum results.
+    - count: 156
+      helmet: IRON_HELMET
+    - count: 314
+      helmet: GOLDEN_HELMET
+    - count: 468
+      helmet: DIAMOND_HELMET
+    - count: 625
+      helmet: NETHERITE_HELMET
 LANG:
   DATABASE:
     CONNECTIONERROR: "&cA database error has occurred, please contact an Administrator."
