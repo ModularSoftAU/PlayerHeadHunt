@@ -21,18 +21,13 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
-
-import java.io.File;
 import java.util.*;
 
 public class HeadWorldController {
     private final PlayerHeadHuntMain plugin;
-    private final YamlFileManager yamlFileManager;
 
     public HeadWorldController(PlayerHeadHuntMain plugin) {
         this.plugin = plugin;
-        this.yamlFileManager = new YamlFileManager(new File(plugin.getDataFolder(), "player-data.yml"));
     }
 
     public void countHeadsInRegion() {
@@ -55,39 +50,11 @@ public class HeadWorldController {
     }
 
     public void playerCollectedHead(Player player, Block block, int x, int y, int z) {
-        String playerUUID = player.getUniqueId().toString();
-        Map<String, Object> data = yamlFileManager.getData();
-        Map<String, Object> playerData = (Map<String, Object>) data.get(playerUUID);
-
-        if (playerData == null) {
-            playerData = new HashMap<>();
-            playerData.put("headsCollected", new ArrayList<Map<String, Integer>>());
-            data.put(playerUUID, playerData);
-        }
-
-        List<Map<String, Integer>> collectedHeads = (List<Map<String, Integer>>) playerData.get("headsCollected");
-        if (collectedHeads == null) {
-            collectedHeads = new ArrayList<>();
-            playerData.put("headsCollected", collectedHeads);
-        }
-
-        boolean alreadyCollected = collectedHeads.stream().anyMatch(head ->
-                head.get("x") == x && head.get("y") == y && head.get("z") == z);
-
-        if (alreadyCollected) {
-            player.sendMessage(plugin.config().getLangHeadAlreadyFound());
-            return;
-        }
-
-        collectedHeads.add(Map.of("x", x, "y", y, "z", z));
-        yamlFileManager.save();
-
-        // Increment the player's head count
+        // Record the collection via HeadQuery (single source of truth for player data)
         plugin.getHeadQuery().insertCollectedHead(player, x, y, z);
 
         Material blockType = block.getType();
         BlockData blockData = block.getBlockData();
-
         int headRespawnTimer = plugin.config().getHeadRespawnTimer();
 
         breakBlock(x, y, z);

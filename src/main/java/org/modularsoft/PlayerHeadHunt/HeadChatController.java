@@ -101,10 +101,20 @@ public class HeadChatController {
     }
 
     public void playersOwnHeadCountResponse(Player player) {
-        // Use the instance of HeadQuery to call the method
         player.sendMessage(plugin.config().getLangHeadCount()
                 .replace("%FOUNDHEADS%", "" + headQuery.foundHeadsCount(player))
                 .replace("%NUMBEROFHEADS%", "" + plugin.config().getTotalHeads()));
+    }
+
+    public void targetPlayerHeadCountResponse(org.bukkit.command.CommandSender sender, String targetName, int count) {
+        if (count == -1) {
+            sender.sendMessage(ChatColor.RED + "No data found for player: " + targetName);
+            return;
+        }
+        sender.sendMessage(plugin.config().getLangHeadCount()
+                .replace("%FOUNDHEADS%", "" + count)
+                .replace("%NUMBEROFHEADS%", "" + plugin.config().getTotalHeads())
+                .replace("You have", targetName + " has"));
     }
 
     public void playerClearedTheirHeadsResponse(Player player) {

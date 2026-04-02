@@ -40,19 +40,20 @@ public class debugheadhunt implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (!sender.hasPermission("playerheadhunt.debug") || !sender.isOp()) {
+        if (!sender.hasPermission("playerheadhunt.debug") && !sender.isOp()) {
             sender.sendMessage(plugin.config().getLangInsufficientPermissions());
             return true;
         }
 
         if (args.length == 0) {
-            sender.sendMessage("Usage: /debugheadhunt <clearheads|countheads|firewebhook>");
+            sender.sendMessage("Usage: /debugheadhunt <clearheads [player]|countheads|firewebhook>");
             return true;
         }
 
         switch (args[0].toLowerCase()) {
             case "clearheads" -> {
-                if (sender instanceof Player player) {
+                if (sender instanceof Player player && args.length == 1) {
+                    // Player clearing their own heads
                     if (!headQuery.clearHeads(player)) {
                         sender.sendMessage("No heads to clear.");
                         return true;
@@ -61,8 +62,22 @@ public class debugheadhunt implements CommandExecutor, TabCompleter {
                     headHatController.clearHelmet(player);
                     scoreboardController.reloadScoreboard(player, headQuery.foundHeadsCount(player));
                     sender.sendMessage("Heads cleared successfully.");
+                } else if (args.length >= 2) {
+                    // Clear heads for a named player (works from console or player)
+                    String targetName = args[1];
+                    if (!headQuery.clearHeadsByName(targetName)) {
+                        sender.sendMessage("No data found for player: " + targetName);
+                        return true;
+                    }
+                    sender.sendMessage("Heads cleared for player: " + targetName);
+                    // If the target is online, update their scoreboard and helmet too
+                    org.bukkit.entity.Player online = plugin.getServer().getPlayerExact(targetName);
+                    if (online != null) {
+                        headHatController.clearHelmet(online);
+                        scoreboardController.reloadScoreboard(online, 0);
+                    }
                 } else {
-                    sender.sendMessage("The 'clearheads' command can only be executed by a player.");
+                    sender.sendMessage("Usage: /debugheadhunt clearheads [player]");
                 }
             }
             case "countheads" -> {

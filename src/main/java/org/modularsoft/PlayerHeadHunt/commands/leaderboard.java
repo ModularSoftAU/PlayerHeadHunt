@@ -36,10 +36,15 @@ public class leaderboard implements CommandExecutor {
         } else {
             // Handle the command for the console
             headQuery.getBestHunters(5).thenAccept(bestHunters -> {
-                // Log the leaderboard to the console
-                plugin.getServer().getConsoleSender().sendMessage("Top 5 Hunters:");
-                for (int i = 0; i < bestHunters.size(); i++) {
-                    plugin.getServer().getConsoleSender().sendMessage((i + 1) + ". " + bestHunters.get(i));
+                plugin.getServer().getConsoleSender().sendMessage("=== Top 5 Head Hunters ===");
+                if (bestHunters.isEmpty()) {
+                    plugin.getServer().getConsoleSender().sendMessage("No hunters found.");
+                } else {
+                    for (int i = 0; i < bestHunters.size(); i++) {
+                        HeadQuery.HeadHunter hunter = bestHunters.get(i);
+                        plugin.getServer().getConsoleSender().sendMessage(
+                                (i + 1) + ". " + hunter.name() + " - " + hunter.headsCollected() + " heads");
+                    }
                 }
             });
         }

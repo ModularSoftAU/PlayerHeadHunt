@@ -3,13 +3,13 @@ name: PlayerHeadHunt
 description: An Player Head Hunt minigame.
 version: 1.2.0
 author: ModularSoft
-api-version: 1.19
+api-version: 1.21
 depend: [WorldEdit]
 
 commands:
   heads:
-    description: Grab the amount of heads you have.
-    usage: /heads
+    description: Grab the amount of heads you have, or check another player's count.
+    usage: /heads [player]
     aliases: [eggs, presents]
   leaderboard:
     description: Show the 5 best heads hunters on the Server.
@@ -17,10 +17,13 @@ commands:
     aliases: [lb]
   debugheadhunt:
     description: Debug command for developers.
-    usage: /debugheadhunt <clearheads|countheads|firewebhook>
+    usage: /debugheadhunt <clearheads [player]|countheads|firewebhook>
     aliases: [ dhh ]
 
 permissions:
     playerheadhunt.leaderboard.exempt:
         description: Allows the player to be exempt from the leaderboard.
+        default: false
+    playerheadhunt.flight.exempt:
+        description: Allows the player to fly even when FEATURE.DISABLEFLIGHT is enabled.
         default: false

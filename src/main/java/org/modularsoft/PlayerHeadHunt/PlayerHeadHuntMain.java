@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.modularsoft.PlayerHeadHunt.commands.*;
 import org.modularsoft.PlayerHeadHunt.events.HeadFindEvent;
 import org.modularsoft.PlayerHeadHunt.events.HeadHatOnHead;
+import org.modularsoft.PlayerHeadHunt.events.HeadHunterFlightControl;
 import org.modularsoft.PlayerHeadHunt.events.HeadHunterOnJoin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -27,8 +28,12 @@ public class PlayerHeadHuntMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Generate configuration file
+        // Write default config.yml if it doesn't exist on disk, then enable
+        // in-memory fallback to bundled defaults for any key not present in
+        // the server's config.yml. Do NOT call saveConfig() here — merging
+        // new structured defaults into an old config corrupts the YAML file.
         saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
         config = new PluginConfig(this);
         console = getServer().getConsoleSender();
 
@@ -40,15 +45,23 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         HeadHatController headHatController = new HeadHatController(this);
         HeadScoreboardController headScoreboardController = new HeadScoreboardController(this);
 
+        // Log loaded player and head statistics
+        int playerCount = headQuery.getLoadedPlayerCount();
+        int totalCollected = headQuery.getTotalHeadsCollectedAcrossAllPlayers();
+        console.sendMessage(ChatColor.GREEN + "Loaded " + playerCount + " player profile(s) from storage.");
+        console.sendMessage(ChatColor.GREEN + "Total heads collected across all players: " + totalCollected);
+
         // Do an initial calculation of the number of heads. This can be
         // manually recalculated with the relevant command.
         headWorldController.countHeadsInRegion();
 
         // Plugin Event Register
+        HeadHunterFlightControl flightControl = new HeadHunterFlightControl(this);
         PluginManager pluginmanager = getServer().getPluginManager();
         pluginmanager.registerEvents(new HeadFindEvent(this, headWorldController, headChatController, headHatController, headScoreboardController, headQuery), this);
-        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery), this);
+        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery, flightControl), this);
         pluginmanager.registerEvents(new HeadHatOnHead(), this);
+        pluginmanager.registerEvents(flightControl, this);
 
         // Command Registry
         Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));
@@ -69,7 +82,7 @@ public class PlayerHeadHuntMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin Shutdown Message
-        console.sendMessage(ChatColor.RED + getDescription().getName() + " is now disabled.");
+        if (console != null)
+            console.sendMessage(ChatColor.RED + getDescription().getName() + " is now disabled.");
     }
 }

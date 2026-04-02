@@ -16,6 +16,7 @@ public class PluginConfig {
 
     @Getter private final boolean milestoneHatFeatureEnabled;
     @Getter private final boolean milestoneMessageFeatureEnabled;
+    @Getter private final boolean flightDisabledFeatureEnabled;
 
     @Getter private final String headBlock;
     @Getter private final int headRespawnTimer;
@@ -27,6 +28,10 @@ public class PluginConfig {
     @Getter private final Sound majorCollectionSound;
 
     @Getter private final Map<Integer, HeadMileStone> headMilestones;
+
+    // Raw percentage templates parsed once from config; counts derived at runtime
+    private record MilestoneTemplate(double percentage, boolean isMajor, Material helmet) {}
+    private final List<MilestoneTemplate> milestoneTemplates;
 
     @Getter private final String langDatabaseConnectionError;
     @Getter private final String langDatabaseConnectionSuccess;
@@ -43,6 +48,8 @@ public class PluginConfig {
     @Getter private final String langLastHeadFound;
     @Getter private final String langHeadCount;
     @Getter private final String langHeadCollectionMilestoneReached;
+    @Getter private final String langAllHeadsCollected;
+    @Getter private final String langFlightDisabled;
 
     @Getter private final String langLeaderboardNoHeads;
     @Getter private final String langLeaderboardHeader;
@@ -57,6 +64,7 @@ public class PluginConfig {
 
         milestoneHatFeatureEnabled = config.getBoolean("FEATURE.MILESTONEHAT");
         milestoneMessageFeatureEnabled = config.getBoolean("FEATURE.MILESTONEMESSAGE");
+        flightDisabledFeatureEnabled = config.getBoolean("FEATURE.DISABLEFLIGHT");
 
         headBlock = config.getString("HEAD.HEADBLOCK");
         headRespawnTimer = config.getInt("HEAD.RESPAWNTIMER");
@@ -71,40 +79,88 @@ public class PluginConfig {
         minorCollectionSound = Sound.valueOf(config.getString("SOUND.MINORCOLLECTIONMILESTONE"));
         majorCollectionSound = Sound.valueOf(config.getString("SOUND.MAJORCOLLECTIONMILESTONE"));
 
+        milestoneTemplates = new ArrayList<>();
+        for (Object entry : config.getList("MILESTONES.MINOR", Collections.emptyList()))
+            parseMilestoneTemplate(entry, false);
+        for (Object entry : config.getList("MILESTONES.MAJOR", Collections.emptyList()))
+            parseMilestoneTemplate(entry, true);
+
         headMilestones = new HashMap<>();
-        for (Integer minor : config.getIntegerList("MILESTONES.MINOR"))
-            headMilestones.put(minor, new HeadMileStone(minor, false));
-        for (Integer minor : config.getIntegerList("MILESTONES.MAJOR"))
-            headMilestones.put(minor, new HeadMileStone(minor, true));
-        headMilestones.get(config.getInt("MILESTONES.LEATHERHELMET")).setHelmet(Material.LEATHER_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.CHAINMAILHELMET")).setHelmet(Material.CHAINMAIL_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.IRONHELMET")).setHelmet(Material.IRON_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.GOLDENHELMET")).setHelmet(Material.GOLDEN_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.DIAMONDHELMET")).setHelmet(Material.DIAMOND_HELMET);
-        headMilestones.get(config.getInt("MILESTONES.NETHERITEHELMET")).setHelmet(Material.NETHERITE_HELMET);
+        recomputeMilestones(getTotalHeads());
 
-        langDatabaseConnectionError =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONERROR")));
-        langDatabaseConnectionSuccess =      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONSUCCESS")));
-        langNotAPlayer =                     ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.NOTAPLAYER")));
-        langInsufficientPermissions =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.INSUFFICENTPERMISSIONS")));
-        langCommandIncomplete =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.COMMANDINCOMPLETE")));
-        langHeadFound =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADFOUND")));
-        langHeadAlreadyFound =               ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADALREADYFOUND")));
-        langHeadFirstFinder =                ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTFINDER")));
-        langHeadFirstFinderStill =           ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTFINDERSTILL")));
-        langHeadNotFirstFinderSingle =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.NOTFIRSTFINDERSINGLE")));
-        langHeadNotFirstFinderMultiple =     ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.NOTFIRSTFINDERMULTIPLE")));
-        langFirstHeadFound =                 ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTHEADFOUND")));
-        langLastHeadFound =                  ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.LASTHEADFOUND")));
-        langHeadCount =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOUNT")));
-        langHeadCollectionMilestoneReached = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOLLECTIONMILESTONEREACHED")));
+        langDatabaseConnectionError =        lang("LANG.DATABASE.CONNECTIONERROR");
+        langDatabaseConnectionSuccess =      lang("LANG.DATABASE.CONNECTIONSUCCESS");
+        langNotAPlayer =                     lang("LANG.COMMAND.NOTAPLAYER");
+        langInsufficientPermissions =        lang("LANG.COMMAND.INSUFFICENTPERMISSIONS");
+        langCommandIncomplete =              lang("LANG.COMMAND.COMMANDINCOMPLETE");
+        langHeadFound =                      lang("LANG.HEAD.HEADFOUND");
+        langHeadAlreadyFound =               lang("LANG.HEAD.HEADALREADYFOUND");
+        langHeadFirstFinder =                lang("LANG.HEAD.FIRSTFINDER");
+        langHeadFirstFinderStill =           lang("LANG.HEAD.FIRSTFINDERSTILL");
+        langHeadNotFirstFinderSingle =       lang("LANG.HEAD.NOTFIRSTFINDERSINGLE");
+        langHeadNotFirstFinderMultiple =     lang("LANG.HEAD.NOTFIRSTFINDERMULTIPLE");
+        langFirstHeadFound =                 lang("LANG.HEAD.FIRSTHEADFOUND");
+        langLastHeadFound =                  lang("LANG.HEAD.LASTHEADFOUND");
+        langHeadCount =                      lang("LANG.HEAD.HEADCOUNT");
+        langHeadCollectionMilestoneReached = lang("LANG.HEAD.HEADCOLLECTIONMILESTONEREACHED");
+        langAllHeadsCollected =              lang("LANG.HEAD.ALLHEADSCOLLECTED");
+        langFlightDisabled =                 lang("LANG.FLIGHT.DISABLED");
 
-        langLeaderboardNoHeads =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.NOHEADS")));
-        langLeaderboardHeader =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.HEADER")));
-        langLeaderboardFirstColour =         ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FIRSTCOLOUR")));
-        langLeaderboardSecondColour =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.SECONDCOLOUR")));
-        langLeaderboardThirdColour =         ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.THIRDCOLOUR")));
-        langLeaderboardFormat =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FORMAT")));
+        langLeaderboardNoHeads =             lang("LANG.LEADERBOARD.NOHEADS");
+        langLeaderboardHeader =              lang("LANG.LEADERBOARD.HEADER");
+        langLeaderboardFirstColour =         lang("LANG.LEADERBOARD.FIRSTCOLOUR");
+        langLeaderboardSecondColour =        lang("LANG.LEADERBOARD.SECONDCOLOUR");
+        langLeaderboardThirdColour =         lang("LANG.LEADERBOARD.THIRDCOLOUR");
+        langLeaderboardFormat =              lang("LANG.LEADERBOARD.FORMAT");
+    }
+
+    /** Reads a lang string, falling back to the bundled default if the key is absent or the file is corrupt. */
+    private String lang(String path) {
+        String value = config.getString(path); // falls through to bundled defaults automatically
+        if (value == null) {
+            plugin.getLogger().warning("Missing config key: " + path + " — using empty string. Delete config.yml to regenerate.");
+            return "";
+        }
+        return ChatColor.translateAlternateColorCodes('&', value);
+    }
+
+    private void parseMilestoneTemplate(Object entry, boolean isMajor) {
+        double percentage;
+        Material helmet = null;
+
+        if (entry instanceof Number num) {
+            percentage = num.doubleValue();
+        } else if (entry instanceof Map<?, ?> map) {
+            Object pctObj = map.get("percentage");
+            if (!(pctObj instanceof Number pctNum)) return;
+            percentage = pctNum.doubleValue();
+            Object helmetStr = map.get("helmet");
+            if (helmetStr instanceof String name) {
+                try {
+                    helmet = Material.valueOf(name.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("Unknown helmet material in milestones config: " + name);
+                }
+            }
+        } else {
+            return;
+        }
+
+        milestoneTemplates.add(new MilestoneTemplate(percentage, isMajor, helmet));
+    }
+
+    public void recomputeMilestones(int totalHeads) {
+        headMilestones.clear();
+        if (totalHeads <= 0) return;
+
+        for (MilestoneTemplate template : milestoneTemplates) {
+            int count = Math.max(1, (int) Math.round(template.percentage() / 100.0 * totalHeads));
+            HeadMileStone milestone = new HeadMileStone(count, template.isMajor());
+            if (template.helmet() != null) milestone.setHelmet(template.helmet());
+            headMilestones.put(count, milestone);
+        }
+
+        plugin.getLogger().info("Milestones recalculated for " + totalHeads + " total heads: " + headMilestones.keySet().stream().sorted().toList());
     }
 
     public void save() {
@@ -113,6 +169,7 @@ public class PluginConfig {
 
     public void setTotalHeads(int totalHeads) {
         config.set("HEAD.HEADTOTAL", totalHeads);
+        recomputeMilestones(totalHeads);
     }
 
     public int getTotalHeads() {
