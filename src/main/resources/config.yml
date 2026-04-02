@@ -11,6 +11,7 @@ FEATURE:
   MILESTONEHAT: TRUE
   MILESTONEMESSAGE: TRUE
   LEADERBOARDDAILYWEBHOOK: TRUE
+  DISABLEFLIGHT: TRUE
 DISCORD:
   WEBHOOKURL: "https://discord.com/api/webhooks/000000000000000000/000000000000000000"
   HOUR: 7
@@ -83,6 +84,8 @@ LANG:
     LASTHEADFOUND: "&e&l%PLAYER% &5has found all &e&l%NUMBEROFHEADS% &r&5eggs!"
     HEADCOUNT: "&eYou have found &l&6%FOUNDHEADS%/%NUMBEROFHEADS% &r&eheads."
     ALLHEADSCOLLECTED: "&eYou have already collected all available eggs!"
+  FLIGHT:
+    DISABLED: "&cFlight is disabled during the Head Hunt."
     # Use %PLAYER% to display players name, use %NUMBEROFHEADS% to display number of eggs.
     HEADCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFHEADS% &r&5eggs!"
   LEADERBOARD:

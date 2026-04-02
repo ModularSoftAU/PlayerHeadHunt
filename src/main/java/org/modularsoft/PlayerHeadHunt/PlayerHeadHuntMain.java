@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.modularsoft.PlayerHeadHunt.commands.*;
 import org.modularsoft.PlayerHeadHunt.events.HeadFindEvent;
 import org.modularsoft.PlayerHeadHunt.events.HeadHatOnHead;
+import org.modularsoft.PlayerHeadHunt.events.HeadHunterFlightControl;
 import org.modularsoft.PlayerHeadHunt.events.HeadHunterOnJoin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -51,10 +52,12 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         headWorldController.countHeadsInRegion();
 
         // Plugin Event Register
+        HeadHunterFlightControl flightControl = new HeadHunterFlightControl(this);
         PluginManager pluginmanager = getServer().getPluginManager();
         pluginmanager.registerEvents(new HeadFindEvent(this, headWorldController, headChatController, headHatController, headScoreboardController, headQuery), this);
-        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery), this);
+        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery, flightControl), this);
         pluginmanager.registerEvents(new HeadHatOnHead(), this);
+        pluginmanager.registerEvents(flightControl, this);
 
         // Command Registry
         Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));

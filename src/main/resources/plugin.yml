@@ -24,3 +24,6 @@ permissions:
     playerheadhunt.leaderboard.exempt:
         description: Allows the player to be exempt from the leaderboard.
         default: false
+    playerheadhunt.flight.exempt:
+        description: Allows the player to fly even when FEATURE.DISABLEFLIGHT is enabled.
+        default: false

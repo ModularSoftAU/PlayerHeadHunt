@@ -16,6 +16,7 @@ public class PluginConfig {
 
     @Getter private final boolean milestoneHatFeatureEnabled;
     @Getter private final boolean milestoneMessageFeatureEnabled;
+    @Getter private final boolean flightDisabledFeatureEnabled;
 
     @Getter private final String headBlock;
     @Getter private final int headRespawnTimer;
@@ -48,6 +49,7 @@ public class PluginConfig {
     @Getter private final String langHeadCount;
     @Getter private final String langHeadCollectionMilestoneReached;
     @Getter private final String langAllHeadsCollected;
+    @Getter private final String langFlightDisabled;
 
     @Getter private final String langLeaderboardNoHeads;
     @Getter private final String langLeaderboardHeader;
@@ -62,6 +64,7 @@ public class PluginConfig {
 
         milestoneHatFeatureEnabled = config.getBoolean("FEATURE.MILESTONEHAT");
         milestoneMessageFeatureEnabled = config.getBoolean("FEATURE.MILESTONEMESSAGE");
+        flightDisabledFeatureEnabled = config.getBoolean("FEATURE.DISABLEFLIGHT");
 
         headBlock = config.getString("HEAD.HEADBLOCK");
         headRespawnTimer = config.getInt("HEAD.RESPAWNTIMER");
@@ -101,6 +104,7 @@ public class PluginConfig {
         langHeadCount =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOUNT")));
         langHeadCollectionMilestoneReached = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOLLECTIONMILESTONEREACHED")));
         langAllHeadsCollected =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.ALLHEADSCOLLECTED")));
+        langFlightDisabled =                 ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.FLIGHT.DISABLED")));
 
         langLeaderboardNoHeads =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.NOHEADS")));
         langLeaderboardHeader =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.HEADER")));

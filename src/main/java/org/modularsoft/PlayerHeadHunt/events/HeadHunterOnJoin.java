@@ -8,21 +8,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.modularsoft.PlayerHeadHunt.events.HeadHunterFlightControl;
 
 public class HeadHunterOnJoin implements Listener {
     private final PlayerHeadHuntMain plugin;
     private final HeadChatController headChatController;
     private final HeadScoreboardController headScoreboardController;
-    private final HeadQuery headQuery; // Add HeadQuery instance
+    private final HeadQuery headQuery;
+    private final HeadHunterFlightControl flightControl;
 
     public HeadHunterOnJoin(PlayerHeadHuntMain plugin,
                             HeadChatController headChatController,
                             HeadScoreboardController headScoreboardController,
-                            HeadQuery headQuery) {
+                            HeadQuery headQuery,
+                            HeadHunterFlightControl flightControl) {
         this.plugin = plugin;
         this.headChatController = headChatController;
         this.headScoreboardController = headScoreboardController;
-        this.headQuery = headQuery; // Initialize HeadQuery
+        this.headQuery = headQuery;
+        this.flightControl = flightControl;
     }
 
     @EventHandler
@@ -30,8 +34,8 @@ public class HeadHunterOnJoin implements Listener {
         Player player = event.getPlayer();
         String username = player.getName();
 
-        // Use the instance of HeadQuery to call the method
         headScoreboardController.reloadScoreboard(player, headQuery.foundHeadsCount(player));
+        flightControl.enforceFlight(player);
 
         if (headQuery.addNewHunter(player)) {
             // New player joined
