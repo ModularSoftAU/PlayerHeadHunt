@@ -28,8 +28,11 @@ public class PlayerHeadHuntMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Generate configuration file
+        // Generate configuration file, then merge any new keys from the
+        // bundled default into an existing config on disk before reading.
         saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
+        saveConfig();
         config = new PluginConfig(this);
         console = getServer().getConsoleSender();
 
@@ -78,7 +81,7 @@ public class PlayerHeadHuntMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin Shutdown Message
-        console.sendMessage(ChatColor.RED + getDescription().getName() + " is now disabled.");
+        if (console != null)
+            console.sendMessage(ChatColor.RED + getDescription().getName() + " is now disabled.");
     }
 }
