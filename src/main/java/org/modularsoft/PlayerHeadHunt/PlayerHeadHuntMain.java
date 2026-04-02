@@ -28,11 +28,12 @@ public class PlayerHeadHuntMain extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Generate configuration file, then merge any new keys from the
-        // bundled default into an existing config on disk before reading.
+        // Write default config.yml if it doesn't exist on disk, then enable
+        // in-memory fallback to bundled defaults for any key not present in
+        // the server's config.yml. Do NOT call saveConfig() here — merging
+        // new structured defaults into an old config corrupts the YAML file.
         saveDefaultConfig();
         getConfig().options().copyDefaults(true);
-        saveConfig();
         config = new PluginConfig(this);
         console = getServer().getConsoleSender();
 

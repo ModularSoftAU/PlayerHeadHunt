@@ -88,30 +88,40 @@ public class PluginConfig {
         headMilestones = new HashMap<>();
         recomputeMilestones(getTotalHeads());
 
-        langDatabaseConnectionError =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONERROR")));
-        langDatabaseConnectionSuccess =      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONSUCCESS")));
-        langNotAPlayer =                     ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.NOTAPLAYER")));
-        langInsufficientPermissions =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.INSUFFICENTPERMISSIONS")));
-        langCommandIncomplete =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMMAND.COMMANDINCOMPLETE")));
-        langHeadFound =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADFOUND")));
-        langHeadAlreadyFound =               ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADALREADYFOUND")));
-        langHeadFirstFinder =                ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTFINDER")));
-        langHeadFirstFinderStill =           ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTFINDERSTILL")));
-        langHeadNotFirstFinderSingle =       ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.NOTFIRSTFINDERSINGLE")));
-        langHeadNotFirstFinderMultiple =     ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.NOTFIRSTFINDERMULTIPLE")));
-        langFirstHeadFound =                 ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.FIRSTHEADFOUND")));
-        langLastHeadFound =                  ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.LASTHEADFOUND")));
-        langHeadCount =                      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOUNT")));
-        langHeadCollectionMilestoneReached = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.HEADCOLLECTIONMILESTONEREACHED")));
-        langAllHeadsCollected =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.HEAD.ALLHEADSCOLLECTED")));
-        langFlightDisabled =                 ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.FLIGHT.DISABLED")));
+        langDatabaseConnectionError =        lang("LANG.DATABASE.CONNECTIONERROR");
+        langDatabaseConnectionSuccess =      lang("LANG.DATABASE.CONNECTIONSUCCESS");
+        langNotAPlayer =                     lang("LANG.COMMAND.NOTAPLAYER");
+        langInsufficientPermissions =        lang("LANG.COMMAND.INSUFFICENTPERMISSIONS");
+        langCommandIncomplete =              lang("LANG.COMMAND.COMMANDINCOMPLETE");
+        langHeadFound =                      lang("LANG.HEAD.HEADFOUND");
+        langHeadAlreadyFound =               lang("LANG.HEAD.HEADALREADYFOUND");
+        langHeadFirstFinder =                lang("LANG.HEAD.FIRSTFINDER");
+        langHeadFirstFinderStill =           lang("LANG.HEAD.FIRSTFINDERSTILL");
+        langHeadNotFirstFinderSingle =       lang("LANG.HEAD.NOTFIRSTFINDERSINGLE");
+        langHeadNotFirstFinderMultiple =     lang("LANG.HEAD.NOTFIRSTFINDERMULTIPLE");
+        langFirstHeadFound =                 lang("LANG.HEAD.FIRSTHEADFOUND");
+        langLastHeadFound =                  lang("LANG.HEAD.LASTHEADFOUND");
+        langHeadCount =                      lang("LANG.HEAD.HEADCOUNT");
+        langHeadCollectionMilestoneReached = lang("LANG.HEAD.HEADCOLLECTIONMILESTONEREACHED");
+        langAllHeadsCollected =              lang("LANG.HEAD.ALLHEADSCOLLECTED");
+        langFlightDisabled =                 lang("LANG.FLIGHT.DISABLED");
 
-        langLeaderboardNoHeads =             ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.NOHEADS")));
-        langLeaderboardHeader =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.HEADER")));
-        langLeaderboardFirstColour =         ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FIRSTCOLOUR")));
-        langLeaderboardSecondColour =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.SECONDCOLOUR")));
-        langLeaderboardThirdColour =         ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.THIRDCOLOUR")));
-        langLeaderboardFormat =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FORMAT")));
+        langLeaderboardNoHeads =             lang("LANG.LEADERBOARD.NOHEADS");
+        langLeaderboardHeader =              lang("LANG.LEADERBOARD.HEADER");
+        langLeaderboardFirstColour =         lang("LANG.LEADERBOARD.FIRSTCOLOUR");
+        langLeaderboardSecondColour =        lang("LANG.LEADERBOARD.SECONDCOLOUR");
+        langLeaderboardThirdColour =         lang("LANG.LEADERBOARD.THIRDCOLOUR");
+        langLeaderboardFormat =              lang("LANG.LEADERBOARD.FORMAT");
+    }
+
+    /** Reads a lang string, falling back to the bundled default if the key is absent or the file is corrupt. */
+    private String lang(String path) {
+        String value = config.getString(path); // falls through to bundled defaults automatically
+        if (value == null) {
+            plugin.getLogger().warning("Missing config key: " + path + " — using empty string. Delete config.yml to regenerate.");
+            return "";
+        }
+        return ChatColor.translateAlternateColorCodes('&', value);
     }
 
     private void parseMilestoneTemplate(Object entry, boolean isMajor) {
