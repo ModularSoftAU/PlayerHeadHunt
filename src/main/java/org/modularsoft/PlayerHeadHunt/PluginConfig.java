@@ -28,6 +28,10 @@ public class PluginConfig {
 
     @Getter private final Map<Integer, HeadMileStone> headMilestones;
 
+    // Raw percentage templates parsed once from config; counts derived at runtime
+    private record MilestoneTemplate(double percentage, boolean isMajor, Material helmet) {}
+    private final List<MilestoneTemplate> milestoneTemplates;
+
     @Getter private final String langDatabaseConnectionError;
     @Getter private final String langDatabaseConnectionSuccess;
     @Getter private final String langNotAPlayer;
@@ -72,11 +76,14 @@ public class PluginConfig {
         minorCollectionSound = Sound.valueOf(config.getString("SOUND.MINORCOLLECTIONMILESTONE"));
         majorCollectionSound = Sound.valueOf(config.getString("SOUND.MAJORCOLLECTIONMILESTONE"));
 
-        headMilestones = new HashMap<>();
+        milestoneTemplates = new ArrayList<>();
         for (Object entry : config.getList("MILESTONES.MINOR", Collections.emptyList()))
-            parseMilestoneEntry(entry, false);
+            parseMilestoneTemplate(entry, false);
         for (Object entry : config.getList("MILESTONES.MAJOR", Collections.emptyList()))
-            parseMilestoneEntry(entry, true);
+            parseMilestoneTemplate(entry, true);
+
+        headMilestones = new HashMap<>();
+        recomputeMilestones(getTotalHeads());
 
         langDatabaseConnectionError =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONERROR")));
         langDatabaseConnectionSuccess =      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONSUCCESS")));
@@ -103,24 +110,43 @@ public class PluginConfig {
         langLeaderboardFormat =              ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.LEADERBOARD.FORMAT")));
     }
 
-    @SuppressWarnings("unchecked")
-    private void parseMilestoneEntry(Object entry, boolean isMajor) {
-        if (entry instanceof Integer count) {
-            headMilestones.put(count, new HeadMileStone(count, isMajor));
+    private void parseMilestoneTemplate(Object entry, boolean isMajor) {
+        double percentage;
+        Material helmet = null;
+
+        if (entry instanceof Number num) {
+            percentage = num.doubleValue();
         } else if (entry instanceof Map<?, ?> map) {
-            Object countObj = map.get("count");
-            if (!(countObj instanceof Integer count)) return;
-            HeadMileStone milestone = new HeadMileStone(count, isMajor);
+            Object pctObj = map.get("percentage");
+            if (!(pctObj instanceof Number pctNum)) return;
+            percentage = pctNum.doubleValue();
             Object helmetStr = map.get("helmet");
             if (helmetStr instanceof String name) {
                 try {
-                    milestone.setHelmet(Material.valueOf(name.toUpperCase()));
+                    helmet = Material.valueOf(name.toUpperCase());
                 } catch (IllegalArgumentException e) {
                     plugin.getLogger().warning("Unknown helmet material in milestones config: " + name);
                 }
             }
+        } else {
+            return;
+        }
+
+        milestoneTemplates.add(new MilestoneTemplate(percentage, isMajor, helmet));
+    }
+
+    public void recomputeMilestones(int totalHeads) {
+        headMilestones.clear();
+        if (totalHeads <= 0) return;
+
+        for (MilestoneTemplate template : milestoneTemplates) {
+            int count = Math.max(1, (int) Math.round(template.percentage() / 100.0 * totalHeads));
+            HeadMileStone milestone = new HeadMileStone(count, template.isMajor());
+            if (template.helmet() != null) milestone.setHelmet(template.helmet());
             headMilestones.put(count, milestone);
         }
+
+        plugin.getLogger().info("Milestones recalculated for " + totalHeads + " total heads: " + headMilestones.keySet().stream().sorted().toList());
     }
 
     public void save() {
@@ -129,6 +155,7 @@ public class PluginConfig {
 
     public void setTotalHeads(int totalHeads) {
         config.set("HEAD.HEADTOTAL", totalHeads);
+        recomputeMilestones(totalHeads);
     }
 
     public int getTotalHeads() {

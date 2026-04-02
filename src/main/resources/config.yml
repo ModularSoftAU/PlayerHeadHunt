@@ -37,31 +37,32 @@ SOUND:
   MINORCOLLECTIONMILESTONE: "ENTITY_PLAYER_LEVELUP"
   MAJORCOLLECTIONMILESTONE: "UI_TOAST_CHALLENGE_COMPLETE"
 MILESTONES:
-  # Each entry is either a plain number (no helmet reward) or a map with
-  # a 'count' and optional 'helmet' (any valid Bukkit Material name).
-  # MINOR uses the minor sound; MAJOR uses the major sound.
+  # Milestone counts are derived automatically from the total egg count.
+  # Each entry is either a plain percentage (e.g. 8.0 = 8% of total) or a
+  # map with a 'percentage' and optional 'helmet' (any Bukkit Material name).
+  # MINOR uses the minor sound; MAJOR uses the major sound and a broadcast.
   MINOR:
-    - 10
-    - 25
-    - count: 50
+    - 1.6
+    - 4.0
+    - percentage: 8.0
       helmet: LEATHER_HELMET
-    - count: 75
+    - percentage: 12.0
       helmet: COPPER_HELMET
-    - count: 100
+    - percentage: 16.0
       helmet: CHAINMAIL_HELMET
-    - 200
-    - 300
-    - 400
-    - 500
-    - 600
+    - 32.0
+    - 48.0
+    - 64.0
+    - 80.0
+    - 96.0
   MAJOR:
-    - count: 156
+    - percentage: 25.0
       helmet: IRON_HELMET
-    - count: 314
+    - percentage: 50.0
       helmet: GOLDEN_HELMET
-    - count: 468
+    - percentage: 75.0
       helmet: DIAMOND_HELMET
-    - count: 625
+    - percentage: 100.0
       helmet: NETHERITE_HELMET
 LANG:
   DATABASE:
