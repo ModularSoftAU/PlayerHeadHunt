@@ -61,7 +61,7 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         // Plugin Event Register
         PluginManager pluginmanager = getServer().getPluginManager();
         pluginmanager.registerEvents(new HeadFindEvent(this, headWorldController, headChatController, headHatController, headScoreboardController, headQuery, headCompassController), this);
-        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery, headCompassController), this);
+        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery, headHatController, headCompassController), this);
         pluginmanager.registerEvents(new HeadHatOnHead(), this);
         if (config.isCompassEnabled()) {
             pluginmanager.registerEvents(new HeadCompassInventoryEvent(headCompassController), this);
