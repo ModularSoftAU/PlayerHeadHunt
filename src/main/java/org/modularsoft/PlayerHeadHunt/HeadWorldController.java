@@ -31,11 +31,71 @@ import java.util.*;
 public class HeadWorldController {
     private final PlayerHeadHuntMain plugin;
     private final YamlFileManager yamlFileManager;
+    private final YamlFileManager pendingRespawnsFile;
     private HeadCompassController compassController;
 
     public HeadWorldController(PlayerHeadHuntMain plugin) {
         this.plugin = plugin;
         this.yamlFileManager = new YamlFileManager(new File(plugin.getDataFolder(), "player-data.yml"));
+        this.pendingRespawnsFile = new YamlFileManager(new File(plugin.getDataFolder(), "pending-respawns.yml"));
+    }
+
+    // Called at startup to immediately restore any heads that were mid-respawn when the server stopped.
+    public void restorePendingRespawns() {
+        Map<String, Object> data = pendingRespawnsFile.getData();
+        List<Map<String, Object>> pending = (List<Map<String, Object>>) data.get("pending");
+        if (pending == null || pending.isEmpty()) return;
+
+        List<Map<String, Object>> toRestore = new ArrayList<>(pending);
+        pending.clear();
+        pendingRespawnsFile.save();
+
+        for (Map<String, Object> entry : toRestore) {
+            int x = (Integer) entry.get("x");
+            int y = (Integer) entry.get("y");
+            int z = (Integer) entry.get("z");
+            String materialStr = (String) entry.get("material");
+            String blockDataStr = (String) entry.get("blockData");
+
+            Material material;
+            try { material = Material.valueOf(materialStr); }
+            catch (IllegalArgumentException e) { continue; }
+
+            BlockData blockData;
+            try { blockData = Bukkit.createBlockData(blockDataStr); }
+            catch (IllegalArgumentException e) { blockData = material.createBlockData(); }
+
+            replaceHeadBlock(material, blockData, x, y, z);
+        }
+
+        plugin.getServer().getConsoleSender().sendMessage(
+            "[PlayerHeadHunt] Restored " + toRestore.size() + " head(s) that were mid-respawn at last shutdown."
+        );
+    }
+
+    private void savePendingRespawn(int x, int y, int z, Material material, BlockData blockData) {
+        Map<String, Object> data = pendingRespawnsFile.getData();
+        List<Map<String, Object>> pending = (List<Map<String, Object>>) data.computeIfAbsent("pending", k -> new ArrayList<>());
+        Map<String, Object> entry = new HashMap<>();
+        entry.put("x", x);
+        entry.put("y", y);
+        entry.put("z", z);
+        entry.put("material", material.name());
+        entry.put("blockData", blockData.getAsString());
+        pending.add(entry);
+        pendingRespawnsFile.save();
+    }
+
+    private void removePendingRespawn(int x, int y, int z) {
+        Map<String, Object> data = pendingRespawnsFile.getData();
+        List<Map<String, Object>> pending = (List<Map<String, Object>>) data.get("pending");
+        if (pending == null) return;
+        pending.removeIf(entry ->
+            Integer.valueOf(x).equals(entry.get("x"))
+            && Integer.valueOf(y).equals(entry.get("y"))
+            && Integer.valueOf(z).equals(entry.get("z"))
+        );
+        pendingRespawnsFile.save();
     }
 
     public void setCompassController(HeadCompassController compassController) {
@@ -143,6 +203,8 @@ public class HeadWorldController {
 
         int headRespawnTimer = plugin.config().getHeadRespawnTimer();
 
+        // Persist before breaking so a restart during the respawn window can recover this head
+        savePendingRespawn(x, y, z, blockType, blockData);
         breakBlock(x, y, z);
         new BukkitRunnable() {
             @Override
@@ -176,6 +238,7 @@ public class HeadWorldController {
         if (compassController != null) {
             compassController.onHeadRespawned(headBlockLocation);
         }
+        removePendingRespawn(x, y, z);
     }
 
     private String getRandomHead() {

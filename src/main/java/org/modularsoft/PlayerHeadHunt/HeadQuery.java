@@ -51,24 +51,24 @@ public class HeadQuery {
 
     public int foundHeadsAlreadyCount(int xCord, int yCord, int zCord) {
         Map<String, Object> data = yamlFileManager.getData();
-        Object headsObject = data.get("heads");
-
-        // Ensure the "heads" object is a list
-        if (!(headsObject instanceof List<?>)) {
-            return 0; // Return 0 if the data is not a list
+        int count = 0;
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            if (!(entry.getValue() instanceof Map<?, ?> rawPlayerData)) continue;
+            Map<String, Object> playerData = (Map<String, Object>) rawPlayerData;
+            Object headsObj = playerData.get("headsCollected");
+            if (!(headsObj instanceof List<?> rawList)) continue;
+            for (Object rawHead : rawList) {
+                if (!(rawHead instanceof Map<?, ?> rawHeadMap)) continue;
+                Map<String, Object> head = (Map<String, Object>) rawHeadMap;
+                if (Integer.valueOf(xCord).equals(head.get("x"))
+                        && Integer.valueOf(yCord).equals(head.get("y"))
+                        && Integer.valueOf(zCord).equals(head.get("z"))) {
+                    count++;
+                    break; // each player counts once per head
+                }
+            }
         }
-
-        List<?> heads = (List<?>) headsObject;
-
-        // Filter and count matching heads
-        return (int) heads.stream()
-                .filter(head -> head instanceof Map)
-                .map(head -> (Map<String, Object>) head)
-                .filter(head ->
-                        head.get("x") instanceof Integer && head.get("y") instanceof Integer && head.get("z") instanceof Integer &&
-                                head.get("x").equals(xCord) && head.get("y").equals(yCord) && head.get("z").equals(zCord)
-                )
-                .count();
+        return count;
     }
 
     public boolean clearHeads(Player player) {

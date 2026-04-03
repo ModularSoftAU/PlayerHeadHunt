@@ -47,8 +47,9 @@ public class PlayerHeadHuntMain extends JavaPlugin {
 
         headWorldController.setCompassController(headCompassController);
 
-        // Do an initial calculation of the number of heads. This can be
-        // manually recalculated with the relevant command.
+        // Restore any heads that were mid-respawn when the server last stopped,
+        // then count so the total reflects the full set of placed heads.
+        headWorldController.restorePendingRespawns();
         headWorldController.countHeadsInRegion();
 
         // Scan for head locations and start the compass task
