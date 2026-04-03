@@ -43,6 +43,7 @@ At certain counts, a helmet is automatically equipped to display a player's prog
 | Count | Helmet    |
 |-------|-----------|
 | 25    | Leather   |
+| 50    | Copper    |
 | 100   | Chainmail |
 | 156   | Iron      |
 | 314   | Golden    |
@@ -161,6 +162,7 @@ MILESTONES:
     - 468
     - 625
   LEATHERHELMET: 25
+  COPPERHELMET: 50
   CHAINMAILHELMET: 100
   IRONHELMET: 156
   GOLDENHELMET: 314

@@ -3,7 +3,7 @@ name: PlayerHeadHunt
 description: An Player Head Hunt minigame.
 version: 1.2.0
 author: ModularSoft
-api-version: 1.21.1
+api-version: 1.21.4
 depend: [WorldEdit]
 
 commands:
