@@ -61,7 +61,6 @@ MILESTONES:
     - 625
   # These need to match up 1 to 1 with a milestone above
   LEATHERHELMET: 25
-  COPPERHELMET: 50
   CHAINMAILHELMET: 100
   IRONHELMET: 156
   GOLDENHELMET: 314
