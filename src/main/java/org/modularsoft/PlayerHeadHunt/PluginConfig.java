@@ -44,6 +44,16 @@ public class PluginConfig {
     @Getter private final String langHeadCount;
     @Getter private final String langHeadCollectionMilestoneReached;
 
+    @Getter private final boolean compassEnabled;
+    @Getter private final int compassSlot;
+    @Getter private final int compassCooldownTicks;
+    @Getter private final int compassScanIntervalTicks;
+    @Getter private final String compassItemName;
+    @Getter private final String langCompassTargetFound;
+    @Getter private final String langCompassTargetCollected;
+    @Getter private final String langCompassCooldownEnded;
+    @Getter private final String langCompassNoHeads;
+
     @Getter private final String langLeaderboardNoHeads;
     @Getter private final String langLeaderboardHeader;
     @Getter private final String langLeaderboardFirstColour;
@@ -82,6 +92,17 @@ public class PluginConfig {
         headMilestones.get(config.getInt("MILESTONES.GOLDENHELMET")).setHelmet(Material.GOLDEN_HELMET);
         headMilestones.get(config.getInt("MILESTONES.DIAMONDHELMET")).setHelmet(Material.DIAMOND_HELMET);
         headMilestones.get(config.getInt("MILESTONES.NETHERITEHELMET")).setHelmet(Material.NETHERITE_HELMET);
+
+        compassEnabled = config.getBoolean("COMPASS.ENABLED");
+        compassSlot = config.getInt("COMPASS.SLOT");
+        compassCooldownTicks = config.getInt("COMPASS.COOLDOWN_TICKS");
+        compassScanIntervalTicks = config.getInt("COMPASS.SCAN_INTERVAL_TICKS");
+        compassItemName = config.getString("COMPASS.ITEM_NAME");
+
+        langCompassTargetFound =    ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMPASS.TARGET_FOUND")));
+        langCompassTargetCollected = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMPASS.TARGET_COLLECTED")));
+        langCompassCooldownEnded =  ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMPASS.COOLDOWN_ENDED")));
+        langCompassNoHeads =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.COMPASS.NO_HEADS")));
 
         langDatabaseConnectionError =        ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONERROR")));
         langDatabaseConnectionSuccess =      ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("LANG.DATABASE.CONNECTIONSUCCESS")));

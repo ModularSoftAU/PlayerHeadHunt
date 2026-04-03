@@ -13,6 +13,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,6 +22,7 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.modularsoft.PlayerHeadHunt.compass.HeadCompassController;
 import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 
 import java.io.File;
@@ -29,10 +31,59 @@ import java.util.*;
 public class HeadWorldController {
     private final PlayerHeadHuntMain plugin;
     private final YamlFileManager yamlFileManager;
+    private HeadCompassController compassController;
 
     public HeadWorldController(PlayerHeadHuntMain plugin) {
         this.plugin = plugin;
         this.yamlFileManager = new YamlFileManager(new File(plugin.getDataFolder(), "player-data.yml"));
+    }
+
+    public void setCompassController(HeadCompassController compassController) {
+        this.compassController = compassController;
+    }
+
+    // Scan all loaded chunks for player heads within the configured region.
+    // Uses tile-entity iteration so it only touches actual skull blocks, not every block.
+    public Set<Location> scanForHeadLocations() {
+        Set<Location> locations = new HashSet<>();
+        org.bukkit.World bukkitWorld = Bukkit.getWorld("world");
+        if (bukkitWorld == null) return locations;
+
+        String headBlock = plugin.config().getHeadBlock().toUpperCase();
+        Material headMaterial;
+        try {
+            headMaterial = Material.valueOf(headBlock);
+        } catch (IllegalArgumentException e) {
+            return locations;
+        }
+
+        BlockVector3 lower = plugin.config().getLowerRegion();
+        BlockVector3 upper = plugin.config().getUpperRegion();
+        int minX = Math.min(lower.getX(), upper.getX());
+        int maxX = Math.max(lower.getX(), upper.getX());
+        int minY = Math.min(lower.getY(), upper.getY());
+        int maxY = Math.max(lower.getY(), upper.getY());
+        int minZ = Math.min(lower.getZ(), upper.getZ());
+        int maxZ = Math.max(lower.getZ(), upper.getZ());
+
+        for (Chunk chunk : bukkitWorld.getLoadedChunks()) {
+            int chunkMinX = chunk.getX() * 16;
+            int chunkMaxX = chunkMinX + 15;
+            int chunkMinZ = chunk.getZ() * 16;
+            int chunkMaxZ = chunkMinZ + 15;
+            if (chunkMaxX < minX || chunkMinX > maxX || chunkMaxZ < minZ || chunkMinZ > maxZ) continue;
+
+            for (BlockState tileEntity : chunk.getTileEntities()) {
+                if (tileEntity.getType() != headMaterial) continue;
+                Location loc = tileEntity.getLocation();
+                if (loc.getBlockX() >= minX && loc.getBlockX() <= maxX
+                        && loc.getBlockY() >= minY && loc.getBlockY() <= maxY
+                        && loc.getBlockZ() >= minZ && loc.getBlockZ() <= maxZ) {
+                    locations.add(loc);
+                }
+            }
+        }
+        return locations;
     }
 
     public void countHeadsInRegion() {
@@ -72,7 +123,9 @@ public class HeadWorldController {
         }
 
         boolean alreadyCollected = collectedHeads.stream().anyMatch(head ->
-                head.get("x") == x && head.get("y") == y && head.get("z") == z);
+                Integer.valueOf(x).equals(head.get("x"))
+                && Integer.valueOf(y).equals(head.get("y"))
+                && Integer.valueOf(z).equals(head.get("z")));
 
         if (alreadyCollected) {
             player.sendMessage(plugin.config().getLangHeadAlreadyFound());
@@ -102,6 +155,9 @@ public class HeadWorldController {
     private void breakBlock(int x, int y, int z) {
         Location headBlock = new Location(Bukkit.getWorld("world"), x, y, z);
         headBlock.getBlock().setType(Material.AIR);
+        if (compassController != null) {
+            compassController.onHeadRemoved(headBlock);
+        }
     }
 
     private void replaceHeadBlock(Material headMaterialBlock, BlockData blockData, int x, int y, int z) {
@@ -116,6 +172,9 @@ public class HeadWorldController {
 
             skull.setPlayerProfile(profile);
             skull.update(true);
+        }
+        if (compassController != null) {
+            compassController.onHeadRespawned(headBlockLocation);
         }
     }
 

@@ -31,6 +31,12 @@ HEAD:
     7: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOWUyMmE0ZTM5NTM3YTA0OWVhZWQ4NDcyZmY3NTAwZDRlZmE0ZmQ0NGVhOGNjNjQwMjQxNTk5MmUyZTc1ZGQxIn19fQ=="
     8: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGUzYmE1NGU0NmY0ZmNkOTI4MWVjNTkyYTVjODE3OTAxY2UzZjgxMTE4NWY3N2E5MzhjZjBjNjMzNDZlMGU2MiJ9fX0="
     9: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWMwZDA0NDNhZGQ0OTA0N2YzNDg2NDRhYjJlNTYzNjE3ZTc5ZjI1N2I3MmY4NzM4N2UwNGRkZDZiMzAxODdmOSJ9fX0="
+COMPASS:
+  ENABLED: TRUE
+  SLOT: 8
+  COOLDOWN_TICKS: 6000
+  SCAN_INTERVAL_TICKS: 6000
+  ITEM_NAME: "&bHead Compass"
 SOUND:
   HEADFOUND: "BLOCK_NOTE_BLOCK_SNARE"
   HEADALREADYFOUND: "BLOCK_NOTE_BLOCK_BASS"
@@ -80,6 +86,11 @@ LANG:
     HEADCOUNT: "&eYou have found &l&6%FOUNDHEADS%/%NUMBEROFHEADS% &r&eheads."
     # Use %PLAYER% to display players name, use %NUMBEROFHEADS% to display number of eggs.
     HEADCOLLECTIONMILESTONEREACHED: "&e&l%PLAYER% &5has collected &e&l%NUMBEROFHEADS% &r&5eggs!"
+  COMPASS:
+    TARGET_FOUND: "&bYour Head Compass has locked onto an unclaimed head."
+    TARGET_COLLECTED: "&bYou collected the tracked head. Head Compass recharging for 5 minutes."
+    COOLDOWN_ENDED: "&bYour Head Compass is recharged and searching again."
+    NO_HEADS: "&bNo uncollected heads could be found right now."
   LEADERBOARD:
     # You can change the length of the header to change where the "centre" is for
     # the rest of the leaderboard. Keep the line below for reference:

@@ -4,6 +4,7 @@ import org.modularsoft.PlayerHeadHunt.PlayerHeadHuntMain;
 import org.modularsoft.PlayerHeadHunt.HeadChatController;
 import org.modularsoft.PlayerHeadHunt.HeadQuery;
 import org.modularsoft.PlayerHeadHunt.HeadScoreboardController;
+import org.modularsoft.PlayerHeadHunt.compass.HeadCompassController;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,16 +14,19 @@ public class HeadHunterOnJoin implements Listener {
     private final PlayerHeadHuntMain plugin;
     private final HeadChatController headChatController;
     private final HeadScoreboardController headScoreboardController;
-    private final HeadQuery headQuery; // Add HeadQuery instance
+    private final HeadQuery headQuery;
+    private final HeadCompassController compassController;
 
     public HeadHunterOnJoin(PlayerHeadHuntMain plugin,
                             HeadChatController headChatController,
                             HeadScoreboardController headScoreboardController,
-                            HeadQuery headQuery) {
+                            HeadQuery headQuery,
+                            HeadCompassController compassController) {
         this.plugin = plugin;
         this.headChatController = headChatController;
         this.headScoreboardController = headScoreboardController;
-        this.headQuery = headQuery; // Initialize HeadQuery
+        this.headQuery = headQuery;
+        this.compassController = compassController;
     }
 
     @EventHandler
@@ -38,6 +42,10 @@ public class HeadHunterOnJoin implements Listener {
             plugin.getServer().getConsoleSender().sendMessage(username + " is a new player, creating a player profile.");
             plugin.getServer().getConsoleSender().sendMessage("Added a new hunter, " + username + ".");
             headChatController.newPlayerJoinsTheHunt(player);
+        }
+
+        if (plugin.config().isCompassEnabled()) {
+            compassController.onPlayerJoin(player);
         }
     }
 }

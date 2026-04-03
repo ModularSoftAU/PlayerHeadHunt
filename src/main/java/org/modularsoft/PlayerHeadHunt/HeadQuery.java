@@ -12,6 +12,7 @@ import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 public class HeadQuery {
     private final YamlFileManager yamlFileManager;
@@ -108,7 +109,9 @@ public class HeadQuery {
 
         // Check if the head coordinates already exist in the list
         return headsCollected.stream().anyMatch(head ->
-                head.get("x") == x && head.get("y") == y && head.get("z") == z);
+                Integer.valueOf(x).equals(head.get("x"))
+                && Integer.valueOf(y).equals(head.get("y"))
+                && Integer.valueOf(z).equals(head.get("z")));
     }
 
     public void insertCollectedHead(Player player, int x, int y, int z) {
@@ -161,6 +164,37 @@ public class HeadQuery {
 
         yamlFileManager.save();
         return true;
+    }
+
+    // Compass persistence
+
+    public Map<String, Object> getRawCompassData(UUID uuid) {
+        Map<String, Object> data = yamlFileManager.getData();
+        Map<String, Object> playerData = (Map<String, Object>) data.get(uuid.toString());
+        if (playerData == null) return Collections.emptyMap();
+
+        Map<String, Object> compassData = new HashMap<>();
+        compassData.put("compassMode",          playerData.get("compassMode"));
+        compassData.put("compassTrackedX",       playerData.get("compassTrackedX"));
+        compassData.put("compassTrackedY",       playerData.get("compassTrackedY"));
+        compassData.put("compassTrackedZ",       playerData.get("compassTrackedZ"));
+        compassData.put("compassCooldownUntil",  playerData.get("compassCooldownUntil"));
+        return compassData;
+    }
+
+    public void saveCompassState(UUID uuid, String mode,
+                                 Integer trackedX, Integer trackedY, Integer trackedZ,
+                                 long cooldownUntil) {
+        Map<String, Object> data = yamlFileManager.getData();
+        Map<String, Object> playerData = (Map<String, Object>) data.get(uuid.toString());
+        if (playerData == null) return;
+
+        playerData.put("compassMode",         mode);
+        playerData.put("compassTrackedX",     trackedX);
+        playerData.put("compassTrackedY",     trackedY);
+        playerData.put("compassTrackedZ",     trackedZ);
+        playerData.put("compassCooldownUntil", cooldownUntil);
+        yamlFileManager.save();
     }
 
     private boolean isPlayerExcluded(UUID uuid, String username) {
