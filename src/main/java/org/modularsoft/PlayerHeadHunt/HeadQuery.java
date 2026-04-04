@@ -30,7 +30,7 @@ public class HeadQuery {
         }
     }
 
-    public record HeadHunter(@Getter String name, @Getter int headsCollected) { }
+    public record HeadHunter(@Getter String name, @Getter int headsCollected, @Getter long lastCollectedAt) { }
 
     public int foundHeadsCount(Player player) {
         String playerUUID = player.getUniqueId().toString();
@@ -132,12 +132,13 @@ public class HeadQuery {
             playerData.put("headsCollected", headsCollected);
         }
 
-        // Add the new head coordinates to the list
-        Map<String, Integer> newHead = new HashMap<>();
+        // Add the new head coordinates and collection timestamp to the list
+        Map<String, Object> newHead = new HashMap<>();
         newHead.put("x", x);
         newHead.put("y", y);
         newHead.put("z", z);
-        headsCollected.add(newHead);
+        newHead.put("collectedAt", System.currentTimeMillis());
+        headsCollected.add((Map) newHead);
 
         // Increment the count of collected heads
         int currentCount = (int) playerData.getOrDefault("headsCollectedCount", 0);
@@ -240,7 +241,21 @@ public class HeadQuery {
             return Optional.empty();
         }
 
-        return Optional.of(new HeadHunter(username, headsCollected.size()));
+        // Find when the player last collected a head (i.e. when they reached their current count).
+        // Players without timestamps (legacy data) sort last among ties.
+        long lastCollectedAt = headsCollected.stream()
+                .filter(e -> e instanceof Map)
+                .map(e -> (Map<?, ?>) e)
+                .mapToLong(e -> {
+                    Object ts = e.get("collectedAt");
+                    if (ts instanceof Long l) return l;
+                    if (ts instanceof Integer i) return i.longValue();
+                    return Long.MAX_VALUE;
+                })
+                .max()
+                .orElse(Long.MAX_VALUE);
+
+        return Optional.of(new HeadHunter(username, headsCollected.size(), lastCollectedAt));
     }
 
     public CompletableFuture<List<HeadHunter>> getBestHunters(int topHunters) {
@@ -267,6 +282,9 @@ public class HeadQuery {
                         .map(Optional::get)
                         .sorted((a, b) -> {
                             int cmp = Integer.compare(b.headsCollected(), a.headsCollected());
+                            if (cmp != 0) return cmp;
+                            // Tie: whoever reached this count first ranks higher
+                            cmp = Long.compare(a.lastCollectedAt(), b.lastCollectedAt());
                             if (cmp != 0) return cmp;
                             return a.name().compareToIgnoreCase(b.name());
                         })
