@@ -265,7 +265,11 @@ public class HeadQuery {
                         .map(CompletableFuture::join)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .sorted((a, b) -> Integer.compare(b.headsCollected(), a.headsCollected()))
+                        .sorted((a, b) -> {
+                            int cmp = Integer.compare(b.headsCollected(), a.headsCollected());
+                            if (cmp != 0) return cmp;
+                            return a.name().compareToIgnoreCase(b.name());
+                        })
                         .limit(topHunters)
                         .collect(Collectors.toList()));
     }
