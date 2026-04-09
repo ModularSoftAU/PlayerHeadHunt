@@ -213,7 +213,6 @@ public class HeadQuery {
                     // Only exclude if the permission is explicitly TRUE
                     boolean isExcluded = permissionResult == Tristate.TRUE;
 
-                    Bukkit.getLogger().info("Player " + username + " exclusion status: " + isExcluded);
                     return isExcluded;
                 }).join();
     }
@@ -234,8 +233,6 @@ public class HeadQuery {
             Bukkit.getLogger().warning("Invalid data for user " + uuidStr + ": username=" + username + ", headsCollected=" + headsCollectedObj);
             return Optional.empty();
         }
-
-        Bukkit.getLogger().info("Processing player: " + username + ", Heads Collected: " + headsCollected.size());
 
         if (isPlayerExcluded(uuid, username)) {
             return Optional.empty();
