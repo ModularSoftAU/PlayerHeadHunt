@@ -13,6 +13,10 @@ public class HeadMileStone {
     private final boolean isMajorSound;
     @Setter private Material helmet;
 
+    public Material getHelmet() {
+        return helmet;
+    }
+
     public HeadMileStone(int atHeadsFound, boolean isMajorSound) {
         this.atHeadsFound = atHeadsFound;
         this.isMajorSound = isMajorSound;

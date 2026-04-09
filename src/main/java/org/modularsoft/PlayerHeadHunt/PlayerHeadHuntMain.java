@@ -2,17 +2,22 @@ package org.modularsoft.PlayerHeadHunt;
 
 import lombok.Getter;
 import org.modularsoft.PlayerHeadHunt.commands.*;
+import org.modularsoft.PlayerHeadHunt.compass.HeadCompassController;
+import org.modularsoft.PlayerHeadHunt.events.HeadCompassInventoryEvent;
 import org.modularsoft.PlayerHeadHunt.events.HeadFindEvent;
 import org.modularsoft.PlayerHeadHunt.events.HeadHatOnHead;
 import org.modularsoft.PlayerHeadHunt.events.HeadHunterOnJoin;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.modularsoft.PlayerHeadHunt.helpers.WebhookUtil;
 import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 
 import java.io.File;
 import java.util.Objects;
+import java.util.Set;
 
 public class PlayerHeadHuntMain extends JavaPlugin {
     private PluginConfig config;
@@ -39,16 +44,30 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         HeadWorldController headWorldController = new HeadWorldController(this);
         HeadHatController headHatController = new HeadHatController(this);
         HeadScoreboardController headScoreboardController = new HeadScoreboardController(this);
+        HeadCompassController headCompassController = new HeadCompassController(this, headQuery);
 
-        // Do an initial calculation of the number of heads. This can be
-        // manually recalculated with the relevant command.
+        headWorldController.setCompassController(headCompassController);
+
+        // Restore any heads that were mid-respawn when the server last stopped,
+        // then count so the total reflects the full set of placed heads.
+        headWorldController.restorePendingRespawns();
         headWorldController.countHeadsInRegion();
+
+        // Scan for head locations and start the compass task
+        if (config.isCompassEnabled()) {
+            Set<Location> headLocations = headWorldController.scanForHeadLocations();
+            headCompassController.setKnownHeadLocations(headLocations);
+            headCompassController.startCompassTask();
+        }
 
         // Plugin Event Register
         PluginManager pluginmanager = getServer().getPluginManager();
-        pluginmanager.registerEvents(new HeadFindEvent(this, headWorldController, headChatController, headHatController, headScoreboardController, headQuery), this);
-        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery), this);
+        pluginmanager.registerEvents(new HeadFindEvent(this, headWorldController, headChatController, headHatController, headScoreboardController, headQuery, headCompassController), this);
+        pluginmanager.registerEvents(new HeadHunterOnJoin(this, headChatController, headScoreboardController, headQuery, headHatController, headCompassController), this);
         pluginmanager.registerEvents(new HeadHatOnHead(), this);
+        if (config.isCompassEnabled()) {
+            pluginmanager.registerEvents(new HeadCompassInventoryEvent(headCompassController), this);
+        }
 
         // Command Registry
         Objects.requireNonNull(getCommand("heads")).setExecutor(new heads(this, headChatController));
@@ -59,6 +78,9 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         Objects.requireNonNull(getCommand("debugheadhunt")).setTabCompleter(
                 new debugheadhunt(this, headChatController, headHatController, headScoreboardController, headWorldController, headQuery)
         );
+
+        // Schedule daily Discord leaderboard webhook
+        new WebhookUtil(this).scheduleDailyWebhook(headQuery);
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");

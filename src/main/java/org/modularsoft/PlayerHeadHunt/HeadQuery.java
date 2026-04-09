@@ -12,6 +12,7 @@ import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 public class HeadQuery {
     private final YamlFileManager yamlFileManager;
@@ -29,7 +30,7 @@ public class HeadQuery {
         }
     }
 
-    public record HeadHunter(@Getter String name, @Getter int headsCollected) { }
+    public record HeadHunter(@Getter String name, @Getter int headsCollected, @Getter long lastCollectedAt) { }
 
     public int foundHeadsCount(Player player) {
         String playerUUID = player.getUniqueId().toString();
@@ -50,24 +51,24 @@ public class HeadQuery {
 
     public int foundHeadsAlreadyCount(int xCord, int yCord, int zCord) {
         Map<String, Object> data = yamlFileManager.getData();
-        Object headsObject = data.get("heads");
-
-        // Ensure the "heads" object is a list
-        if (!(headsObject instanceof List<?>)) {
-            return 0; // Return 0 if the data is not a list
+        int count = 0;
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            if (!(entry.getValue() instanceof Map<?, ?> rawPlayerData)) continue;
+            Map<String, Object> playerData = (Map<String, Object>) rawPlayerData;
+            Object headsObj = playerData.get("headsCollected");
+            if (!(headsObj instanceof List<?> rawList)) continue;
+            for (Object rawHead : rawList) {
+                if (!(rawHead instanceof Map<?, ?> rawHeadMap)) continue;
+                Map<String, Object> head = (Map<String, Object>) rawHeadMap;
+                if (Integer.valueOf(xCord).equals(head.get("x"))
+                        && Integer.valueOf(yCord).equals(head.get("y"))
+                        && Integer.valueOf(zCord).equals(head.get("z"))) {
+                    count++;
+                    break; // each player counts once per head
+                }
+            }
         }
-
-        List<?> heads = (List<?>) headsObject;
-
-        // Filter and count matching heads
-        return (int) heads.stream()
-                .filter(head -> head instanceof Map)
-                .map(head -> (Map<String, Object>) head)
-                .filter(head ->
-                        head.get("x") instanceof Integer && head.get("y") instanceof Integer && head.get("z") instanceof Integer &&
-                                head.get("x").equals(xCord) && head.get("y").equals(yCord) && head.get("z").equals(zCord)
-                )
-                .count();
+        return count;
     }
 
     public boolean clearHeads(Player player) {
@@ -108,7 +109,9 @@ public class HeadQuery {
 
         // Check if the head coordinates already exist in the list
         return headsCollected.stream().anyMatch(head ->
-                head.get("x") == x && head.get("y") == y && head.get("z") == z);
+                Integer.valueOf(x).equals(head.get("x"))
+                && Integer.valueOf(y).equals(head.get("y"))
+                && Integer.valueOf(z).equals(head.get("z")));
     }
 
     public void insertCollectedHead(Player player, int x, int y, int z) {
@@ -129,12 +132,13 @@ public class HeadQuery {
             playerData.put("headsCollected", headsCollected);
         }
 
-        // Add the new head coordinates to the list
-        Map<String, Integer> newHead = new HashMap<>();
+        // Add the new head coordinates and collection timestamp to the list
+        Map<String, Object> newHead = new HashMap<>();
         newHead.put("x", x);
         newHead.put("y", y);
         newHead.put("z", z);
-        headsCollected.add(newHead);
+        newHead.put("collectedAt", System.currentTimeMillis());
+        headsCollected.add((Map) newHead);
 
         // Increment the count of collected heads
         int currentCount = (int) playerData.getOrDefault("headsCollectedCount", 0);
@@ -163,6 +167,37 @@ public class HeadQuery {
         return true;
     }
 
+    // Compass persistence
+
+    public Map<String, Object> getRawCompassData(UUID uuid) {
+        Map<String, Object> data = yamlFileManager.getData();
+        Map<String, Object> playerData = (Map<String, Object>) data.get(uuid.toString());
+        if (playerData == null) return Collections.emptyMap();
+
+        Map<String, Object> compassData = new HashMap<>();
+        compassData.put("compassMode",          playerData.get("compassMode"));
+        compassData.put("compassTrackedX",       playerData.get("compassTrackedX"));
+        compassData.put("compassTrackedY",       playerData.get("compassTrackedY"));
+        compassData.put("compassTrackedZ",       playerData.get("compassTrackedZ"));
+        compassData.put("compassCooldownUntil",  playerData.get("compassCooldownUntil"));
+        return compassData;
+    }
+
+    public void saveCompassState(UUID uuid, String mode,
+                                 Integer trackedX, Integer trackedY, Integer trackedZ,
+                                 long cooldownUntil) {
+        Map<String, Object> data = yamlFileManager.getData();
+        Map<String, Object> playerData = (Map<String, Object>) data.get(uuid.toString());
+        if (playerData == null) return;
+
+        playerData.put("compassMode",         mode);
+        playerData.put("compassTrackedX",     trackedX);
+        playerData.put("compassTrackedY",     trackedY);
+        playerData.put("compassTrackedZ",     trackedZ);
+        playerData.put("compassCooldownUntil", cooldownUntil);
+        yamlFileManager.save();
+    }
+
     private boolean isPlayerExcluded(UUID uuid, String username) {
         return luckPerms.getUserManager().loadUser(uuid)
                 .thenApply(user -> {
@@ -178,7 +213,6 @@ public class HeadQuery {
                     // Only exclude if the permission is explicitly TRUE
                     boolean isExcluded = permissionResult == Tristate.TRUE;
 
-                    Bukkit.getLogger().info("Player " + username + " exclusion status: " + isExcluded);
                     return isExcluded;
                 }).join();
     }
@@ -200,13 +234,25 @@ public class HeadQuery {
             return Optional.empty();
         }
 
-        Bukkit.getLogger().info("Processing player: " + username + ", Heads Collected: " + headsCollected.size());
-
         if (isPlayerExcluded(uuid, username)) {
             return Optional.empty();
         }
 
-        return Optional.of(new HeadHunter(username, headsCollected.size()));
+        // Find when the player last collected a head (i.e. when they reached their current count).
+        // Players without timestamps (legacy data) sort last among ties.
+        long lastCollectedAt = headsCollected.stream()
+                .filter(e -> e instanceof Map)
+                .map(e -> (Map<?, ?>) e)
+                .mapToLong(e -> {
+                    Object ts = e.get("collectedAt");
+                    if (ts instanceof Long l) return l;
+                    if (ts instanceof Integer i) return i.longValue();
+                    return Long.MAX_VALUE;
+                })
+                .max()
+                .orElse(Long.MAX_VALUE);
+
+        return Optional.of(new HeadHunter(username, headsCollected.size(), lastCollectedAt));
     }
 
     public CompletableFuture<List<HeadHunter>> getBestHunters(int topHunters) {
@@ -231,7 +277,14 @@ public class HeadQuery {
                         .map(CompletableFuture::join)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .sorted((a, b) -> Integer.compare(b.headsCollected(), a.headsCollected()))
+                        .sorted((a, b) -> {
+                            int cmp = Integer.compare(b.headsCollected(), a.headsCollected());
+                            if (cmp != 0) return cmp;
+                            // Tie: whoever reached this count first ranks higher
+                            cmp = Long.compare(a.lastCollectedAt(), b.lastCollectedAt());
+                            if (cmp != 0) return cmp;
+                            return a.name().compareToIgnoreCase(b.name());
+                        })
                         .limit(topHunters)
                         .collect(Collectors.toList()));
     }

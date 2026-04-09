@@ -1,7 +1,9 @@
 package org.modularsoft.PlayerHeadHunt.events;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.modularsoft.PlayerHeadHunt.*;
+import org.modularsoft.PlayerHeadHunt.compass.HeadCompassController;
 import org.modularsoft.PlayerHeadHunt.helpers.HeadMileStone;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -20,16 +22,19 @@ public class HeadFindEvent implements Listener {
     private final Map<Integer, HeadMileStone> milestones;
 
     private final HeadQuery headQuery;
+    private final HeadCompassController compassController;
 
     public HeadFindEvent(PlayerHeadHuntMain plugin, HeadWorldController headWorldController,
                          HeadChatController headChatController, HeadHatController headHatController,
-                         HeadScoreboardController headScoreboardController, HeadQuery headQuery) {
+                         HeadScoreboardController headScoreboardController, HeadQuery headQuery,
+                         HeadCompassController compassController) {
         this.plugin = plugin;
         this.headWorldController = headWorldController;
         this.headChatController = headChatController;
         this.headHatController = headHatController;
         this.headScoreboardController = headScoreboardController;
         this.headQuery = headQuery;
+        this.compassController = compassController;
         this.milestones = plugin.config().getHeadMilestones();
     }
 
@@ -52,6 +57,11 @@ public class HeadFindEvent implements Listener {
             // Send the "head already found" message and stop further processing
             headChatController.headFoundResponse(player, true, headQuery.foundHeadsCount(player), x, y, z);
             return; // Ensure no further processing occurs
+        }
+
+        // Notify compass BEFORE breaking the block so it can check tracked state
+        if (plugin.config().isCompassEnabled()) {
+            compassController.onHeadCollected(player, new Location(block.getWorld(), x, y, z));
         }
 
         // Process head collection
