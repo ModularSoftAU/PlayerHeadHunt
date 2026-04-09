@@ -66,16 +66,12 @@ public class WebhookUtil {
                         return;
                     }
 
-                    plugin.getLogger().info("Top hunters size: " + topHunters.size());
-
                     List<String> fieldsList = new ArrayList<>();
                     for (HeadQuery.HeadHunter hunter : topHunters) {
                         if (hunter == null) continue;
 
                         String name = hunter.name();
                         int headsCollected = hunter.headsCollected();
-
-                        plugin.getLogger().info("Hunter: " + name + ", Heads Collected: " + headsCollected);
 
                         if (name != null && !name.isEmpty()) {
                             fieldsList.add(String.format("""
@@ -114,8 +110,6 @@ public class WebhookUtil {
                             ]
                         }
                     """, fieldsJson);
-
-                    plugin.getLogger().info("Generated JSON: " + embedJson);
 
                     try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
                         HttpPost post = new HttpPost(webhookUrl);

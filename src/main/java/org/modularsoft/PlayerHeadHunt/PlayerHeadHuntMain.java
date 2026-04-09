@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.modularsoft.PlayerHeadHunt.helpers.WebhookUtil;
 import org.modularsoft.PlayerHeadHunt.helpers.YamlFileManager;
 
 import java.io.File;
@@ -77,6 +78,9 @@ public class PlayerHeadHuntMain extends JavaPlugin {
         Objects.requireNonNull(getCommand("debugheadhunt")).setTabCompleter(
                 new debugheadhunt(this, headChatController, headHatController, headScoreboardController, headWorldController, headQuery)
         );
+
+        // Schedule daily Discord leaderboard webhook
+        new WebhookUtil(this).scheduleDailyWebhook(headQuery);
 
         // Plugin Load Message
         console.sendMessage(ChatColor.GREEN + getDescription().getName() + " is now enabled.");
